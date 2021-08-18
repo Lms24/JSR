@@ -1,0 +1,10 @@
+group = 'at.tugraz.ist.stracke.jsr'
+version = '1.0-SNAPSHOT'
+
+allprojects {
+    task hello {
+        doLast { task ->
+            println "I'm $task.project.name"
+        }
+    }
+}
