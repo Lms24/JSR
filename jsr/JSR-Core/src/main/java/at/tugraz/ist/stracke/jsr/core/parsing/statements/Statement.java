@@ -5,8 +5,8 @@ public abstract class Statement implements IStatement{
   private int endLine;
 
   public Statement(int startLine, int endLine) {
-    this.startLine = startLine;
-    this.endLine = endLine;
+    this.startLine = Math.max(startLine, 0);
+    this.endLine = Math.max(startLine, endLine);
   }
 
   @Override
