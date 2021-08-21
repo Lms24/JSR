@@ -50,49 +50,58 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
       }
       return null;
     } else {
-      logger.info("Parsing from String code");
-
-      CompilationUnit cu = StaticJavaParser.parse(code);
-
-      var testCaseMethods = cu.findAll(MethodDeclaration.class).stream().filter(decl ->
-        decl.getAnnotations().stream().anyMatch(a -> a.getNameAsString().equals("Test")));
-
-      List<TestCase> tcs = testCaseMethods.map(decl -> {
-
-        List<IStatement> aStmts = new ArrayList<>();
-
-        if (decl.getBody().isPresent()) {
-          aStmts = decl.getBody().get().findAll(Statement.class).stream()
-            .filter(Statement::isExpressionStmt)
-            .filter(stmt -> stmt.toString().toLowerCase().contains("assert"))
-            .map(stmt -> {
-
-              Set<String> refs = stmt.findAll(Expression.class).stream()
-                .filter(e -> e.isNameExpr() || e.isFieldAccessExpr())
-                .map(Node::toString)
-                .collect(Collectors.toSet());
-
-              return new AssertionStatement(
-                stmt.toString(),
-                stmt.getBegin().isPresent() ? stmt.getBegin().get().line : 0,
-                stmt.getEnd().isPresent() ? stmt.getEnd().get().line : 0,
-                refs
-              );
-            }).collect(Collectors.toList());
-        }
-
-        return new JUnitTestCase(
-          decl.getNameAsString(),
-          decl.getParentNode().isPresent() ?
-            ((ClassOrInterfaceDeclaration) decl.getParentNode().get()).getNameAsString() : null,
-          aStmts);
-      }).collect(Collectors.toList());
-
-      logger.info("Found {} test cases", tcs.size());
-
-      tcs.forEach(tc -> logger.info(tc.toString()));
-
-      return new TestSuite(tcs);
+      return parseFromString();
     }
+  }
+
+  private TestSuite parseFromString() {
+    logger.info("Parsing from String code");
+
+    CompilationUnit cu = StaticJavaParser.parse(code);
+
+    var testCaseMethods = cu.findAll(MethodDeclaration.class).stream().filter(decl ->
+      decl.getAnnotations().stream().anyMatch(a -> a.getNameAsString().equals("Test")));
+
+    List<TestCase> tcs = testCaseMethods
+      .map(this::mapDeclarationToTestCase)
+      .collect(Collectors.toList());
+
+    logger.info("Found {} test case{}", tcs.size(), tcs.size() != 1 ? "s" : "");
+
+    tcs.forEach(tc -> logger.info(tc.toString()));
+
+    return new TestSuite(tcs);
+  }
+
+  private JUnitTestCase mapDeclarationToTestCase(MethodDeclaration decl) {
+    List<IStatement> aStmts = new ArrayList<>();
+
+    if (decl.getBody().isPresent()) {
+      aStmts = decl.getBody().get().findAll(Statement.class).stream()
+        .filter(Statement::isExpressionStmt)
+        .filter(stmt -> stmt.toString().toLowerCase().contains("assert"))
+        .map(this::mapStatementToAssertionStatement)
+        .collect(Collectors.toList());
+    }
+
+    return new JUnitTestCase(
+      decl.getNameAsString(),
+      decl.getParentNode().isPresent() ?
+        ((ClassOrInterfaceDeclaration) decl.getParentNode().get()).getNameAsString() : null,
+      aStmts);
+  }
+
+  private AssertionStatement mapStatementToAssertionStatement(Statement stmt) {
+    Set<String> refs = stmt.findAll(Expression.class).stream()
+      .filter(e -> e.isNameExpr() || e.isFieldAccessExpr())
+      .map(Node::toString)
+      .collect(Collectors.toSet());
+
+    return new AssertionStatement(
+      stmt.toString(),
+      stmt.getBegin().isPresent() ? stmt.getBegin().get().line : 0,
+      stmt.getEnd().isPresent() ? stmt.getEnd().get().line : 0,
+      refs
+    );
   }
 }
