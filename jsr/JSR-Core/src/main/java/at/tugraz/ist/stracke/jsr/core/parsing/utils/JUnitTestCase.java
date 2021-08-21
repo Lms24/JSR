@@ -6,7 +6,7 @@ import java.util.List;
 
 public class JUnitTestCase extends TestCase {
 
-  public JUnitTestCase(List<IStatement> assertions, String className) {
-    super(assertions, className);
+  public JUnitTestCase(String name, String className, List<IStatement> assertions) {
+    super(name, className, assertions);
   }
 }

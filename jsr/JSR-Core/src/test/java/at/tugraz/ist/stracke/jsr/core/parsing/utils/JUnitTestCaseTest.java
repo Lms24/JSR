@@ -14,10 +14,11 @@ class JUnitTestCaseTest {
 
   @Test
   public void testEmptyInitialization() {
-    TestCase tc = new JUnitTestCase(null, "NullClass");
+    TestCase tc = new JUnitTestCase("tc1", "NullClass", null);
 
     assertThat(tc.getClassName(), equalTo("NullClass"));
-    assertThat(tc.getAssertions(), nullValue());
+    assertThat(tc.getName(), is(equalTo("tc1")));
+    assertThat(tc.getAssertions(), is(empty()));
   }
 
   @Test
@@ -27,7 +28,7 @@ class JUnitTestCaseTest {
     IStatement ass3 = new AssertionStatement(10, 12);
     List<IStatement> stmts = Arrays.asList(ass1, ass2, ass3);
 
-    TestCase tc = new JUnitTestCase(stmts, "LoadedClass");
+    TestCase tc = new JUnitTestCase("tc1", "LoadedClass", stmts);
 
     assertThat(tc.getClassName(), equalTo("LoadedClass"));
     assertThat(tc.getAssertions(), notNullValue());

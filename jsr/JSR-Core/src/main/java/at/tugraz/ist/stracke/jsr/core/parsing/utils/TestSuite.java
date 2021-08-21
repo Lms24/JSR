@@ -1,8 +1,10 @@
 package at.tugraz.ist.stracke.jsr.core.parsing.utils;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.List;
 
-public record TestSuite(List<TestCase> testCases) {
+public record TestSuite(@NonNull List<TestCase> testCases) {
 
   public List<TestCase> getTestCases() {
     return testCases;
@@ -15,6 +17,6 @@ public record TestSuite(List<TestCase> testCases) {
   }
 
   public int getNumberOfTestCases() {
-    return this.testCases != null ? this.testCases.size() : 0;
+    return this.testCases.size();
   }
 }

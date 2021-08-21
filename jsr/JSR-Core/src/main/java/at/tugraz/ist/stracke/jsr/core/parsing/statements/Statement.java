@@ -1,8 +1,8 @@
 package at.tugraz.ist.stracke.jsr.core.parsing.statements;
 
-public abstract class Statement implements IStatement{
-  private int startLine;
-  private int endLine;
+public class Statement implements IStatement{
+  private final int startLine;
+  private final int endLine;
 
   public Statement(int startLine, int endLine) {
     this.startLine = Math.max(startLine, 0);
@@ -17,5 +17,10 @@ public abstract class Statement implements IStatement{
   @Override
   public int getEndLine() {
     return endLine;
+  }
+
+  @Override
+  public boolean isMultilineStatement() {
+    return this.startLine != this.endLine;
   }
 }

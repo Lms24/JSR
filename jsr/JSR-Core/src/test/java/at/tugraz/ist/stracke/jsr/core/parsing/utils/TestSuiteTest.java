@@ -16,18 +16,18 @@ class TestSuiteTest {
   private class MockedTestCase extends TestCase {
 
     public MockedTestCase() {
-      super(Collections.singletonList(
+      super("MockedTestCase", "MockedTestClass", Collections.singletonList(
         new AssertionStatement(1, 1)
-      ), "MockedTestClass");
+      ));
     }
   }
 
   @Test
-  public void testInitializeNull() {
-    TestSuite ts = new TestSuite(null);
+  public void testInitializeEmpty() {
+    TestSuite ts = new TestSuite(new ArrayList<>());
 
     assertThat(ts, is(notNullValue()));
-    assertThat(ts.getTestCases(), is(nullValue()));
+    assertThat(ts.getTestCases(), is(empty()));
     assertThat(ts.getNumberOfTestCases(), is(equalTo(0)));
   }
 
