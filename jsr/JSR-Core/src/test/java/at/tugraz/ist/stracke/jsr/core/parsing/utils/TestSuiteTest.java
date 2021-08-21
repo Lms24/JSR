@@ -17,7 +17,7 @@ class TestSuiteTest {
 
     public MockedTestCase() {
       super("MockedTestCase", "MockedTestClass", Collections.singletonList(
-        new AssertionStatement(1, 1)
+        new AssertionStatement("int i", 1, 1)
       ));
     }
   }

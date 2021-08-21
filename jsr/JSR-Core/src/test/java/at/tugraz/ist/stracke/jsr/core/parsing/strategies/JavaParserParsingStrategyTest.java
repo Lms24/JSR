@@ -1,9 +1,6 @@
 package at.tugraz.ist.stracke.jsr.core.parsing.strategies;
 
-import at.tugraz.ist.stracke.jsr.core.parsing.statements.IStatement;
-import at.tugraz.ist.stracke.jsr.core.parsing.utils.TestCase;
 import at.tugraz.ist.stracke.jsr.core.parsing.utils.TestSuite;
-import org.hamcrest.collection.IsEmptyCollection;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -64,6 +61,36 @@ class JavaParserParsingStrategyTest {
     assertThat(ts.getTestCases().get(1).getName(), is(equalTo("testCase2")));
     assertThat(ts.getTestCases().get(0).getAssertions(), is(empty()));
     assertThat(ts.getTestCases().get(1).getAssertions(), is(empty()));
+  }
+
+  @Test
+  public void testTestCaseParsing03() {
+    var code = """
+      public class TestClass {
+        @Test
+        public void testCase1() {
+          int i = 0;
+          for (; i < 10; i++) {
+            System.out.println();
+          }
+          assertEquals(i, 10);
+          assertTrue(i < 100);
+        }
+      }""";
+    var strat = new JavaParserParsingStrategy(code);
+
+    var outcome = """
+      Testcase TestClass::testCase1 has 2 assertions:\s
+       assertEquals(i, 10); ref {i} [8-8],
+       assertTrue(i < 100); ref {i} [9-9]""";
+
+    TestSuite ts = strat.execute();
+
+    assertThat(ts, is(notNullValue()));
+    assertThat(ts.getTestCases(), not(empty()));
+    assertThat(ts.getTestCases().get(0).getAssertions(), is(not(empty())));
+    assertThat(ts.getTestCases().get(0).getAssertions().size(), is(equalTo(2)));
+    assertThat(ts.getTestCases().get(0).toString(), is(equalTo(outcome)));
   }
 
 }

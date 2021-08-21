@@ -1,17 +1,24 @@
 package at.tugraz.ist.stracke.jsr.core.parsing.strategies;
 
+import at.tugraz.ist.stracke.jsr.core.parsing.statements.AssertionStatement;
+import at.tugraz.ist.stracke.jsr.core.parsing.statements.IStatement;
 import at.tugraz.ist.stracke.jsr.core.parsing.utils.JUnitTestCase;
 import at.tugraz.ist.stracke.jsr.core.parsing.utils.TestCase;
 import at.tugraz.ist.stracke.jsr.core.parsing.utils.TestSuite;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.stmt.Statement;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
@@ -50,14 +57,40 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
       var testCaseMethods = cu.findAll(MethodDeclaration.class).stream().filter(decl ->
         decl.getAnnotations().stream().anyMatch(a -> a.getNameAsString().equals("Test")));
 
-      List<TestCase> tcs = testCaseMethods.map(decl ->
-        new JUnitTestCase(
+      List<TestCase> tcs = testCaseMethods.map(decl -> {
+
+        List<IStatement> aStmts = new ArrayList<>();
+
+        if (decl.getBody().isPresent()) {
+          aStmts = decl.getBody().get().findAll(Statement.class).stream()
+            .filter(Statement::isExpressionStmt)
+            .filter(stmt -> stmt.toString().toLowerCase().contains("assert"))
+            .map(stmt -> {
+
+              Set<String> refs = stmt.findAll(Expression.class).stream()
+                .filter(e -> e.isNameExpr() || e.isFieldAccessExpr())
+                .map(Node::toString)
+                .collect(Collectors.toSet());
+
+              return new AssertionStatement(
+                stmt.toString(),
+                stmt.getBegin().isPresent() ? stmt.getBegin().get().line : 0,
+                stmt.getEnd().isPresent() ? stmt.getEnd().get().line : 0,
+                refs
+              );
+            }).collect(Collectors.toList());
+        }
+
+        return new JUnitTestCase(
           decl.getNameAsString(),
           decl.getParentNode().isPresent() ?
-          ((ClassOrInterfaceDeclaration) decl.getParentNode().get()).getNameAsString() : null,
-          null)).collect(Collectors.toList());
+            ((ClassOrInterfaceDeclaration) decl.getParentNode().get()).getNameAsString() : null,
+          aStmts);
+      }).collect(Collectors.toList());
 
       logger.info("Found {} test cases", tcs.size());
+
+      tcs.forEach(tc -> logger.info(tc.toString()));
 
       return new TestSuite(tcs);
     }

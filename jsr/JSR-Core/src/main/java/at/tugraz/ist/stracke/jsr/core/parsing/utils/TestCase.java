@@ -4,6 +4,7 @@ import at.tugraz.ist.stracke.jsr.core.parsing.statements.IStatement;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class TestCase {
 
@@ -28,5 +29,15 @@ public abstract class TestCase {
 
   public List<IStatement> getAssertions() {
     return assertions;
+  }
+
+  @Override
+  public String toString() {
+    return "Testcase %s::%s has %d assertions: %s %s".formatted(
+      this.className,
+      this.name,
+      this.assertions.size(),
+      System.lineSeparator(),
+      this.assertions.stream().map(Object::toString).collect(Collectors.joining(",%s ".formatted(System.lineSeparator()))));
   }
 }

@@ -5,25 +5,39 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import javax.annotation.Nonnegative;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AssertionStatement extends Statement {
 
   private final Set<String> ref;
 
-  public AssertionStatement(@Nonnegative int startLine,
+  public AssertionStatement(@NonNull String text,
+                            @Nonnegative int startLine,
                             @Nonnegative int endLine) {
-    super(startLine, endLine);
+    super(text, startLine, endLine);
     this.ref = new HashSet<>();
   }
 
-  public AssertionStatement(@Nonnegative int startLine,
+  public AssertionStatement(@NonNull String text,
+                            @Nonnegative int startLine,
                             @Nonnegative int endLine,
                             @NonNull Set<String> ref) {
-    super(startLine, endLine);
+    super(text, startLine, endLine);
     this.ref = ref;
   }
 
   public Set<String> getRef() {
     return ref;
   }
+
+  @Override
+  public String toString() {
+    return "%s ref {%s} [%d-%d]".formatted(
+      this.text,
+      String.join(", ", this.ref),
+      this.startLine,
+      this.endLine
+    );
+  }
+
 }

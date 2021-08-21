@@ -23,9 +23,9 @@ class JUnitTestCaseTest {
 
   @Test
   public void testLoadedInitialization() {
-    IStatement ass1 = new AssertionStatement(1, 1);
-    IStatement ass2 = new AssertionStatement(4, 5);
-    IStatement ass3 = new AssertionStatement(10, 12);
+    IStatement ass1 = new AssertionStatement("int i", 1, 1);
+    IStatement ass2 = new AssertionStatement("int i", 4, 5);
+    IStatement ass3 = new AssertionStatement("int i", 10, 12);
     List<IStatement> stmts = Arrays.asList(ass1, ass2, ass3);
 
     TestCase tc = new JUnitTestCase("tc1", "LoadedClass", stmts);
