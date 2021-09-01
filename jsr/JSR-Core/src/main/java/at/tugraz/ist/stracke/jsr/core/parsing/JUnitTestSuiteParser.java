@@ -13,17 +13,19 @@ public class JUnitTestSuiteParser implements TestSuiteParser {
 
   private final ParsingStrategy parsingStrategy;
 
+  private TestSuite result;
+
   public JUnitTestSuiteParser(ParsingStrategy parsingStrategy) {
     this.parsingStrategy = parsingStrategy;
   }
 
   @Override
   public void parse() {
-    this.parsingStrategy.execute();
+    this.result = this.parsingStrategy.execute();
   }
 
   @Override
   public TestSuite getResult() {
-    return null;
+    return this.result;
   }
 }
