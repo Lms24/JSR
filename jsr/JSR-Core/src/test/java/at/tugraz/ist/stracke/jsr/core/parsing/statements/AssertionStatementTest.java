@@ -59,4 +59,24 @@ class AssertionStatementTest {
     assertThat(stmt.getRef(), hasItems("var1", "var2"));
   }
 
+  @Test
+  public void testText() {
+    Set<String> ref = Sets.newHashSet("var1", "var2");
+    AssertionStatement stmt = new AssertionStatement("int i", 5, 5, ref);
+
+    assertThat(stmt.getText(), is(equalTo("int i")));
+  }
+
+  @Test
+  public void testToString() {
+    Set<String> ref = Sets.newHashSet("var1", "var2");
+    AssertionStatement stmt = new AssertionStatement("int i", 5, 6, ref);
+
+    assertThat(stmt.toString(), containsString("int i"));
+    assertThat(stmt.toString(), containsString("var1"));
+    assertThat(stmt.toString(), containsString("var2"));
+    assertThat(stmt.toString(), containsString("5"));
+    assertThat(stmt.toString(), containsString("6"));
+  }
+
 }
