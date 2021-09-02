@@ -1,4 +1,4 @@
-package at.tugraz.ist.stracke.jsr.core.parsing.utils;
+package at.tugraz.ist.stracke.jsr.core.shared;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 

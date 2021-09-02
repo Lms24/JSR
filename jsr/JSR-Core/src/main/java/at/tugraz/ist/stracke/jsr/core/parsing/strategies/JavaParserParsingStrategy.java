@@ -2,9 +2,9 @@ package at.tugraz.ist.stracke.jsr.core.parsing.strategies;
 
 import at.tugraz.ist.stracke.jsr.core.parsing.statements.AssertionStatement;
 import at.tugraz.ist.stracke.jsr.core.parsing.statements.IStatement;
-import at.tugraz.ist.stracke.jsr.core.parsing.utils.JUnitTestCase;
-import at.tugraz.ist.stracke.jsr.core.parsing.utils.TestCase;
-import at.tugraz.ist.stracke.jsr.core.parsing.utils.TestSuite;
+import at.tugraz.ist.stracke.jsr.core.shared.JUnitTestCase;
+import at.tugraz.ist.stracke.jsr.core.shared.TestCase;
+import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;

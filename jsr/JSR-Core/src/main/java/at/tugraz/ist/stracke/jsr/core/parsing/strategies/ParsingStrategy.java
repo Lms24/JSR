@@ -1,6 +1,6 @@
 package at.tugraz.ist.stracke.jsr.core.parsing.strategies;
 
-import at.tugraz.ist.stracke.jsr.core.parsing.utils.TestSuite;
+import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
 
 /**
  * A {@link ParsingStrategy} encapsulates the employed parsing logic. It is used to

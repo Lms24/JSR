@@ -1,6 +1,6 @@
 package at.tugraz.ist.stracke.jsr.core.parsing.strategies;
 
-import at.tugraz.ist.stracke.jsr.core.parsing.utils.TestSuite;
+import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;

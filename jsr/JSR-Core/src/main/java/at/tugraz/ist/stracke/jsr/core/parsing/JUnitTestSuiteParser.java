@@ -1,7 +1,7 @@
 package at.tugraz.ist.stracke.jsr.core.parsing;
 
 import at.tugraz.ist.stracke.jsr.core.parsing.strategies.ParsingStrategy;
-import at.tugraz.ist.stracke.jsr.core.parsing.utils.TestSuite;
+import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
 
 /**
  * Class JUnitTestSuiteParser parses a given JUnit test suite.
