@@ -5,10 +5,16 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Set;
 
-public record TestCaseSliceResult(
-  @NonNull TestCase testCase,
-  @NonNull Set<SliceEntry> slice
-) {
+public class TestCaseSliceResult{
+
+  public final TestCase testCase;
+  public final Set<SliceEntry> slice;
+
+  public TestCaseSliceResult(@NonNull TestCase testCase,
+                             @NonNull Set<SliceEntry> slice) {
+    this.testCase = testCase;
+    this.slice = slice;
+  }
 
   public int getSliceCount() {
     return this.slice.size();

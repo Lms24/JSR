@@ -65,24 +65,25 @@ class JavaParserParsingStrategyTest {
 
   @Test
   public void testTestCaseParsing03() {
-    var code = """
-      public class TestClass {
-        @Test
-        public void testCase1() {
-          int i = 0;
-          for (; i < 10; i++) {
-            System.out.println();
-          }
-          assertEquals(i, 10);
-          assertTrue(i < 100);
-        }
-      }""";
+    String nl = System.lineSeparator();
+    var code =
+      "public class TestClass {" + nl +
+      "  @Test" + nl +
+      "  public void testCase1() {" + nl +
+      "    int i = 0;" + nl +
+      "    for (; i < 10; i++) {" + nl +
+      "      System.out.println();" + nl +
+      "    }" + nl +
+      "    assertEquals(i, 10);" + nl +
+      "    assertTrue(i < 100);" + nl +
+      "  }" + nl +
+      "}";
     var strat = new JavaParserParsingStrategy(code);
 
-    var outcome = """
-      Testcase TestClass::testCase1 has 2 assertions:\s
-       assertEquals(i, 10); ref {i} [8-8],
-       assertTrue(i < 100); ref {i} [9-9]""";
+    var outcome =
+      "Testcase TestClass::testCase1 has 2 assertions: " + nl +
+      " assertEquals(i, 10); ref {i} [8-8]," + nl +
+      " assertTrue(i < 100); ref {i} [9-9]";
 
     TestSuite ts = strat.execute();
 
@@ -95,25 +96,25 @@ class JavaParserParsingStrategyTest {
 
   @Test
   public void testTestCaseParsing04() {
-    var code = """
-      public class TestClass {
-        @Test
-        public void testCase1() {
-          MyObject o = new MyObject(100);
-          o.prop1 = 101;
-          o.setProp2(o.getProp2() == null ? 100 : o.getProp2());
-          assertEquals(101, o.pro1);
-          assertEquals(100, o.getProp2());
-          assertThat(o, is(not(null)));
-        }
-      }""";
+    String nl = System.lineSeparator();
+    var code = "public class TestClass {" + nl +
+               "  @Test" + nl +
+               "  public void testCase1() {" + nl +
+               "    MyObject o = new MyObject(100);" + nl +
+               "    o.prop1 = 101;" + nl +
+               "    o.setProp2(o.getProp2() == null ? 100 : o.getProp2());" + nl +
+               "    assertEquals(101, o.pro1);" + nl +
+               "    assertEquals(100, o.getProp2());" + nl +
+               "    assertThat(o, is(not(null)));" + nl +
+               "  }" + nl +
+               "}";
     var strat = new JavaParserParsingStrategy(code);
 
-    var outcome = """
-      Testcase TestClass::testCase1 has 3 assertions:\s
-       assertEquals(101, o.pro1); ref {o.pro1, o} [7-7],
-       assertEquals(100, o.getProp2()); ref {o} [8-8],
-       assertThat(o, is(not(null))); ref {o} [9-9]""";
+    var outcome =
+      "Testcase TestClass::testCase1 has 3 assertions: " + nl +
+      " assertEquals(101, o.pro1); ref {o.pro1, o} [7-7]," + nl +
+      " assertEquals(100, o.getProp2()); ref {o} [8-8]," + nl +
+      " assertThat(o, is(not(null))); ref {o} [9-9]";
 
     TestSuite ts = strat.execute();
 
@@ -126,30 +127,32 @@ class JavaParserParsingStrategyTest {
 
   @Test
   public void testTestCaseParsing05() {
-    var code = """
-      public class TestClass {
-        @Test
-        public void testCase1() {
-          MyObject o = new MyObject(100);
-          MyOtherObject p = new MyOtherObject(o);
-          o.prop1 = 101;
-          o.setProp2(o.getProp2() == null ? 100 : o.getProp2());
-          assertEquals(101, o.pro1);
-          assertEquals(100, o.getProp2());
-          assertThat(o, is(not(null)));
-          assertTrue(p != null && p.o != null && p.getO() != null);
-          assertEquals(p.o.prop1 == 101 && p.getO().prop1 == 101);
-        }
-      }""";
+    String nl = System.lineSeparator();
+
+    var code =
+      "public class TestClass {" + nl +
+      "  @Test" + nl +
+      "  public void testCase1() {" + nl +
+      "    MyObject o = new MyObject(100);" + nl +
+      "    MyOtherObject p = new MyOtherObject(o);" + nl +
+      "    o.prop1 = 101;" + nl +
+      "    o.setProp2(o.getProp2() == null ? 100 : o.getProp2());" + nl +
+      "    assertEquals(101, o.pro1);" + nl +
+      "    assertEquals(100, o.getProp2());" + nl +
+      "    assertThat(o, is(not(null)));" + nl +
+      "    assertTrue(p != null && p.o != null && p.getO() != null);" + nl +
+      "    assertEquals(p.o.prop1 == 101 && p.getO().prop1 == 101);" + nl +
+      "  }" + nl +
+      "}";
     var strat = new JavaParserParsingStrategy(code);
 
-    var outcome = """
-      Testcase TestClass::testCase1 has 5 assertions:\s
-       assertEquals(101, o.pro1); ref {o.pro1, o} [8-8],
-       assertEquals(100, o.getProp2()); ref {o} [9-9],
-       assertThat(o, is(not(null))); ref {o} [10-10],
-       assertTrue(p != null && p.o != null && p.getO() != null); ref {p, p.o} [11-11],
-       assertEquals(p.o.prop1 == 101 && p.getO().prop1 == 101); ref {p.o, p, p.getO().prop1, p.o.prop1} [12-12]""";
+    var outcome =
+      "Testcase TestClass::testCase1 has 5 assertions: " + nl +
+      " assertEquals(101, o.pro1); ref {o.pro1, o} [8-8]," + nl +
+      " assertEquals(100, o.getProp2()); ref {o} [9-9]," + nl +
+      " assertThat(o, is(not(null))); ref {o} [10-10]," + nl +
+      " assertTrue(p != null && p.o != null && p.getO() != null); ref {p, p.o} [11-11]," + nl +
+      " assertEquals(p.o.prop1 == 101 && p.getO().prop1 == 101); ref {p.o, p, p.getO().prop1, p.o.prop1} [12-12]";
 
     TestSuite ts = strat.execute();
 
@@ -162,45 +165,47 @@ class JavaParserParsingStrategyTest {
 
   @Test
   public void testTestCaseParsing06() {
-    var code = """
-      public class TestClass {
-        @Test
-        public void testCase1() {
-          MyObject o = new MyObject(100);
-          MyOtherObject p = new MyOtherObject(o);
-          o.prop1 = 101;
-          o.setProp2(o.getProp2() == null ? 100 : o.getProp2());
-          assertEquals(101, o.pro1);
-          assertEquals(100, o.getProp2());
-          assertThat(o, is(not(null)));
-          assertTrue(p != null && p.o != null && p.getO() != null);
-          assertEquals(p.o.prop1 == 101 && p.getO().prop1 == 101);
-        }
-        
-        @Test
-        public void testCase2() {
-          int i = 0;
-          for (; i < 10; i++) {
-            System.out.println();
-          }
-          assertEquals(i, 10);
-          assertTrue(i < 100);
-        }
-      }""";
+    String nl = System.lineSeparator();
+
+    var code =
+      "public class TestClass {" + nl +
+      "  @Test" + nl +
+      "  public void testCase1() {" + nl +
+      "    MyObject o = new MyObject(100);" + nl +
+      "    MyOtherObject p = new MyOtherObject(o);" + nl +
+      "    o.prop1 = 101;" + nl +
+      "    o.setProp2(o.getProp2() == null ? 100 : o.getProp2());" + nl +
+      "    assertEquals(101, o.pro1);" + nl +
+      "    assertEquals(100, o.getProp2());" + nl +
+      "    assertThat(o, is(not(null)));" + nl +
+      "    assertTrue(p != null && p.o != null && p.getO() != null);" + nl +
+      "    assertEquals(p.o.prop1 == 101 && p.getO().prop1 == 101);" + nl +
+      "  }" + nl +
+      "" + nl +
+      "  @Test" + nl +
+      "  public void testCase2() {" + nl +
+      "    int i = 0;" + nl +
+      "    for (; i < 10; i++) {" + nl +
+      "      System.out.println();" + nl +
+      "    }" + nl +
+      "    assertEquals(i, 10);" + nl +
+      "    assertTrue(i < 100);" + nl +
+      "  }" + nl +
+      "}";
     var strat = new JavaParserParsingStrategy(code);
 
-    var outcome = """
-      Testcase TestClass::testCase1 has 5 assertions:\s
-       assertEquals(101, o.pro1); ref {o.pro1, o} [8-8],
-       assertEquals(100, o.getProp2()); ref {o} [9-9],
-       assertThat(o, is(not(null))); ref {o} [10-10],
-       assertTrue(p != null && p.o != null && p.getO() != null); ref {p, p.o} [11-11],
-       assertEquals(p.o.prop1 == 101 && p.getO().prop1 == 101); ref {p.o, p, p.getO().prop1, p.o.prop1} [12-12]""";
+    var outcome =
+      "Testcase TestClass::testCase1 has 5 assertions: " + nl +
+      " assertEquals(101, o.pro1); ref {o.pro1, o} [8-8]," + nl +
+      " assertEquals(100, o.getProp2()); ref {o} [9-9]," + nl +
+      " assertThat(o, is(not(null))); ref {o} [10-10]," + nl +
+      " assertTrue(p != null && p.o != null && p.getO() != null); ref {p, p.o} [11-11]," + nl +
+      " assertEquals(p.o.prop1 == 101 && p.getO().prop1 == 101); ref {p.o, p, p.getO().prop1, p.o.prop1} [12-12]";
 
-    var outcome2 = """
-      Testcase TestClass::testCase2 has 2 assertions:\s
-       assertEquals(i, 10); ref {i} [21-21],
-       assertTrue(i < 100); ref {i} [22-22]""";
+    var outcome2 =
+      "Testcase TestClass::testCase2 has 2 assertions: " + nl +
+      " assertEquals(i, 10); ref {i} [21-21]," + nl +
+      " assertTrue(i < 100); ref {i} [22-22]";
 
     TestSuite ts = strat.execute();
 

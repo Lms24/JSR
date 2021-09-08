@@ -34,6 +34,6 @@ public class Statement implements IStatement{
 
   @Override
   public String toString() {
-    return "%s [%d-%d]".formatted(this.text, this.startLine, this.endLine);
+    return String.format("%s [%d-%d]", this.text, this.startLine, this.endLine);
   }
 }

@@ -16,8 +16,8 @@ class JUnitTestSuiteSlicerTest {
     final TestSuiteSliceResult slice = slicer.slice();
 
     assertThat(slice, is(notNullValue()));
-    assertThat(slice.testCaseSlices().toArray(), is(arrayWithSize(3)));
-    assertThat(slice.testCaseSlices().stream().allMatch(tcs -> tcs.getSliceCount() == 0), is(true));
+    assertThat(slice.testCaseSlices.toArray(), is(arrayWithSize(3)));
+    assertThat(slice.testCaseSlices.stream().allMatch(tcs -> tcs.getSliceCount() == 0), is(true));
   }
 
   @Test

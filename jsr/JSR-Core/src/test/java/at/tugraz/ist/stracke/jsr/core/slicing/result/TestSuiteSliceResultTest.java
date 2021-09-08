@@ -43,7 +43,7 @@ class TestSuiteSliceResultTest {
 
   @Test
   void testGetTestCaseSliceUnion() {
-    assertThat(this.result.testCaseSlices().size(), is(equalTo(3)));
+    assertThat(this.result.testCaseSlices.size(), is(equalTo(3)));
     assertThat(this.result.getTestCaseSliceUnion().size(), is(equalTo(7)));
     assertThat(this.result.getTestCaseSliceUnion().toArray(),
                is(arrayContainingInAnyOrder(se1, se2, se3, se20, se22, se23, se50)));
@@ -51,7 +51,7 @@ class TestSuiteSliceResultTest {
 
   @Test
   void testGetTestCaseSliceIntersection() {
-    assertThat(this.result.testCaseSlices().size(), is(equalTo(3)));
+    assertThat(this.result.testCaseSlices.size(), is(equalTo(3)));
     assertThat(this.result.getTestCaseSliceIntersection().size(), is(equalTo(1)));
     assertThat(this.result.getTestCaseSliceIntersection().toArray(),
                is(arrayContainingInAnyOrder(se1)));
@@ -61,7 +61,7 @@ class TestSuiteSliceResultTest {
   void testEmptySliceSetOperations() {
     TestSuiteSliceResult tsr = new TestSuiteSliceResult(Collections.emptyList());
 
-    assertThat(tsr.testCaseSlices().toArray(), is(emptyArray()));
+    assertThat(tsr.testCaseSlices.toArray(), is(emptyArray()));
     assertThat(tsr.getTestCaseSliceUnion().toArray(), is(emptyArray()));
     assertThat(tsr.getTestCaseSliceIntersection().toArray(), is(emptyArray()));
   }
@@ -74,7 +74,7 @@ class TestSuiteSliceResultTest {
       )))
     ));
 
-    assertThat(tsr.testCaseSlices().toArray(), is(arrayWithSize(1)));
+    assertThat(tsr.testCaseSlices.toArray(), is(arrayWithSize(1)));
     assertThat(tsr.getTestCaseSliceUnion().toArray(), is(arrayWithSize(3)));
     assertThat(tsr.getTestCaseSliceIntersection().toArray(), is(arrayWithSize(3)));
   }

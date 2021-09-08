@@ -24,7 +24,7 @@ class TestCaseSliceResultTest {
 
     TestCaseSliceResult tsr = new TestCaseSliceResult(tc, entries);
 
-    assertThat(tsr.slice().size(), is(equalTo(tsr.getSliceCount())));
+    assertThat(tsr.slice.size(), is(equalTo(tsr.getSliceCount())));
     assertThat(tsr.getSliceCount(), is(equalTo(3)));
   }
 }
