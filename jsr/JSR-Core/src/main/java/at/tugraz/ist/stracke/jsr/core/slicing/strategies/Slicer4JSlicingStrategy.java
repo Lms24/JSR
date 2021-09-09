@@ -13,6 +13,8 @@ import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static at.tugraz.ist.stracke.jsr.core.slicing.strategies.Slicer4JCLI.*;
+
 /**
  * A {@link SlicingStrategy} that uses the tool Slicer4J to create a dynamic slice
  * of the passed Testcase.
@@ -35,6 +37,9 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
   private Path pathToLoggerJar;
 
   private TestCase testCase;
+
+  private String jarFileName;
+  private String instrumentedJarFileName;
 
   /**
    * Initializes a new Slicer4JSlicingStrategy instance
@@ -80,10 +85,13 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
     Path out = Path.of(pathToOutDir).toAbsolutePath();
     this.pathToOutDir = out.toFile().exists() ? out.toRealPath() : out;
 
-    this.pathToLoggerJar = Path.of(
-      "../../slicer/DynamicSlicingCore/DynamicSlicingLoggingClasses/DynamicSlicingLogger.jar")
+    this.pathToLoggerJar = Path.of("../../slicer/" + Slicer4JCLI.Paths.PATH_LOGGER_JAR)
                                .toAbsolutePath()
                                .toRealPath();
+    final String[] tmp = this.pathToJar.toString().split("/");
+    this.jarFileName = tmp[tmp.length - 1];
+    this.instrumentedJarFileName = this.jarFileName
+      .replace(".jar", FileNames.INSTRUMENTED_JAR_SUFFIX + ".jar");
   }
 
   private void createDirectoriesIfNecessary() throws IOException {
@@ -114,15 +122,19 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
 
     ProcessBuilder pb = new ProcessBuilder()
       .command("java", "-Xmx8g",
-               "-cp", String.format("%s/Slicer4J/target/slicer4j-jar-with-dependencies.jar:%s/Slicer4J/target/lib/*",
-                                    this.pathToSlicer.toString(), this.pathToSlicer.toString()),
-               "ca.ubc.ece.resess.slicer.dynamic.slicer4j.Slicer",
-               "-m", "i", "-j", pathToJar.toString(),
-               "-o", pathToOutDir.toString(),
-               "-sl", String.format("%s/static_log.log", this.pathToOutDir),
-               "-lc", pathToLoggerJar.toString())
-      .redirectOutput(ProcessBuilder.Redirect.to(new File(this.pathToOutDir.toString() + "/instr-debug.log")))
-      .redirectError(ProcessBuilder.Redirect.to(new File(this.pathToOutDir.toString() + "/instr-debug.log")));
+               "-cp", String.format("%s/%s:%s/%s",
+                                    this.pathToSlicer.toString(), Slicer4JCLI.Paths.PATH_SLICER4J_JAR_WITH_DEPENDENCIES,
+                                    this.pathToSlicer.toString(), Slicer4JCLI.Paths.PATH_SLICER4J_ALL_LIBS),
+               SL4C_MAIN_CLASS,
+               Args.ARG_MODE, Args.MODE_INSTRUMENT,
+               Args.ARG_JAR, pathToJar.toString(),
+               Args.ARG_OUT_DIR, pathToOutDir.toString(),
+               Args.ARG_STATIC_LOG, String.format("%s/%s", this.pathToOutDir, FileNames.STATIC_LOG),
+               Args.ARG_LOGGING_CLASS, pathToLoggerJar.toString())
+      .redirectOutput(ProcessBuilder.Redirect.to(new File(
+        String.format("%s/%s", this.pathToOutDir.toString(), FileNames.INSTR_DEBUG_LOG))))
+      .redirectError(ProcessBuilder.Redirect.to(new File(
+        String.format("%s/%s", this.pathToOutDir.toString(), FileNames.INSTR_DEBUG_LOG))));
 
     try {
       logger.debug("Instrumentation command: {}", String.join(" ", pb.command()));
@@ -141,16 +153,51 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
     }
   }
 
-  private void handleInstrumentationError(Process p) {
+  private void handleInstrumentationError(@NonNull Process p) {
     logger.error("Error during Instrumentation, See instr-debug.log for more info");
 
     new BufferedReader(new InputStreamReader(p.getErrorStream()))
       .lines().forEach(logger::error);
   }
 
+  private void handleTCExecutionError(@NonNull Process p) {
+    logger.error("Error during test case execution, See trace_full.log for more info");
+
+    new BufferedReader(new InputStreamReader(p.getErrorStream()))
+      .lines().forEach(logger::error);
+  }
+
   private void executeTestCase() {
-    // TODO use a test runner to execute the passed testCase in the instrumented jar
-    // TODO produce execution trace
+    logger.info("Executing testcase {}#{}", this.testCase.getClassName(), this.testCase.getName());
+
+    ProcessBuilder pb = new ProcessBuilder()
+      .command("java", "-Xmx8g",
+               "-cp", String.format("%s/%s:%s/%s:%s",
+                                    this.pathToSlicer.toString(), Slicer4JCLI.Paths.PATH_JUNIT4_RUNNER_JAR,
+                                    this.pathToSlicer.toString(), Slicer4JCLI.Paths.PATH_JUNIT4_LIB_JAR,
+                                    String.format("%s/%s", this.pathToOutDir, this.instrumentedJarFileName)),
+               JUNIT4_RUNNER_MAIN_CLASS,
+               String.format("%s#%s", this.testCase.getClassName(), this.testCase.getName()))
+      .redirectOutput(ProcessBuilder.Redirect.to(new File(
+        String.format("%s/%s", this.pathToOutDir.toString(), FileNames.TRACE_FULL_LOG))))
+      .redirectError(ProcessBuilder.Redirect.to(new File(
+        String.format("%s/%s", this.pathToOutDir.toString(), FileNames.TRACE_FULL_LOG))));
+
+    try {
+      logger.debug("Test case runner command: {}", String.join(" ", pb.command()));
+
+      Process p = pb.start();
+      p.waitFor();
+
+      if (p.exitValue() == 0) {
+        logger.info("Test case was executed successfully.");
+      } else {
+        handleInstrumentationError(p);
+      }
+    } catch (IOException | InterruptedException e) {
+      logger.error("Error during test case execution, Caught exception:");
+      e.printStackTrace();
+    }
   }
 
   private TestCaseSliceResult calculateSlice() {
