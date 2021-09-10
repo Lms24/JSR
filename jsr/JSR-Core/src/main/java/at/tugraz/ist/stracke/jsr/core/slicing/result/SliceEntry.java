@@ -11,6 +11,12 @@ public class SliceEntry{
     this.endLine = endLine;
   }
 
+  public SliceEntry(String className, int startLine) {
+    this.className = className;
+    this.startLine = startLine;
+    this.endLine = startLine;
+  }
+
   @Override
   public String toString() {
     return String.format("%s:%s",

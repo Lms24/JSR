@@ -13,11 +13,15 @@ class Slicer4JCLI {
 
     static final String PATH_JUNIT4_RUNNER_JAR = "scripts/SingleJUnitTestRunner.jar";
     static final String PATH_JUNIT4_LIB_JAR = "scripts/junit-4.8.2.jar";
+
+    static final String PATH_SUMMARIES_MANUAL = "models/summariesManual";
+    static final String PATH_TAINT_WRAPPER_SOURCE = "models/EasyTaintWrapperSource.txt";
   }
 
   static class Args {
     static final String ARG_MODE = "-m";
     static final String MODE_INSTRUMENT = "i";
+    static final String MODE_GRAPH = "g";
     static final String MODE_SLICE = "s";
 
     static final String ARG_JAR = "-j";
@@ -25,6 +29,12 @@ class Slicer4JCLI {
     static final String ARG_OUT_DIR = "-o";
     static final String ARG_STATIC_LOG = "-sl";
     static final String ARG_LOGGING_CLASS = "-lc";
+
+    static final String ARG_TRACE_LOG = "-t";
+    static final String ARG_STUBDROID = "-sd";
+    static final String ARG_TAINT_WRAPPER = "-tw";
+
+    static final String ARG_SLICE_POSITIONS = "-sp";
   }
 
   static class FileNames {
@@ -32,7 +42,14 @@ class Slicer4JCLI {
     static final String INSTR_DEBUG_LOG = "instr-debug.log";
 
     static final String TRACE_FULL_LOG = "trace_full.log";
+    static final String TRACE_LOG = "trace.log";
+    static final String TRACE_ICDG = "trace.log_icdg.log";
 
     static final String INSTRUMENTED_JAR_SUFFIX = "_i";
+
+    static final String SLICE_FILE = "slice-file.log";
+    static final String GRAPH_DEBUG_LOG = "graph-debug.log";
+    static final String SLICE_LOG = "slice.log";
+
   }
 }

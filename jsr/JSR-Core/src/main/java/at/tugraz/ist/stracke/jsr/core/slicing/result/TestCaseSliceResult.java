@@ -16,7 +16,7 @@ public class TestCaseSliceResult{
     this.slice = slice;
   }
 
-  public int getSliceCount() {
+  public int getSliceLength() {
     return this.slice.size();
   }
 }

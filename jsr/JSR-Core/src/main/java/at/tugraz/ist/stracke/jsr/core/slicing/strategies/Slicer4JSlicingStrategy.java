@@ -1,17 +1,21 @@
 package at.tugraz.ist.stracke.jsr.core.slicing.strategies;
 
 import at.tugraz.ist.stracke.jsr.core.shared.TestCase;
+import at.tugraz.ist.stracke.jsr.core.slicing.result.SliceEntry;
 import at.tugraz.ist.stracke.jsr.core.slicing.result.TestCaseSliceResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static at.tugraz.ist.stracke.jsr.core.slicing.strategies.Slicer4JCLI.*;
 
@@ -68,6 +72,12 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
     if (this.testCase == null) {
       throw new IllegalStateException("Test case was not set before calling execute()");
     }
+    if (this.testCase.getAssertions().isEmpty()) {
+      logger.warn("Got TestCase w/o assertions, skipping execution and slicing ({}:{})",
+                  this.testCase.getClassName(),
+                  this.testCase.getName());
+      return null;
+    }
     this.executeTestCase();
     return this.calculateSlice();
   }
@@ -92,29 +102,6 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
     this.jarFileName = tmp[tmp.length - 1];
     this.instrumentedJarFileName = this.jarFileName
       .replace(".jar", FileNames.INSTRUMENTED_JAR_SUFFIX + ".jar");
-  }
-
-  private void createDirectoriesIfNecessary() throws IOException {
-    if (!this.pathToOutDir.toFile().exists()) {
-      logger.info("Output directory does not yet exist, creating it");
-
-      boolean success = this.pathToOutDir.toFile().mkdirs();
-      if (success) {
-        this.pathToOutDir = this.pathToOutDir.toRealPath();
-      } else {
-        logger.error("Could not create directory");
-      }
-    }
-  }
-
-  private void logPaths() {
-    Path currentRelativePath = Paths.get("");
-    String s = currentRelativePath.toAbsolutePath().toString();
-    logger.debug("Current absolute path is: " + s);
-    logger.debug("Path to jar: {}", this.pathToJar);
-    logger.debug("Path to slicer: {}", this.pathToSlicer);
-    logger.debug("Path to out dir: {}", this.pathToOutDir);
-    logger.debug("Path to out logging jar: {}", this.pathToLoggerJar);
   }
 
   private void instrumentJar() throws IllegalStateException {
@@ -153,20 +140,6 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
     }
   }
 
-  private void handleInstrumentationError(@NonNull Process p) {
-    logger.error("Error during Instrumentation, See instr-debug.log for more info");
-
-    new BufferedReader(new InputStreamReader(p.getErrorStream()))
-      .lines().forEach(logger::error);
-  }
-
-  private void handleTCExecutionError(@NonNull Process p) {
-    logger.error("Error during test case execution, See trace_full.log for more info");
-
-    new BufferedReader(new InputStreamReader(p.getErrorStream()))
-      .lines().forEach(logger::error);
-  }
-
   private void executeTestCase() {
     logger.info("Executing testcase {}#{}", this.testCase.getClassName(), this.testCase.getName());
 
@@ -191,8 +164,9 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
 
       if (p.exitValue() == 0) {
         logger.info("Test case was executed successfully.");
+        this.writeTraceLog();
       } else {
-        handleInstrumentationError(p);
+        handleTCExecutionError(p);
       }
     } catch (IOException | InterruptedException e) {
       logger.error("Error during test case execution, Caught exception:");
@@ -201,8 +175,217 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
   }
 
   private TestCaseSliceResult calculateSlice() {
-    // TODO call slicer in "s" mode to calculate the slice
-    // TODO produce a TestCaseSliceResult
-    return null;
+    this.createGraph();
+
+    String criterion = getICDGSlicingCriterion();
+    if (criterion == null) {
+      return null;
+    }
+
+    this.slice(criterion);
+
+    Set<SliceEntry> slice = collectSliceResult();
+    if (slice == null) {
+      return null;
+    }
+
+    return new TestCaseSliceResult(this.testCase, slice);
+  }
+
+
+  private void createGraph() {
+    logger.info("Creating ICDG Graph for {}#{}", this.testCase.getClassName(), this.testCase.getName());
+
+    ProcessBuilder pb = new ProcessBuilder()
+      .command("java", "-Xmx8g",
+               "-cp", String.format("%s/%s:%s/%s",
+                                    this.pathToSlicer.toString(), Slicer4JCLI.Paths.PATH_SLICER4J_JAR_WITH_DEPENDENCIES,
+                                    this.pathToSlicer.toString(), Slicer4JCLI.Paths.PATH_SLICER4J_ALL_LIBS),
+               SL4C_MAIN_CLASS,
+               Args.ARG_MODE, Args.MODE_GRAPH,
+               Args.ARG_JAR, pathToJar.toString(),
+               Args.ARG_TRACE_LOG, String.format("%s/%s", this.pathToOutDir, FileNames.TRACE_LOG),
+               Args.ARG_OUT_DIR, pathToOutDir.toString(),
+               Args.ARG_STATIC_LOG, String.format("%s/%s", this.pathToOutDir, FileNames.STATIC_LOG),
+               Args.ARG_STUBDROID, String.format("%s/%s", this.pathToSlicer, Slicer4JCLI.Paths.PATH_SUMMARIES_MANUAL),
+               Args.ARG_TAINT_WRAPPER,
+               String.format("%s/%s", this.pathToSlicer, Slicer4JCLI.Paths.PATH_TAINT_WRAPPER_SOURCE))
+      .redirectOutput(ProcessBuilder.Redirect.to(new File(
+        String.format("%s/%s", this.pathToOutDir.toString(), FileNames.GRAPH_DEBUG_LOG))))
+      .redirectError(ProcessBuilder.Redirect.to(new File(
+        String.format("%s/%s", this.pathToOutDir.toString(), FileNames.GRAPH_DEBUG_LOG))));
+
+    try {
+      logger.debug("Graph creation command: {}", String.join(" ", pb.command()));
+
+      Process p = pb.start();
+      p.waitFor();
+
+      if (p.exitValue() == 0) {
+        logger.info("Graph was created successfully.");
+      } else {
+        handleGraphCreationError(p);
+      }
+    } catch (IOException | InterruptedException e) {
+      logger.error("Error graph creation, Caught exception:");
+      e.printStackTrace();
+    }
+  }
+
+  private String getICDGSlicingCriterion() {
+    List<String> icdgLogLines;
+    try {
+      icdgLogLines = Files.readAllLines(
+        Path.of(String.format("%s/%s", this.pathToOutDir, FileNames.TRACE_ICDG)));
+    } catch (IOException e) {
+      logger.error("Error while reading {}, aborting.", FileNames.TRACE_ICDG);
+      e.printStackTrace();
+      return null;
+    }
+
+    List<String> finalIcdgLogLines = icdgLogLines;
+    String sl4jSlicingCriteriaString =
+      this.testCase.getAssertions()
+                   .stream()
+                   .map(ass -> {
+                     String substr = String.format("LINENO:%s:FILE:%s",
+                                                   ass.getStartLine(),
+                                                   this.testCase.getClassName());
+                     return finalIcdgLogLines.stream()
+                                             .filter(l -> l.contains(substr))
+                                             .map(l -> l.split(", ")[0])
+                                             .collect(Collectors.joining("-"));
+                   })
+                   .collect(Collectors.joining("-"));
+
+    logger.debug("SL4J Slicing Criterion: [{}]", sl4jSlicingCriteriaString);
+
+    return sl4jSlicingCriteriaString;
+  }
+
+  private void slice(String criterion) {
+    logger.info("Slicing {}/{}", this.testCase.getClassName(), this.testCase.getName());
+
+    ProcessBuilder pb = new ProcessBuilder()
+      .command("java", "-Xmx8g",
+               "-cp", String.format("%s/%s:%s/%s",
+                                    this.pathToSlicer.toString(), Slicer4JCLI.Paths.PATH_SLICER4J_JAR_WITH_DEPENDENCIES,
+                                    this.pathToSlicer.toString(), Slicer4JCLI.Paths.PATH_SLICER4J_ALL_LIBS),
+               SL4C_MAIN_CLASS,
+               Args.ARG_MODE, Args.MODE_SLICE,
+               Args.ARG_JAR, pathToJar.toString(),
+               Args.ARG_TRACE_LOG, String.format("%s/%s", this.pathToOutDir, FileNames.TRACE_LOG),
+               Args.ARG_OUT_DIR, pathToOutDir.toString(),
+               Args.ARG_STATIC_LOG, String.format("%s/%s", this.pathToOutDir, FileNames.STATIC_LOG),
+               Args.ARG_STUBDROID, String.format("%s/%s", this.pathToSlicer, Slicer4JCLI.Paths.PATH_SUMMARIES_MANUAL),
+               Args.ARG_TAINT_WRAPPER,
+               String.format("%s/%s", this.pathToSlicer, Slicer4JCLI.Paths.PATH_TAINT_WRAPPER_SOURCE),
+               Args.ARG_SLICE_POSITIONS, criterion)
+      .redirectOutput(ProcessBuilder.Redirect.to(new File(
+        String.format("%s/%s", this.pathToOutDir.toString(), FileNames.SLICE_FILE))))
+      .redirectError(ProcessBuilder.Redirect.to(new File(
+        String.format("%s/%s", this.pathToOutDir.toString(), FileNames.SLICE_FILE))));
+
+    try {
+      logger.debug("Slicing command: {}", String.join(" ", pb.command()));
+
+      Process p = pb.start();
+      p.waitFor();
+
+      if (p.exitValue() == 0) {
+        logger.info("Slice was calculated successfully");
+      } else {
+        handleSlicingError(p);
+      }
+    } catch (IOException | InterruptedException e) {
+      logger.error("Error during Instrumentation, Caught exception:");
+      e.printStackTrace();
+    }
+  }
+
+  private Set<SliceEntry> collectSliceResult() {
+    List<String> sliceLines;
+    try {
+      sliceLines = Files.readAllLines(Path.of(String.format("%s/%s", this.pathToOutDir, FileNames.SLICE_LOG)));
+    } catch (IOException e) {
+      logger.error("Error while collecting slice result, see slice.log and slice-file.log for more details.");
+      e.printStackTrace();
+      return null;
+    }
+
+    final Set<SliceEntry> slice = sliceLines.stream()
+                                            .map(line -> line.split(":"))
+                                            .map(l -> new SliceEntry(l[0], Integer.parseInt(l[1])))
+                                            .collect(Collectors.toSet());
+
+    logger.info("Collected slice result");
+
+    return slice;
+  }
+
+  /**
+   * Writes the {@link Slicer4JCLI.FileNames#TRACE_LOG} file
+   *
+   * @throws IOException to be caught by parent calling function
+   */
+  private void writeTraceLog() throws IOException {
+    final File fullLogFile = new File(this.pathToOutDir.toString() + "/" + FileNames.TRACE_FULL_LOG);
+    final BufferedReader reader = new BufferedReader(new FileReader(fullLogFile));
+    List<String> slicing = reader.lines().filter(l -> l.contains("SLICING")).collect(Collectors.toList());
+
+    final File logFile = new File(this.pathToOutDir.toString() + "/" + FileNames.TRACE_LOG);
+
+    Files.write(logFile.toPath(), String.join(System.lineSeparator(), slicing).getBytes(StandardCharsets.UTF_8));
+  }
+
+  private void handleInstrumentationError(@NonNull Process p) {
+    logger.error("Error during Instrumentation, See instr-debug.log for more info");
+
+    new BufferedReader(new InputStreamReader(p.getErrorStream()))
+      .lines().forEach(logger::error);
+  }
+
+  private void handleTCExecutionError(@NonNull Process p) {
+    logger.error("Error during test case execution, See trace_full.log for more info");
+
+    new BufferedReader(new InputStreamReader(p.getErrorStream()))
+      .lines().forEach(logger::error);
+  }
+
+  private void handleGraphCreationError(@NonNull Process p) {
+    logger.error("Error during graph creation, See graph-debug.log for more info");
+
+    new BufferedReader(new InputStreamReader(p.getErrorStream()))
+      .lines().forEach(logger::error);
+  }
+
+  private void handleSlicingError(@NonNull Process p) {
+    logger.error("Error during slicing, See slice-file.log for more info");
+
+    new BufferedReader(new InputStreamReader(p.getErrorStream()))
+      .lines().forEach(logger::error);
+  }
+
+  private void createDirectoriesIfNecessary() throws IOException {
+    if (!this.pathToOutDir.toFile().exists()) {
+      logger.info("Output directory does not yet exist, creating it");
+
+      boolean success = this.pathToOutDir.toFile().mkdirs();
+      if (success) {
+        this.pathToOutDir = this.pathToOutDir.toRealPath();
+      } else {
+        logger.error("Could not create directory");
+      }
+    }
+  }
+
+  private void logPaths() {
+    Path currentRelativePath = Paths.get("");
+    String s = currentRelativePath.toAbsolutePath().toString();
+    logger.debug("Current absolute path is: " + s);
+    logger.debug("Path to jar: {}", this.pathToJar);
+    logger.debug("Path to slicer: {}", this.pathToSlicer);
+    logger.debug("Path to out dir: {}", this.pathToOutDir);
+    logger.debug("Path to out logging jar: {}", this.pathToLoggerJar);
   }
 }
