@@ -1,5 +1,6 @@
 package at.tugraz.ist.stracke.jsr.test;
 
+import at.tugraz.ist.stracke.jsr.core.coverage.CoverageReport;
 import at.tugraz.ist.stracke.jsr.core.parsing.TestSuiteParser;
 import at.tugraz.ist.stracke.jsr.core.parsing.statements.AssertionStatement;
 import at.tugraz.ist.stracke.jsr.core.parsing.statements.Statement;
@@ -11,6 +12,7 @@ import at.tugraz.ist.stracke.jsr.core.slicing.result.SliceEntry;
 import at.tugraz.ist.stracke.jsr.core.slicing.result.TestCaseSliceResult;
 import at.tugraz.ist.stracke.jsr.core.slicing.result.TestSuiteSliceResult;
 import at.tugraz.ist.stracke.jsr.core.slicing.strategies.SlicingStrategy;
+import com.google.common.collect.Maps;
 
 import java.util.*;
 
@@ -26,11 +28,57 @@ public class Mocks {
     new MockedTestCase()
   ));
 
+  public static final TestSuite tsrOriginalTS = new TestSuite(Arrays.asList(
+    new MockedTestCase("t1"),
+    new MockedTestCase("t2"),
+    new MockedTestCase("t3"),
+    new MockedTestCase("t4"),
+    new MockedTestCase("t5")
+  ));
+
+  public static final CoverageReport smallCoverageReport = new CoverageReport(
+    Set.of(
+      new CoverageReport.Unit("s1", 1, 1),
+      new CoverageReport.Unit("s2", 2, 2),
+      new CoverageReport.Unit("s3", 3, 3),
+      new CoverageReport.Unit("s4", 4, 4),
+      new CoverageReport.Unit("s5", 5, 5),
+      new CoverageReport.Unit("s6", 6, 6)
+    ),
+    Set.of(
+      new CoverageReport.Unit("s1", 1, 1),
+      new CoverageReport.Unit("s2", 2, 2),
+      new CoverageReport.Unit("s3", 3, 3),
+      new CoverageReport.Unit("s4", 4, 4),
+      new CoverageReport.Unit("s5", 5, 5),
+      new CoverageReport.Unit("s6", 6, 6)
+    ),
+    Map.of(new MockedTestCase("t1"), Set.of(new CoverageReport.Unit("s1", 1,1),
+                                            new CoverageReport.Unit("s3", 3, 3),
+                                            new CoverageReport.Unit("s5", 5, 5)),
+           new MockedTestCase("t2"), Set.of(new CoverageReport.Unit("s2", 2,2),
+                                            new CoverageReport.Unit("s4", 4, 4),
+                                            new CoverageReport.Unit("s5", 5, 5)),
+           new MockedTestCase("t3"), Set.of(new CoverageReport.Unit("s2", 2,2),
+                                            new CoverageReport.Unit("s4", 4, 4),
+                                            new CoverageReport.Unit("s5", 5, 5)),
+           new MockedTestCase("t4"), Set.of(new CoverageReport.Unit("s2", 2,2),
+                                            new CoverageReport.Unit("s3", 3, 3),
+                                            new CoverageReport.Unit("s6", 6, 6)),
+           new MockedTestCase("t5"), Set.of(new CoverageReport.Unit("s1", 1,1),
+                                            new CoverageReport.Unit("s4", 4, 4),
+                                            new CoverageReport.Unit("s5", 5, 5))
+    )
+  );
+
   public static class MockedTestCase extends TestCase {
     public MockedTestCase() {
       super("MockedTestCase", "MockedTestClass", Collections.singletonList(
         new AssertionStatement("int i", 1, 1)
       ));
+    }
+    public MockedTestCase(String name) {
+      super(name, name, Collections.emptyList());
     }
   }
 
