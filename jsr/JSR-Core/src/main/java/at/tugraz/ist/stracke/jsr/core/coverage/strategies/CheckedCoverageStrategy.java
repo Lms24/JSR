@@ -3,15 +3,11 @@ package at.tugraz.ist.stracke.jsr.core.coverage.strategies;
 import at.tugraz.ist.stracke.jsr.core.coverage.CoverageReport;
 import at.tugraz.ist.stracke.jsr.core.parsing.TestSuiteParser;
 import at.tugraz.ist.stracke.jsr.core.parsing.statements.Statement;
-import at.tugraz.ist.stracke.jsr.core.parsing.strategies.ParsingStrategy;
 import at.tugraz.ist.stracke.jsr.core.shared.TestCase;
-import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
 import at.tugraz.ist.stracke.jsr.core.slicing.TestSuiteSlicer;
 import at.tugraz.ist.stracke.jsr.core.slicing.result.SliceEntry;
 import at.tugraz.ist.stracke.jsr.core.slicing.result.TestSuiteSliceResult;
-import at.tugraz.ist.stracke.jsr.core.slicing.strategies.SlicingStrategy;
 
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
