@@ -34,5 +34,26 @@ public class CoverageReport {
       this.positionStart = positionStart;
       this.positionEnd = positionEnd;
     }
+
+    @Override
+    public int hashCode() {
+      return name.hashCode() + this.positionStart + this.positionEnd;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (!(obj instanceof Unit)) {
+        return false;
+      }
+      Unit u = (Unit) obj;
+      return this.name.equals(u.name) &&
+             this.positionStart == u.positionStart &&
+             this.positionEnd == u.positionEnd;
+    }
+
+    @Override
+    public String toString() {
+      return name;
+    }
   }
 }
