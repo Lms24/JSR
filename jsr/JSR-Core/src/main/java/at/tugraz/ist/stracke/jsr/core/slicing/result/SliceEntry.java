@@ -27,6 +27,22 @@ public class SliceEntry{
     );
   }
 
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof SliceEntry)) {
+      return false;
+    }
+    SliceEntry se = (SliceEntry) obj;
+    return this.className.equals(se.className) &&
+           this.startLine == se.startLine &&
+           this.endLine == se.endLine;
+  }
+
+  @Override
+  public int hashCode() {
+    return this.className.hashCode() + this.startLine + this.endLine;
+  }
+
   public boolean isMultiline() {
     return this.startLine != this.endLine;
   }

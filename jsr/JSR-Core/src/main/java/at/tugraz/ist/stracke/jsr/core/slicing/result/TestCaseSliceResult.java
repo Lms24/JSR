@@ -5,7 +5,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Set;
 
-public class TestCaseSliceResult extends SliceEntry {
+public class TestCaseSliceResult {
 
   public final TestCase testCase;
   public final Set<SliceEntry> slice;

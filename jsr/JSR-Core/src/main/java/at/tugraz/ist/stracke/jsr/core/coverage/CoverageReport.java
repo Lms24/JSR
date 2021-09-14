@@ -1,15 +1,22 @@
 package at.tugraz.ist.stracke.jsr.core.coverage;
 
+import at.tugraz.ist.stracke.jsr.core.shared.TestCase;
+
+import java.util.Map;
 import java.util.Set;
 
 public class CoverageReport {
 
-  final Set<Unit> allUnits;
-  final Set<Unit> coveredUnits;
+  public final Set<Unit> allUnits;
+  public final Set<Unit> coveredUnits;
+  public final Map<TestCase, Set<Unit>> testCaseCoverageData;
 
-  public CoverageReport(Set<Unit> allUnits, Set<Unit> coveredUnits) {
+  public CoverageReport(Set<Unit> allUnits,
+                        Set<Unit> coveredUnits,
+                        Map<TestCase, Set<Unit>> testCaseCoverageData) {
     this.allUnits = allUnits;
     this.coveredUnits = coveredUnits;
+    this.testCaseCoverageData = testCaseCoverageData;
   }
 
   public double getCoverageScore() {

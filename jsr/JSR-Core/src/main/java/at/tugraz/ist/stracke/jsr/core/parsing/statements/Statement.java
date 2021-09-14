@@ -19,6 +19,13 @@ public class Statement implements IStatement{
     this.endLine = Math.max(startLine, endLine);
   }
 
+  public Statement(@NonNull String text, int startLine, int endLine, String className) {
+    this.text = text;
+    this.startLine = Math.max(startLine, 0);
+    this.endLine = Math.max(startLine, endLine);
+    this.className = className;
+  }
+
   @Override
   public int getStartLine() {
     return startLine;

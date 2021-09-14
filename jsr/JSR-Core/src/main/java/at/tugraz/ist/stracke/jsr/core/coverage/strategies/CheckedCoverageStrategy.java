@@ -4,6 +4,7 @@ import at.tugraz.ist.stracke.jsr.core.coverage.CoverageReport;
 import at.tugraz.ist.stracke.jsr.core.parsing.TestSuiteParser;
 import at.tugraz.ist.stracke.jsr.core.parsing.statements.Statement;
 import at.tugraz.ist.stracke.jsr.core.parsing.strategies.ParsingStrategy;
+import at.tugraz.ist.stracke.jsr.core.shared.TestCase;
 import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
 import at.tugraz.ist.stracke.jsr.core.slicing.TestSuiteSlicer;
 import at.tugraz.ist.stracke.jsr.core.slicing.result.SliceEntry;
@@ -12,6 +13,7 @@ import at.tugraz.ist.stracke.jsr.core.slicing.strategies.SlicingStrategy;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,11 +29,12 @@ public class CheckedCoverageStrategy implements CoverageStrategy {
   }
 
   @Override
-  public CoverageReport calculate() {
+  public CoverageReport calculateOverallCoverage() {
     List<Statement> executableStatements = this.parser.getParsingStrategy().parseStatements();
     TestSuiteSliceResult res = this.slicer.slice();
 
-    Set<CoverageReport.Unit> coveredUnits = res.getTestCaseSliceIntersection()
+
+    Set<CoverageReport.Unit> coveredUnits = res.getTestCaseSliceUnion()
                                                .stream()
                                                .map(SliceEntry::toStatement)
                                                .map(Statement::toUnit)
@@ -40,6 +43,13 @@ public class CheckedCoverageStrategy implements CoverageStrategy {
                                                             .map(Statement::toUnit)
                                                             .collect(Collectors.toSet());
 
-    return new CoverageReport(allUnits, coveredUnits);
+    Map<TestCase, Set<CoverageReport.Unit>> testCaseData =
+      res.testCaseSlices.stream()
+                        .collect(Collectors.toMap(tcs -> tcs.testCase,
+                                                  tcs -> tcs.slice.stream()
+                                                                  .map(se -> se.toStatement().toUnit())
+                                                                  .collect(Collectors.toSet())));
+
+    return new CoverageReport(allUnits, coveredUnits, testCaseData);
   }
 }

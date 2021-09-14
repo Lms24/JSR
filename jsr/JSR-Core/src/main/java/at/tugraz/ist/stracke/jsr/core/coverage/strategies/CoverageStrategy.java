@@ -10,5 +10,5 @@ public interface CoverageStrategy {
    *
    * @return a {@link CoverageReport} of the
    */
-  CoverageReport calculate();
+  CoverageReport calculateOverallCoverage();
 }
