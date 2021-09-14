@@ -1,5 +1,6 @@
 package at.tugraz.ist.stracke.jsr.core.parsing;
 
+import at.tugraz.ist.stracke.jsr.core.parsing.strategies.ParsingStrategy;
 import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
 
 /**
@@ -23,4 +24,6 @@ public interface TestSuiteParser {
    * occured while parsing or retrieving the result
    */
   TestSuite getResult();
+
+  ParsingStrategy getParsingStrategy();
 }

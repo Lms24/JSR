@@ -1,7 +1,10 @@
 package at.tugraz.ist.stracke.jsr.core.parsing.strategies;
 
+import at.tugraz.ist.stracke.jsr.core.parsing.statements.Statement;
 import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -15,7 +18,7 @@ class JavaParserParsingStrategyTest {
       "}";
     var strat = new JavaParserParsingStrategy(code);
 
-    TestSuite ts = strat.execute();
+    TestSuite ts = strat.parseTestSuite();
 
     assertThat(ts, is(notNullValue()));
     assertThat(ts.getTestCases(), is(empty()));
@@ -33,7 +36,7 @@ class JavaParserParsingStrategyTest {
       "}";
     var strat = new JavaParserParsingStrategy(code);
 
-    TestSuite ts = strat.execute();
+    TestSuite ts = strat.parseTestSuite();
 
     assertThat(ts, is(notNullValue()));
     assertThat(ts.getTestCases(), not(empty()));
@@ -52,7 +55,7 @@ class JavaParserParsingStrategyTest {
       "}";
     var strat = new JavaParserParsingStrategy(code);
 
-    TestSuite ts = strat.execute();
+    TestSuite ts = strat.parseTestSuite();
 
     assertThat(ts, is(notNullValue()));
     assertThat(ts.getTestCases(), not(empty()));
@@ -85,7 +88,7 @@ class JavaParserParsingStrategyTest {
       " assertEquals(i, 10); ref {i} [8-8]," + nl +
       " assertTrue(i < 100); ref {i} [9-9]";
 
-    TestSuite ts = strat.execute();
+    TestSuite ts = strat.parseTestSuite();
 
     assertThat(ts, is(notNullValue()));
     assertThat(ts.getTestCases(), not(empty()));
@@ -116,7 +119,7 @@ class JavaParserParsingStrategyTest {
       " assertEquals(100, o.getProp2()); ref {o} [8-8]," + nl +
       " assertThat(o, is(not(null))); ref {o} [9-9]";
 
-    TestSuite ts = strat.execute();
+    TestSuite ts = strat.parseTestSuite();
 
     assertThat(ts, is(notNullValue()));
     assertThat(ts.getTestCases(), not(empty()));
@@ -154,7 +157,7 @@ class JavaParserParsingStrategyTest {
       " assertTrue(p != null && p.o != null && p.getO() != null); ref {p, p.o} [11-11]," + nl +
       " assertEquals(p.o.prop1 == 101 && p.getO().prop1 == 101); ref {p.o, p, p.getO().prop1, p.o.prop1} [12-12]";
 
-    TestSuite ts = strat.execute();
+    TestSuite ts = strat.parseTestSuite();
 
     assertThat(ts, is(notNullValue()));
     assertThat(ts.getTestCases(), not(empty()));
@@ -207,7 +210,7 @@ class JavaParserParsingStrategyTest {
       " assertEquals(i, 10); ref {i} [21-21]," + nl +
       " assertTrue(i < 100); ref {i} [22-22]";
 
-    TestSuite ts = strat.execute();
+    TestSuite ts = strat.parseTestSuite();
 
     assertThat(ts, is(notNullValue()));
     assertThat(ts.getTestCases(), not(empty()));
@@ -217,6 +220,56 @@ class JavaParserParsingStrategyTest {
     assertThat(ts.getTestCases().get(1).getAssertions(), is(not(empty())));
     assertThat(ts.getTestCases().get(1).getAssertions().size(), is(equalTo(2)));
     assertThat(ts.getTestCases().get(1).toString(), is(equalTo(outcome2)));
+  }
+
+  @Test
+  public void testStatementParsing01() {
+    String nl = System.lineSeparator();
+    var code = "package at.ist.test;" + nl +
+               "public class TestClass {" + nl +
+               "  int i = 666;" + nl +
+               "  public void function1() {" + nl +
+               "    MyObject o = new MyObject(100);" + nl +
+               "    o.prop1 = 101;" + nl +
+               "    o.setProp2(o.getProp2() == null ? 100 : o.getProp2());" + nl +
+               "  }" + nl +
+               "}";
+    var strat = new JavaParserParsingStrategy(code);
+
+    List<Statement> stmts = strat.parseStatements();
+
+    assertThat(stmts.size(), is(equalTo(3)));
+  }
+
+  @Test
+  public void testStatementParsing02() {
+    String nl = System.lineSeparator();
+    var code = "package at.ist.test;" + nl +
+               "public class TestClass {" + nl +
+               "  int i = 666;" + nl +
+               "  public void function1() {" + nl +
+               "    MyObject o = new MyObject(100);" + nl +
+               "    o.prop1 = 101;" + nl +
+               "    this.executeFunction();" + nl +
+               "    executeFunction2();" + nl +
+               "    if (a == b) {" + nl +
+               "      executeFunction3();" + nl +
+               "    } else {" + nl +
+               "      this.x = 999;" + nl +
+               "    }" + nl +
+               "    for(String s : strings) {" + nl +
+               "      log(s);" + nl +
+               "    }" + nl +
+               "    collection.stream().foreach(i -> i.get());" + nl +
+               "    " + nl +
+               "    o.setProp2(o.getProp2() == null ? 100 : o.getProp2());" + nl +
+               "  }" + nl +
+               "}";
+    var strat = new JavaParserParsingStrategy(code);
+
+    List<Statement> stmts = strat.parseStatements();
+
+    assertThat(stmts.size(), is(equalTo(12)));
   }
 
 

@@ -21,11 +21,16 @@ public class JUnitTestSuiteParser implements TestSuiteParser {
 
   @Override
   public void parse() {
-    this.result = this.parsingStrategy.execute();
+    this.result = this.parsingStrategy.parseTestSuite();
   }
 
   @Override
   public TestSuite getResult() {
     return this.result;
+  }
+
+  @Override
+  public ParsingStrategy getParsingStrategy() {
+    return this.parsingStrategy;
   }
 }

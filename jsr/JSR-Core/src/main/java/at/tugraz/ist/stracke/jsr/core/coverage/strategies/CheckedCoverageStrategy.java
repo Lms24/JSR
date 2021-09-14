@@ -1,38 +1,45 @@
 package at.tugraz.ist.stracke.jsr.core.coverage.strategies;
 
 import at.tugraz.ist.stracke.jsr.core.coverage.CoverageReport;
+import at.tugraz.ist.stracke.jsr.core.parsing.TestSuiteParser;
+import at.tugraz.ist.stracke.jsr.core.parsing.statements.Statement;
+import at.tugraz.ist.stracke.jsr.core.parsing.strategies.ParsingStrategy;
 import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
 import at.tugraz.ist.stracke.jsr.core.slicing.TestSuiteSlicer;
+import at.tugraz.ist.stracke.jsr.core.slicing.result.SliceEntry;
+import at.tugraz.ist.stracke.jsr.core.slicing.result.TestSuiteSliceResult;
 import at.tugraz.ist.stracke.jsr.core.slicing.strategies.SlicingStrategy;
+
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CheckedCoverageStrategy implements CoverageStrategy {
 
-  private TestSuite testSuite;
-  private TestSuiteSlicer slicer;
-  private SlicingStrategy slicingStrategy;
+  private final TestSuiteParser parser;
+  private final TestSuiteSlicer slicer;
 
-  public CheckedCoverageStrategy(TestSuite testSuite,
-                                 TestSuiteSlicer slicer,
-                                 SlicingStrategy slicingStrategy) {
-    this.testSuite = testSuite;
+  public CheckedCoverageStrategy(TestSuiteParser parser,
+                                 TestSuiteSlicer slicer) {
+    this.parser = parser;
     this.slicer = slicer;
-    this.slicingStrategy = slicingStrategy;
   }
 
   @Override
   public CoverageReport calculate() {
-    this.slicer.slice();
-    //TODO
-    return new CoverageReport(0.8F);
-  }
+    List<Statement> executableStatements = this.parser.getParsingStrategy().parseStatements();
+    TestSuiteSliceResult res = this.slicer.slice();
 
-  public CheckedCoverageStrategy setSlicer(TestSuiteSlicer slicer) {
-    this.slicer = slicer;
-    return this;
-  }
+    Set<CoverageReport.Unit> coveredUnits = res.getTestCaseSliceIntersection()
+                                               .stream()
+                                               .map(SliceEntry::toStatement)
+                                               .map(Statement::toUnit)
+                                               .collect(Collectors.toSet());
+    Set<CoverageReport.Unit> allUnits = executableStatements.stream()
+                                                            .map(Statement::toUnit)
+                                                            .collect(Collectors.toSet());
 
-  public CheckedCoverageStrategy setSlicingStrategy(SlicingStrategy strategy) {
-    this.slicingStrategy = strategy;
-    return this;
+    return new CoverageReport(allUnits, coveredUnits);
   }
 }

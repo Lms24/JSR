@@ -1,6 +1,7 @@
 package at.tugraz.ist.stracke.jsr.test;
 
 import at.tugraz.ist.stracke.jsr.core.parsing.statements.AssertionStatement;
+import at.tugraz.ist.stracke.jsr.core.parsing.statements.Statement;
 import at.tugraz.ist.stracke.jsr.core.parsing.strategies.ParsingStrategy;
 import at.tugraz.ist.stracke.jsr.core.shared.TestCase;
 import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
@@ -10,6 +11,7 @@ import at.tugraz.ist.stracke.jsr.core.slicing.strategies.SlicingStrategy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 public class Mocks {
   public static final TestSuite emptyTestSuite = new TestSuite(new ArrayList<>());
@@ -33,8 +35,13 @@ public class Mocks {
 
   public static class MockedParsingStrategy implements ParsingStrategy {
     @Override
-    public TestSuite execute() {
+    public TestSuite parseTestSuite() {
       return emptyTestSuite;
+    }
+
+    @Override
+    public List<Statement> parseStatements() {
+      return Collections.emptyList();
     }
   }
 

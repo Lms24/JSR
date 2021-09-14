@@ -1,5 +1,7 @@
 package at.tugraz.ist.stracke.jsr.core.slicing.result;
 
+import at.tugraz.ist.stracke.jsr.core.parsing.statements.Statement;
+
 public class SliceEntry{
   public final String className;
   public final int startLine;
@@ -27,5 +29,11 @@ public class SliceEntry{
 
   public boolean isMultiline() {
     return this.startLine != this.endLine;
+  }
+
+  public Statement toStatement() {
+    Statement s = new Statement("Slice", this.startLine, this.endLine);
+    s.setClassName(this.className);
+    return s;
   }
 }
