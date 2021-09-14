@@ -19,8 +19,8 @@ dependencies {
 def mainClassName = "at.tugraz.ist.stracke.jsr.cli.CheckSum"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_16
-    targetCompatibility = JavaVersion.VERSION_16
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 jar {

@@ -1,4 +1,4 @@
-package at.tugraz.ist.stracke.jsr.core.parsing.utils;
+package at.tugraz.ist.stracke.jsr.core.shared;
 
 import at.tugraz.ist.stracke.jsr.core.parsing.statements.IStatement;
 
@@ -33,11 +33,11 @@ public abstract class TestCase {
 
   @Override
   public String toString() {
-    return "Testcase %s::%s has %d assertions: %s %s".formatted(
+    return String.format("Testcase %s::%s has %d assertions: %s %s",
       this.className,
       this.name,
       this.assertions.size(),
       System.lineSeparator(),
-      this.assertions.stream().map(Object::toString).collect(Collectors.joining(",%s ".formatted(System.lineSeparator()))));
+      this.assertions.stream().map(Object::toString).collect(Collectors.joining(String.format(",%s ", System.lineSeparator()))));
   }
 }

@@ -32,7 +32,7 @@ public class AssertionStatement extends Statement {
 
   @Override
   public String toString() {
-    return "%s ref {%s} [%d-%d]".formatted(
+    return String.format("%s ref {%s} [%d-%d]",
       this.text,
       String.join(", ", this.ref),
       this.startLine,
