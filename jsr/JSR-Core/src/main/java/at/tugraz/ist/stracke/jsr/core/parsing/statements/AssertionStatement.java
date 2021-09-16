@@ -4,6 +4,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.annotation.Nonnegative;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,4 +41,17 @@ public class AssertionStatement extends Statement {
     );
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
+    AssertionStatement that = (AssertionStatement) o;
+    return ref.equals(that.ref);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(ref) + super.hashCode();
+  }
 }

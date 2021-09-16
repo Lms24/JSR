@@ -2,10 +2,7 @@ package at.tugraz.ist.stracke.jsr.core.coverage;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
@@ -38,7 +35,7 @@ class CoverageReportTest {
   void testUnitHashCode() {
     CoverageReport.Unit u = new CoverageReport.Unit("unit1", 1, 1);
 
-    assertThat(u.hashCode(), is(equalTo("unit1".hashCode() + 1 + 1)));
+    assertThat(u.hashCode(), is(equalTo(Objects.hash("unit1", 1, 1))));
   }
 
   @Test

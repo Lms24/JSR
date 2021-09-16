@@ -128,7 +128,6 @@ public class GreedyHGSReductionStrategy implements ReductionStrategy {
                 .filter(r -> getTestCasesSatisfyingRequirement(r).size() == finalTargetN1)
                 .count();
 
-      // TODO avoid endless loops
       tie = currentN == nextN && currentN > 0;
       if (tie) {
         targetN++;

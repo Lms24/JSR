@@ -24,6 +24,11 @@ import java.util.concurrent.atomic.AtomicLong;
  *    at least the same number of requirements as TCs r_B are considered. This comes naturally
  *    as a consequence of 1.), as there cannot be columns with less entries than the one currently
  *    under investigation.
+ *
+ * Since this algorithm is very closely related to {@link GreedyHGSReductionStrategy},
+ * we are extending the class and overriding behaviour in the style of a slightly
+ * modified "template method" pattern (namely, not using an abstract class as a
+ * base class).
  */
 public class GreedyIHGSReductionStrategy extends GreedyHGSReductionStrategy {
 

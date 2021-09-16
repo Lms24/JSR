@@ -62,7 +62,6 @@ public abstract class TestCase {
     TestCase t = (TestCase) obj;
     return this.name.equals(t.name) &&
            this.className.equals(t.className) &&
-           this.assertions.stream().filter(t.assertions::contains).count() == 0;
-
+           this.assertions.equals(t.assertions);
   }
 }

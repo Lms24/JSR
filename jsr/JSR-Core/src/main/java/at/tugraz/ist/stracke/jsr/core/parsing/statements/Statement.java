@@ -3,6 +3,8 @@ package at.tugraz.ist.stracke.jsr.core.parsing.statements;
 import at.tugraz.ist.stracke.jsr.core.coverage.CoverageReport;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.Objects;
+
 public class Statement implements IStatement{
   protected final String text;
   protected final int startLine;
@@ -56,6 +58,22 @@ public class Statement implements IStatement{
   @Override
   public String toString() {
     return String.format("%s [%d-%d]", this.text, this.startLine, this.endLine);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Statement statement = (Statement) o;
+    return startLine == statement.startLine &&
+           endLine == statement.endLine &&
+           Objects.equals(text, statement.text) &&
+           Objects.equals(className, statement.className);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(text, startLine, endLine, className);
   }
 
   public CoverageReport.Unit toUnit() {

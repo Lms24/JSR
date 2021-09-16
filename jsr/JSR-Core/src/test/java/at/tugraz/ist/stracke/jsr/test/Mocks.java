@@ -12,64 +12,20 @@ import at.tugraz.ist.stracke.jsr.core.slicing.result.SliceEntry;
 import at.tugraz.ist.stracke.jsr.core.slicing.result.TestCaseSliceResult;
 import at.tugraz.ist.stracke.jsr.core.slicing.result.TestSuiteSliceResult;
 import at.tugraz.ist.stracke.jsr.core.slicing.strategies.SlicingStrategy;
-import com.google.common.collect.Maps;
 
 import java.util.*;
 
 public class Mocks {
-  public static final TestSuite emptyTestSuite = new TestSuite(new ArrayList<>());
+  public static final TestSuite emptyTestSuite = new TestSuite(Collections.emptyList());
 
   /**
    * {@link TestSuite} with 3 {@link TestCase}s.
    */
   public static final TestSuite nonEmptyTestSuite = new TestSuite(Arrays.asList(
-    new MockedTestCase(),
-    new MockedTestCase(),
-    new MockedTestCase()
+    new MockedTestCase("tc1"),
+    new MockedTestCase("tc2"),
+    new MockedTestCase("tc3")
   ));
-
-  public static final TestSuite tsrOriginalTS = new TestSuite(Arrays.asList(
-    new MockedTestCase("t1"),
-    new MockedTestCase("t2"),
-    new MockedTestCase("t3"),
-    new MockedTestCase("t4"),
-    new MockedTestCase("t5")
-  ));
-
-  public static final CoverageReport smallCoverageReport = new CoverageReport(
-    Set.of(
-      new CoverageReport.Unit("s1", 1, 1),
-      new CoverageReport.Unit("s2", 2, 2),
-      new CoverageReport.Unit("s3", 3, 3),
-      new CoverageReport.Unit("s4", 4, 4),
-      new CoverageReport.Unit("s5", 5, 5),
-      new CoverageReport.Unit("s6", 6, 6)
-    ),
-    Set.of(
-      new CoverageReport.Unit("s1", 1, 1),
-      new CoverageReport.Unit("s2", 2, 2),
-      new CoverageReport.Unit("s3", 3, 3),
-      new CoverageReport.Unit("s4", 4, 4),
-      new CoverageReport.Unit("s5", 5, 5),
-      new CoverageReport.Unit("s6", 6, 6)
-    ),
-    Map.of(new MockedTestCase("t1"), Set.of(new CoverageReport.Unit("s1", 1,1),
-                                            new CoverageReport.Unit("s3", 3, 3),
-                                            new CoverageReport.Unit("s5", 5, 5)),
-           new MockedTestCase("t2"), Set.of(new CoverageReport.Unit("s2", 2,2),
-                                            new CoverageReport.Unit("s4", 4, 4),
-                                            new CoverageReport.Unit("s5", 5, 5)),
-           new MockedTestCase("t3"), Set.of(new CoverageReport.Unit("s2", 2,2),
-                                            new CoverageReport.Unit("s4", 4, 4),
-                                            new CoverageReport.Unit("s5", 5, 5)),
-           new MockedTestCase("t4"), Set.of(new CoverageReport.Unit("s2", 2,2),
-                                            new CoverageReport.Unit("s3", 3, 3),
-                                            new CoverageReport.Unit("s6", 6, 6)),
-           new MockedTestCase("t5"), Set.of(new CoverageReport.Unit("s1", 1,1),
-                                            new CoverageReport.Unit("s4", 4, 4),
-                                            new CoverageReport.Unit("s5", 5, 5))
-    )
-  );
 
   public static class MockedTestCase extends TestCase {
     public MockedTestCase() {
@@ -155,12 +111,12 @@ public class Mocks {
 
     public MockedTestSuiteSlicer() {
       this.res = new TestSuiteSliceResult(Arrays.asList(
-        new TestCaseSliceResult(new MockedTestCase(), new HashSet<>(Arrays.asList(
+        new TestCaseSliceResult(new MockedTestCase("tc1"), new HashSet<>(Arrays.asList(
           new SliceEntry("TestClass", 1, 1),
           new SliceEntry("TestClass", 2, 2),
           new SliceEntry("TestClass", 3, 3)
         ))),
-        new TestCaseSliceResult(new MockedTestCase(), new HashSet<>(Arrays.asList(
+        new TestCaseSliceResult(new MockedTestCase("tc2"), new HashSet<>(Arrays.asList(
           new SliceEntry("TestClass", 1, 1),
           new SliceEntry("TestClass", 4, 4)
         )))

@@ -1,8 +1,10 @@
 package at.tugraz.ist.stracke.jsr.core.coverage;
 
 import at.tugraz.ist.stracke.jsr.core.shared.TestCase;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class CoverageReport {
@@ -29,7 +31,9 @@ public class CoverageReport {
     final public int positionStart;
     final public int positionEnd;
 
-    public Unit(String name, int positionStart, int positionEnd) {
+    public Unit(@NonNull String name,
+                int positionStart,
+                int positionEnd) {
       this.name = name;
       this.positionStart = positionStart;
       this.positionEnd = positionEnd;
@@ -37,7 +41,7 @@ public class CoverageReport {
 
     @Override
     public int hashCode() {
-      return name.hashCode() + this.positionStart + this.positionEnd;
+      return Objects.hash(this.name, this.positionStart, this.positionEnd);
     }
 
     @Override
