@@ -6,6 +6,7 @@ import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
 import at.tugraz.ist.stracke.jsr.core.tsr.ReducedTestSuite;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,8 +25,8 @@ public class GreedyReductionStrategy implements ReductionStrategy {
   private final Table<TestCase, CoverageReport.Unit, Boolean> table;
   private final Deque<CoverageReport.Unit> unmarkedRequirements;
 
-  public GreedyReductionStrategy(TestSuite originalTestsuite,
-                                 CoverageReport coverageReport) {
+  public GreedyReductionStrategy(@NonNull TestSuite originalTestsuite,
+                                 @NonNull CoverageReport coverageReport) {
     this.originalTestsuite = originalTestsuite;
     this.table = HashBasedTable.create();
     this.unmarkedRequirements = new ArrayDeque<>();
@@ -33,7 +34,7 @@ public class GreedyReductionStrategy implements ReductionStrategy {
   }
 
   @Override
-  public ReducedTestSuite reduce() {
+  public @NonNull ReducedTestSuite reduce() {
     List<TestCase> retainedTCs = new ArrayList<>();
     boolean allReqsMarked = unmarkedRequirements.isEmpty();
     while (!allReqsMarked) {

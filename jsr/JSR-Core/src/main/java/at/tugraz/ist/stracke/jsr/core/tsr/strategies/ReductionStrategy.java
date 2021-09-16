@@ -1,6 +1,7 @@
 package at.tugraz.ist.stracke.jsr.core.tsr.strategies;
 
 import at.tugraz.ist.stracke.jsr.core.tsr.ReducedTestSuite;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * This interface must be implemented by all
@@ -17,5 +18,5 @@ public interface ReductionStrategy {
    * test cases in {@link ReducedTestSuite#testCases} and the removed
    * test cases in {@link ReducedTestSuite#removedTestCases}.
    */
-  ReducedTestSuite reduce();
+  @NonNull ReducedTestSuite reduce();
 }

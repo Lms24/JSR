@@ -33,6 +33,10 @@ public abstract class TestCase {
     return assertions;
   }
 
+  public String getFullName() {
+    return String.format("%s:%s", this.className, this.name);
+  }
+
   @Override
   public String toString() {
     return String.format("Testcase %s::%s has %d assertions: %s %s",
