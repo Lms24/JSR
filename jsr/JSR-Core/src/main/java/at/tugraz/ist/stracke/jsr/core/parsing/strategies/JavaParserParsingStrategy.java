@@ -13,13 +13,12 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
+import com.github.javaparser.utils.SourceRoot;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
@@ -60,14 +59,13 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
 
   private TestSuite parseTestSuiteFromFilePath() {
     logger.info("Parsing test suite from File Path");
-    try {
-      CompilationUnit cu = StaticJavaParser.parse(this.filePath.toFile());
-      return parseTestSuite(cu);
-    } catch (FileNotFoundException e) {
-      logger.error("Error while parsing test suite from file path");
-      e.printStackTrace();
-      return null;
-    }
+    SourceRoot sourceRoot = new SourceRoot(this.filePath);
+    List<CompilationUnit> compilationUnits = getAllCompilationUnits(sourceRoot);
+    List<TestSuite> partialSuites = compilationUnits.stream()
+                                                    .map(this::parseTestSuite)
+                                                    .collect(Collectors.toList());
+
+    return mergePartialSuites(partialSuites);
   }
 
   private TestSuite parseTestSuiteFromString() {
@@ -106,10 +104,12 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
                    .collect(Collectors.toList());
     }
 
+    final ClassOrInterfaceDeclaration clazz = (ClassOrInterfaceDeclaration) decl.getParentNode().orElse(null);
+    final String className = clazz != null ? clazz.getFullyQualifiedName().orElse("unknown") : "error";
+
     return new JUnitTestCase(
       decl.getNameAsString(),
-      decl.getParentNode().isPresent() ?
-      ((ClassOrInterfaceDeclaration) decl.getParentNode().get()).getNameAsString() : null,
+      className,
       aStmts);
   }
 
@@ -129,14 +129,21 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
 
   private List<at.tugraz.ist.stracke.jsr.core.parsing.statements.Statement> parseStatementsFromFilePath() {
     logger.info("Parsing executable lines from File Path");
-    try {
-      CompilationUnit cu = StaticJavaParser.parse(this.filePath.toFile());
-      return parseStatements(cu);
-    } catch (FileNotFoundException e) {
-      logger.error("Error while parsing statements from file path");
-      e.printStackTrace();
-      return null;
-    }
+    SourceRoot sourceRoot = new SourceRoot(this.filePath);
+    List<CompilationUnit> compilationUnits = getAllCompilationUnits(sourceRoot);
+    List<List<at.tugraz.ist.stracke.jsr.core.parsing.statements.Statement>> partialStatementLists =
+      compilationUnits.stream()
+                      .map(this::parseStatements)
+                      .collect(Collectors.toList());
+    return this.mergePartialStatementLists(partialStatementLists);
+  }
+
+  private List<CompilationUnit> getAllCompilationUnits(SourceRoot sourceRoot) {
+    return sourceRoot.tryToParseParallelized()
+                     .stream()
+                     .filter(pr -> pr.isSuccessful() && pr.getResult().isPresent())
+                     .map(pr -> pr.getResult().get())
+                     .collect(Collectors.toList());
   }
 
   private List<at.tugraz.ist.stracke.jsr.core.parsing.statements.Statement> parseStatementsFromString() {
@@ -172,4 +179,28 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
     jsrStmt.setClassName(fullClassName);
     return jsrStmt;
   }
+
+  private TestSuite mergePartialSuites(List<TestSuite> partialSuites) {
+    if (partialSuites.isEmpty()) {
+      return new TestSuite(Collections.emptyList());
+    }
+
+    List<TestCase> allTCs = partialSuites.stream()
+                                         .map(ts -> ts.testCases)
+                                         .collect(Collectors.toList())
+                                         .stream()
+                                         .flatMap(Collection::stream)
+                                         .collect(Collectors.toList());
+
+    return new TestSuite(allTCs);
+  }
+
+  private List<at.tugraz.ist.stracke.jsr.core.parsing.statements.Statement> mergePartialStatementLists(
+    List<List<at.tugraz.ist.stracke.jsr.core.parsing.statements.Statement>> partialStatementLists) {
+
+    return partialStatementLists.stream()
+                                .flatMap(Collection::stream)
+                                .collect(Collectors.toList());
+  }
+
 }

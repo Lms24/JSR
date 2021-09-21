@@ -17,8 +17,8 @@ class TSRReportTest {
                                "<report>" + System.lineSeparator()  +
                                "  <meta>" + System.lineSeparator()  +
                                "    <nrOriginalTestCases>5</nrOriginalTestCases>" + System.lineSeparator()  +
-                               "    <nrRetainedTestCases>5</nrRetainedTestCases>" + System.lineSeparator()  +
-                               "    <nrRemovedTestCases>5</nrRemovedTestCases>" + System.lineSeparator()  +
+                               "    <nrRetainedTestCases>3</nrRetainedTestCases>" + System.lineSeparator()  +
+                               "    <nrRemovedTestCases>2</nrRemovedTestCases>" + System.lineSeparator()  +
                                "  </meta>" + System.lineSeparator()  +
                                "  <retainedTestCases>" + System.lineSeparator()  +
                                "    <testCase>" + System.lineSeparator()  +

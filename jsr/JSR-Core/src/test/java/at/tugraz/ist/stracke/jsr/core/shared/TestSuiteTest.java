@@ -31,6 +31,7 @@ public class TestSuiteTest {
     assertThat(ts, is(notNullValue()));
     assertThat(ts.getTestCases(), is(notNullValue()));
     assertThat(ts.getNumberOfTestCases(), is(equalTo(2)));
+    assertThat(ts.getNumberOfTestClasses(), is(equalTo(1)));
   }
 
   @Test

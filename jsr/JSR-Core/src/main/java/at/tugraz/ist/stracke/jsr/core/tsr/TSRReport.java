@@ -23,9 +23,9 @@ public class TSRReport {
       .append("  <meta>").append(System.lineSeparator())
       .append(String.format("    <nrOriginalTestCases>%d</nrOriginalTestCases>", nrOriginalTestCases)).append(
         System.lineSeparator())
-      .append(String.format("    <nrRetainedTestCases>%d</nrRetainedTestCases>", nrOriginalTestCases)).append(
+      .append(String.format("    <nrRetainedTestCases>%d</nrRetainedTestCases>", nrRetainedTestCases)).append(
         System.lineSeparator())
-      .append(String.format("    <nrRemovedTestCases>%d</nrRemovedTestCases>", nrOriginalTestCases)).append(
+      .append(String.format("    <nrRemovedTestCases>%d</nrRemovedTestCases>", nrRemovedTestCases)).append(
         System.lineSeparator())
       .append("  </meta>").append(System.lineSeparator());
 

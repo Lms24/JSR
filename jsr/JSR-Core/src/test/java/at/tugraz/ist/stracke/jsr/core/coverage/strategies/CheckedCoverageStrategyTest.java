@@ -11,7 +11,8 @@ class CheckedCoverageStrategyTest {
 
   @Test
   void testCalculateOverallCoverage() {
-    CheckedCoverageStrategy strat = new CheckedCoverageStrategy(new Mocks.MockedTestSuiteParser(),
+    CheckedCoverageStrategy strat = new CheckedCoverageStrategy(Mocks.emptyTestSuite,
+                                                                new Mocks.MockedTestSuiteParser(),
                                                                 new Mocks.MockedTestSuiteSlicer());
     CoverageReport cr = strat.calculateOverallCoverage();
 
