@@ -40,7 +40,7 @@ class GreedyReductionStrategyTest {
 
     assertThat(union.size(), is(equalTo(TSRData.simpleOriginalTS.testCases.size())));
     assertThat(TSRData.smallOriginalTS.testCases.containsAll(union), is(true));
-    assertThat(rts.testCases, contains(TSRData.t1));
+    assertThat(rts.testCases, either(contains(TSRData.t4)).or(contains(TSRData.t1)));
   }
 
   @Test

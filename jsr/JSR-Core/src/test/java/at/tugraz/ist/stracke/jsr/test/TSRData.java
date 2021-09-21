@@ -3,6 +3,7 @@ package at.tugraz.ist.stracke.jsr.test;
 import at.tugraz.ist.stracke.jsr.core.coverage.CoverageReport;
 import at.tugraz.ist.stracke.jsr.core.shared.TestCase;
 import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
+import at.tugraz.ist.stracke.jsr.core.tsr.ReducedTestSuite;
 import at.tugraz.ist.stracke.jsr.core.tsr.TSRTestCase;
 
 import java.util.List;
@@ -52,5 +53,10 @@ public class TSRData {
            t2, Set.of( s1,  s2 /**//**/),
            t3, Set.of(/**//**/  s3,  s4),
            t4, Set.of( s1,  s2, s3,  s4))
+  );
+
+  public static final ReducedTestSuite simpleReducedTesSuite = new ReducedTestSuite(
+    List.of(t1, t3, t4),
+    List.of(t2, t5)
   );
 }

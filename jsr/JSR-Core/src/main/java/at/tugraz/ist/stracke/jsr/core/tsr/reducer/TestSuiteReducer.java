@@ -1,5 +1,7 @@
 package at.tugraz.ist.stracke.jsr.core.tsr.reducer;
 
+import at.tugraz.ist.stracke.jsr.core.tsr.ReducedTestSuite;
+
 import java.nio.file.Path;
 
 /**
@@ -21,8 +23,23 @@ public interface TestSuiteReducer {
   /**
    * Generates a report as a non-invasive TSR result. This report
    * can be read by humans or programs alike.
+   *
+   * @param reportDir the directory where the report shall be saved
+   *
+   * @return a reference to self for optional method chaining
    */
-  void generateReport();
+  TestSuiteReducer generateReport(Path reportDir);
+
+  /**
+   * Generates a report as a non-invasive TSR result. This report
+   * can be read by humans or programs alike.
+   *
+   * @param reportDir the directory where the report shall be saved
+   * @param reportName the name of the report file
+   *
+   * @return a reference to self for optional method chaining
+   */
+  TestSuiteReducer generateReport(Path reportDir, String reportName);
 
   /**
    * Serializes the reduced test suite to a file structure,
@@ -32,6 +49,10 @@ public interface TestSuiteReducer {
    *
    * @param srcTestDir is the root directory of the test directory
    *                   (e.g. myProject/src/test in a typical Java project)
+   *
+   * @return a reference to self for optional method chaining
    */
-  void serialize(Path srcTestDir);
+  TestSuiteReducer serialize(Path srcTestDir);
+
+  ReducedTestSuite getReducedTestSuite();
 }

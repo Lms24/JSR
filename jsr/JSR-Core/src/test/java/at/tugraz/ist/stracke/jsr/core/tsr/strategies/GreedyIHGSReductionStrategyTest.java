@@ -6,6 +6,7 @@ import at.tugraz.ist.stracke.jsr.core.tsr.TSRTestCase;
 import at.tugraz.ist.stracke.jsr.test.TSRData;
 import org.junit.jupiter.api.Test;
 
+import javax.management.Query;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +40,7 @@ class GreedyIHGSReductionStrategyTest {
 
     assertThat(union.size(), is(equalTo(TSRData.simpleOriginalTS.testCases.size())));
     assertThat(TSRData.smallOriginalTS.testCases.containsAll(union), is(true));
-    assertThat(rts.testCases, contains(TSRData.t1));
+    assertThat(rts.testCases, (contains(TSRData.t1)));
   }
 
   @Test
