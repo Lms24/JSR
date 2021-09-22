@@ -21,9 +21,12 @@ import java.util.stream.Collectors;
  */
 public class GreedyReductionStrategy implements ReductionStrategy {
 
-  private final TestSuite originalTestsuite;
-  private final Table<TestCase, CoverageReport.Unit, Boolean> table;
-  private final Deque<CoverageReport.Unit> unmarkedRequirements;
+  private TestSuite originalTestsuite;
+  private Table<TestCase, CoverageReport.Unit, Boolean> table;
+  private Deque<CoverageReport.Unit> unmarkedRequirements;
+
+  public GreedyReductionStrategy() {
+  }
 
   public GreedyReductionStrategy(@NonNull TestSuite originalTestsuite,
                                  @NonNull CoverageReport coverageReport) {
@@ -65,5 +68,17 @@ public class GreedyReductionStrategy implements ReductionStrategy {
                                        units.forEach(u -> this.table.put(tc, u, true)));
     this.unmarkedRequirements.addAll(rep.coveredUnits);
     //this.unmarkedRequirements.sort(Comparator.comparing(a -> this.table.column(a).size()));
+  }
+
+  @Override
+  public void setCoverageReport(CoverageReport report) {
+    this.table = HashBasedTable.create();
+    this.unmarkedRequirements = new ArrayDeque<>();
+    this.populateTableFromCoverageReport(report);
+  }
+
+  @Override
+  public void setOriginalTestSuite(TestSuite testSuite) {
+    this.originalTestsuite = testSuite;
   }
 }

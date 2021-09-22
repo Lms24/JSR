@@ -1,6 +1,7 @@
 package at.tugraz.ist.stracke.jsr.core.tsr.reducer;
 
 import at.tugraz.ist.stracke.jsr.core.tsr.ReducedTestSuite;
+import at.tugraz.ist.stracke.jsr.core.tsr.strategies.ReductionStrategy;
 
 import java.nio.file.Path;
 
@@ -55,4 +56,6 @@ public interface TestSuiteReducer {
   TestSuiteReducer serialize(Path srcTestDir);
 
   ReducedTestSuite getReducedTestSuite();
+
+  void setReductionStrategy(ReductionStrategy strategy);
 }

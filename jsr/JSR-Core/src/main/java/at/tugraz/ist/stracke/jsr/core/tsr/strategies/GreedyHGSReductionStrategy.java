@@ -37,9 +37,12 @@ import java.util.stream.Stream;
  * algorithm/heuristic.
  */
 public class GreedyHGSReductionStrategy implements ReductionStrategy {
-  private final TestSuite originalTestsuite;
-  protected final Table<TSRTestCase, CoverageReport.Unit, Boolean> table;
-  protected final Deque<CoverageReport.Unit> unmarkedRequirements;
+  private TestSuite originalTestsuite;
+  protected Table<TSRTestCase, CoverageReport.Unit, Boolean> table;
+  protected Deque<CoverageReport.Unit> unmarkedRequirements;
+
+  public GreedyHGSReductionStrategy() {
+  }
 
   public GreedyHGSReductionStrategy(@NonNull TestSuite originalTestsuite,
                                     @NonNull CoverageReport coverageReport) {
@@ -144,5 +147,19 @@ public class GreedyHGSReductionStrategy implements ReductionStrategy {
                      .filter(e -> e.getValue() != null && e.getValue())
                      .map(Map.Entry::getKey)
                      .collect(Collectors.toList());
+  }
+
+  @Override
+  public void setCoverageReport(CoverageReport report) {
+    this.table = report.toTable(false);
+    this.unmarkedRequirements =
+      report.coveredUnits.stream()
+                         .sorted(Comparator.comparing(u -> filterSatisfyingTestCases(u).count()))
+                         .collect(Collectors.toCollection(ArrayDeque::new));
+  }
+
+  @Override
+  public void setOriginalTestSuite(TestSuite testSuite) {
+    this.originalTestsuite = testSuite;
   }
 }

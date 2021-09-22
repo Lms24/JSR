@@ -13,12 +13,10 @@ public interface JSRFacade {
    * Performs the whole TSR process from start to finish. This includes:
    *
    * * Parsing the test suite
-   * * Parsing the code for all statements
-   * * Performing Dynamic Slicing (jar instrumentation, TS execution, slicing)
-   * * Calculating Checked coverage
+   * * Calculate coverage
    * * Performing TS reduction with the HGS greedy algorithm
    *
    * @return a {@link ReducedTestSuite} instance with the final outcome
    */
-  ReducedTestSuite reduceTestSuiteWithCheckedCoverage();
+  ReducedTestSuite reduceTestSuite();
 }

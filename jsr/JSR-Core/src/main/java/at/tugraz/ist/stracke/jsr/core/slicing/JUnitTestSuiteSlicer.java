@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 
 public class JUnitTestSuiteSlicer implements TestSuiteSlicer {
 
-  private final SlicingStrategy slicingStrategy;
-  private final TestSuite testSuite;
+  private SlicingStrategy slicingStrategy;
+  private TestSuite testSuite;
 
   private TestSuiteSliceResult result;
 
@@ -20,6 +20,10 @@ public class JUnitTestSuiteSlicer implements TestSuiteSlicer {
                               @NonNull TestSuite testSuite) {
     this.slicingStrategy = slicingStrategy;
     this.testSuite = testSuite;
+  }
+
+  public JUnitTestSuiteSlicer(@NonNull SlicingStrategy slicingStrategy) {
+    this.slicingStrategy = slicingStrategy;
   }
 
   @Override
@@ -37,5 +41,15 @@ public class JUnitTestSuiteSlicer implements TestSuiteSlicer {
   @Override
   public TestSuiteSliceResult getResult() {
     return this.result;
+  }
+
+  @Override
+  public void setSlicingStrategy(SlicingStrategy strategy) {
+    this.slicingStrategy = strategy;
+  }
+
+  @Override
+  public void setTestSuite(TestSuite testSuite) {
+    this.testSuite = testSuite;
   }
 }

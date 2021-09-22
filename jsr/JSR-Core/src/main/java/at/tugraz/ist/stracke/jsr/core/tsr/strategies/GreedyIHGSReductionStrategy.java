@@ -32,6 +32,10 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class GreedyIHGSReductionStrategy extends GreedyHGSReductionStrategy {
 
+  public GreedyIHGSReductionStrategy() {
+    super();
+  }
+
   public GreedyIHGSReductionStrategy(@NonNull TestSuite originalTestsuite,
                                      @NonNull CoverageReport coverageReport) {
     super(originalTestsuite, coverageReport);

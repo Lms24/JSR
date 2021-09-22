@@ -22,13 +22,14 @@ class JUnitJSRFacadeTest {
     String outDir = "./src/test/resources/smallProject/jsr";
     String slicerDir = "../../slicer/Slicer4J";
 
-    JSRFacade facade = new JUnitJSRFacade(Path.of(srcDir),
-                                          Path.of(testDir),
-                                          Path.of(jarDir),
-                                          Path.of(outDir),
-                                          Path.of(slicerDir));
+    JUnitJSRFacadeBuilder facadeBuilder = new JUnitJSRFacadeBuilder(Path.of(srcDir),
+                                                                    Path.of(testDir),
+                                                                    Path.of(jarDir),
+                                                                    Path.of(outDir),
+                                                                    Path.of(slicerDir));
+    JSRFacade facade = facadeBuilder.build();
 
-    ReducedTestSuite rts = facade.reduceTestSuiteWithCheckedCoverage();
+    ReducedTestSuite rts = facade.reduceTestSuite();
 
     assertThat(rts, is(notNullValue()));
   }

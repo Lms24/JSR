@@ -11,7 +11,7 @@ import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
  */
 public class JUnitTestSuiteParser implements TestSuiteParser {
 
-  private final ParsingStrategy parsingStrategy;
+  private ParsingStrategy parsingStrategy;
 
   private TestSuite result;
 
@@ -32,5 +32,10 @@ public class JUnitTestSuiteParser implements TestSuiteParser {
   @Override
   public ParsingStrategy getParsingStrategy() {
     return this.parsingStrategy;
+  }
+
+  @Override
+  public void setParsingStrategy(ParsingStrategy strategy) {
+    this.parsingStrategy = strategy;
   }
 }

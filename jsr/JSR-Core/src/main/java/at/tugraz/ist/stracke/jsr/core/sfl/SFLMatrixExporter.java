@@ -24,4 +24,6 @@ public interface SFLMatrixExporter {
    *         and false otherwise.
    */
   boolean exportSFLMatrices();
+
+  void setCoverageReport(CoverageReport report);
 }

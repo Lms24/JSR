@@ -23,7 +23,7 @@ public class SFLMatrixCsvExporter implements SFLMatrixExporter {
 
   private static Logger logger = LogManager.getLogger(SFLMatrixCsvExporter.class);
 
-  private final CoverageReport coverageReport;
+  private CoverageReport coverageReport;
   private final Path outputDir;
   private final String coverageMatrixFilename;
   private final String passMatrixFilename;
@@ -49,6 +49,12 @@ public class SFLMatrixCsvExporter implements SFLMatrixExporter {
 
   SFLMatrixCsvExporter(@NonNull CoverageReport coverageReport) {
     this.coverageReport = coverageReport;
+    this.outputDir = null;
+    this.coverageMatrixFilename = null;
+    this.passMatrixFilename = null;
+  }
+
+  public SFLMatrixCsvExporter() {
     this.outputDir = null;
     this.coverageMatrixFilename = null;
     this.passMatrixFilename = null;
@@ -159,5 +165,10 @@ public class SFLMatrixCsvExporter implements SFLMatrixExporter {
       e.printStackTrace();
       return false;
     }
+  }
+
+  @Override
+  public void setCoverageReport(CoverageReport report) {
+    this.coverageReport = report;
   }
 }

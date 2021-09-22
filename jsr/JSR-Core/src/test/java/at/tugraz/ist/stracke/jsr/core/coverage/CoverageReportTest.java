@@ -62,7 +62,7 @@ class CoverageReportTest {
   void testUnitHashCode() {
     CoverageReport.Unit u = new CoverageReport.Unit("unit1", 1, 1);
 
-    assertThat(u.hashCode(), is(equalTo(Objects.hash("unit1", 1, 1))));
+    assertThat(u.hashCode(), is(equalTo(Objects.hash("unit1", 1))));
   }
 
   @Test
@@ -75,7 +75,7 @@ class CoverageReportTest {
     assertThat(u1.equals(u2), is(true));
     assertThat(u1.equals(u3), is(false));
     assertThat(u2.equals(u3), is(false));
-    assertThat(u3.equals(u4), is(false));
+    assertThat(u3.equals(u4), is(true)); //this is true due to the relaxed equality criterion
   }
 
   @Test

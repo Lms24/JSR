@@ -7,6 +7,8 @@ import at.tugraz.ist.stracke.jsr.core.parsing.JUnitTestSuiteParser;
 import at.tugraz.ist.stracke.jsr.core.parsing.TestSuiteParser;
 import at.tugraz.ist.stracke.jsr.core.parsing.strategies.JavaParserParsingStrategy;
 import at.tugraz.ist.stracke.jsr.core.parsing.strategies.ParsingStrategy;
+import at.tugraz.ist.stracke.jsr.core.sfl.SFLMatrixCsvExporter;
+import at.tugraz.ist.stracke.jsr.core.sfl.SFLMatrixExporter;
 import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
 import at.tugraz.ist.stracke.jsr.core.slicing.JUnitTestSuiteSlicer;
 import at.tugraz.ist.stracke.jsr.core.slicing.TestSuiteSlicer;
@@ -19,67 +21,51 @@ import at.tugraz.ist.stracke.jsr.core.tsr.strategies.GreedyIHGSReductionStrategy
 import at.tugraz.ist.stracke.jsr.core.tsr.strategies.ReductionStrategy;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.nio.file.Path;
-
 public class JUnitJSRFacade implements JSRFacade {
-  private final Path sourceDir;
-  private final Path testDir;
-  private final Path jarFile;
-  private final Path outputDir;
-  private final Path slicerDir;
+
+  private final JSRConfig config;
 
   /**
-   * Constructor containing all necessary extrinsic information the core library requires
-   * to perform test suite reduction
+   * Package private ctor s.t. the facade can only be initialized via
+   * the {@link JUnitJSRFacadeBuilder}.
    *
-   * @param sourceDir Path to the directory containing all main source files.
-   *                  Usually, in a Java project this directory is similar to "projectRoot/src/main/java".
-   * @param testDir   Path to the directory containing all test source files.
-   *                  Usually, in a Java project, this directory is similar to "projectRoot/src/test/java.
-   * @param jarFile   Path to the fat jar file containing test, as well as source classes.
-   * @param outputDir Path to the directory to which all output files (slicing logs, TSR report, etc)
-   *                  are written.
-   * @param slicerDir Path to the directory of the slicer as described in {@link Slicer4JSlicingStrategy}.
+   * @param config the config object created by the builder.
    */
-  public JUnitJSRFacade(@NonNull Path sourceDir,
-                        @NonNull Path testDir,
-                        @NonNull Path jarFile,
-                        @NonNull Path outputDir,
-                        @NonNull Path slicerDir) {
-    this.sourceDir = sourceDir.toAbsolutePath();
-    this.testDir = testDir.toAbsolutePath();
-    this.jarFile = jarFile.toAbsolutePath();
-    this.outputDir = outputDir.toAbsolutePath();
-    this.slicerDir = slicerDir.toAbsolutePath();
+  JUnitJSRFacade(@NonNull JSRConfig config) {
+    this.config = config;
   }
 
   @Override
-  public ReducedTestSuite reduceTestSuiteWithCheckedCoverage() {
+  public ReducedTestSuite reduceTestSuite() {
 
     // Step 1: Parse the test suite
-    ParsingStrategy parsingStrategy = new JavaParserParsingStrategy(this.testDir);
-    TestSuiteParser parser = new JUnitTestSuiteParser(parsingStrategy);
+    TestSuiteParser parser = this.config.testSuiteParser;
     parser.parse();
     TestSuite originalTestSuite = parser.getResult();
 
     // Step 2: Code instrumentation, TS execution and Slicing per test case, Coverage
-    SlicingStrategy slicingStrategy = new Slicer4JSlicingStrategy(this.jarFile.toString(),
-                                                                  this.slicerDir.toString(),
-                                                                  this.outputDir.toString());
-    TestSuiteSlicer slicer = new JUnitTestSuiteSlicer(slicingStrategy, originalTestSuite);
+    TestSuiteSlicer slicer = this.config.slicer;
+    slicer.setTestSuite(originalTestSuite);
 
-    parsingStrategy = new JavaParserParsingStrategy(this.sourceDir);
-    parser = new JUnitTestSuiteParser(parsingStrategy);
+    CoverageStrategy coverageStrategy = this.config.coverageStrategy;
+    coverageStrategy.setOriginalTestSuite(originalTestSuite);
 
-    CoverageStrategy coverageStrategy = new CheckedCoverageStrategy(originalTestSuite,
-                                                                    parser,
-                                                                    slicer);
     CoverageReport report = coverageStrategy.calculateOverallCoverage();
 
     // Step 3: Perform TSR
-    ReductionStrategy reductionStrategy = new GreedyIHGSReductionStrategy(originalTestSuite, report);
-    TestSuiteReducer reducer = new JUnitTestSuiteReducer(reductionStrategy);
+    ReductionStrategy reductionStrategy = this.config.reductionStrategy;
+    reductionStrategy.setOriginalTestSuite(originalTestSuite);
+    reductionStrategy.setCoverageReport(report);
 
-    return reducer.reduce().generateReport(this.outputDir).getReducedTestSuite();
+    TestSuiteReducer reducer = this.config.reducer;
+
+    // optional step: SFL export
+    if (this.config.exporter != null) {
+      SFLMatrixExporter exporter = this.config.exporter;
+      exporter.setCoverageReport(report);
+      exporter.exportSFLMatrices();
+    }
+
+    return reducer.reduce().generateReport(this.config.outputDir).getReducedTestSuite();
   }
 }

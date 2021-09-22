@@ -62,7 +62,7 @@ public class CoverageReport {
 
     @Override
     public int hashCode() {
-      return Objects.hash(this.name, this.positionStart, this.positionEnd);
+      return Objects.hash(this.name, this.positionStart/*, this.positionEnd*/);
     }
 
     @Override
@@ -72,8 +72,9 @@ public class CoverageReport {
       }
       Unit u = (Unit) obj;
       return this.name.equals(u.name) &&
-             this.positionStart == u.positionStart &&
-             this.positionEnd == u.positionEnd;
+             this.positionStart == u.positionStart;
+      // Note: relaxing the quality criterion here, as sliced statements do not have the end line information
+      /*&& this.positionEnd == u.positionEnd;*/
     }
 
     @Override

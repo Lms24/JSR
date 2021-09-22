@@ -2,6 +2,7 @@ package at.tugraz.ist.stracke.jsr.core.slicing;
 
 import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
 import at.tugraz.ist.stracke.jsr.core.slicing.result.TestSuiteSliceResult;
+import at.tugraz.ist.stracke.jsr.core.slicing.strategies.SlicingStrategy;
 
 public interface TestSuiteSlicer {
 
@@ -19,4 +20,8 @@ public interface TestSuiteSlicer {
    * @return a {@link TestSuiteSliceResult}
    */
   TestSuiteSliceResult getResult();
+
+  void setSlicingStrategy(SlicingStrategy strategy);
+
+  void setTestSuite(TestSuite testSuite);
 }

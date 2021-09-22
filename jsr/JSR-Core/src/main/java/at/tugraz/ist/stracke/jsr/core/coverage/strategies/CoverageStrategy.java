@@ -1,6 +1,9 @@
 package at.tugraz.ist.stracke.jsr.core.coverage.strategies;
 
 import at.tugraz.ist.stracke.jsr.core.coverage.CoverageReport;
+import at.tugraz.ist.stracke.jsr.core.parsing.TestSuiteParser;
+import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
+import at.tugraz.ist.stracke.jsr.core.slicing.TestSuiteSlicer;
 
 public interface CoverageStrategy {
 
@@ -11,4 +14,8 @@ public interface CoverageStrategy {
    * @return a {@link CoverageReport} of the
    */
   CoverageReport calculateOverallCoverage();
+
+  void setOriginalTestSuite(TestSuite testSuite);
+  void setSlicer(TestSuiteSlicer slicer);
+  void setStatementParser(TestSuiteParser parser);
 }

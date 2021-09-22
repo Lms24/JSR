@@ -26,4 +26,6 @@ public interface TestSuiteParser {
   TestSuite getResult();
 
   ParsingStrategy getParsingStrategy();
+
+  void setParsingStrategy(ParsingStrategy strategy);
 }

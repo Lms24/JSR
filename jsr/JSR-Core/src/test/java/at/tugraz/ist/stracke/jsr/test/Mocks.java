@@ -103,6 +103,10 @@ public class Mocks {
         }
       };
     }
+
+    @Override
+    public void setParsingStrategy(ParsingStrategy strategy) {
+    }
   }
 
   public static class MockedTestSuiteSlicer implements TestSuiteSlicer {
@@ -131,6 +135,14 @@ public class Mocks {
     @Override
     public TestSuiteSliceResult getResult() {
       return this.res;
+    }
+
+    @Override
+    public void setSlicingStrategy(SlicingStrategy strategy) {
+    }
+
+    @Override
+    public void setTestSuite(TestSuite testSuite) {
     }
   }
 }

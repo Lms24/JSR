@@ -1,5 +1,8 @@
 package at.tugraz.ist.stracke.jsr.core.tsr.strategies;
 
+import at.tugraz.ist.stracke.jsr.core.coverage.CoverageReport;
+import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
+import at.tugraz.ist.stracke.jsr.core.slicing.TestSuiteSlicer;
 import at.tugraz.ist.stracke.jsr.core.tsr.ReducedTestSuite;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -19,4 +22,7 @@ public interface ReductionStrategy {
    * test cases in {@link ReducedTestSuite#removedTestCases}.
    */
   @NonNull ReducedTestSuite reduce();
+
+  void setCoverageReport(CoverageReport report);
+  void setOriginalTestSuite(TestSuite testSuite);
 }

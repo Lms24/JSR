@@ -19,7 +19,7 @@ public class JUnitTestSuiteReducer implements TestSuiteReducer {
 
   private static final Logger logger = LogManager.getLogger(JUnitTestSuiteReducer.class);
 
-  private final ReductionStrategy tsrStrategy;
+  private ReductionStrategy tsrStrategy;
 
   private ReducedTestSuite reducedTestSuite;
 
@@ -83,5 +83,10 @@ public class JUnitTestSuiteReducer implements TestSuiteReducer {
   @Override
   public ReducedTestSuite getReducedTestSuite() {
     return this.reducedTestSuite;
+  }
+
+  @Override
+  public void setReductionStrategy(ReductionStrategy strategy) {
+    this.tsrStrategy = strategy;
   }
 }
