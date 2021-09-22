@@ -3,3 +3,4 @@ gradle/
 **/gradlew*
 build/
 /JSR-Core/.testOut/
+/JSR-Core/.matrixOut/

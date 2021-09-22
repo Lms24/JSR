@@ -18,12 +18,12 @@ public class TSRData {
   public static final TestCase t4 = new TSRTestCase("t4", "t4");
   public static final TestCase t5 = new TSRTestCase("t5", "t5");
 
-  static final CoverageReport.Unit s1 = new CoverageReport.Unit("s1", 1, 1);
-  static final CoverageReport.Unit s2 = new CoverageReport.Unit("s2", 2, 2);
-  static final CoverageReport.Unit s3 = new CoverageReport.Unit("s3", 3, 3);
-  static final CoverageReport.Unit s4 = new CoverageReport.Unit("s4", 4, 4);
-  static final CoverageReport.Unit s5 = new CoverageReport.Unit("s5", 5, 5);
-  static final CoverageReport.Unit s6 = new CoverageReport.Unit("s6", 6, 6);
+  public static final CoverageReport.Unit s1 = new CoverageReport.Unit("s1", 1, 1);
+  public static final CoverageReport.Unit s2 = new CoverageReport.Unit("s2", 2, 2);
+  public static final CoverageReport.Unit s3 = new CoverageReport.Unit("s3", 3, 3);
+  public static final CoverageReport.Unit s4 = new CoverageReport.Unit("s4", 4, 4);
+  public static final CoverageReport.Unit s5 = new CoverageReport.Unit("s5", 5, 5);
+  public static final CoverageReport.Unit s6 = new CoverageReport.Unit("s6", 6, 6);
 
   public static final TestSuite smallOriginalTS = new TestSuite(List.of(t1, t2, t3, t4, t5));
   public static final CoverageReport smallCoverageReport = new CoverageReport(

@@ -44,19 +44,7 @@ public class GreedyHGSReductionStrategy implements ReductionStrategy {
   public GreedyHGSReductionStrategy(@NonNull TestSuite originalTestsuite,
                                     @NonNull CoverageReport coverageReport) {
     this.originalTestsuite = originalTestsuite;
-
-    List<TSRTestCase> rows =
-      originalTestsuite.testCases.stream()
-                                 .sorted(Comparator.comparing(TestCase::getFullName))
-                                 .map(TSRTestCase::new)
-                                 .collect(Collectors.toList());
-    List<CoverageReport.Unit> columns =
-      coverageReport.coveredUnits.stream()
-                                 .sorted(Comparator.comparing(CoverageReport.Unit::toString))
-                                 .collect(Collectors.toList());
-    this.table = ArrayTable.create(rows, columns);
-
-    this.populateTableFromCoverageReport(coverageReport);
+    this.table = coverageReport.toTable(false);
 
     this.unmarkedRequirements =
       coverageReport.coveredUnits.stream()
@@ -156,10 +144,5 @@ public class GreedyHGSReductionStrategy implements ReductionStrategy {
                      .filter(e -> e.getValue() != null && e.getValue())
                      .map(Map.Entry::getKey)
                      .collect(Collectors.toList());
-  }
-
-  private void populateTableFromCoverageReport(CoverageReport rep) {
-    rep.testCaseCoverageData.forEach((tc, units) ->
-                                       units.forEach(u -> this.table.put(new TSRTestCase(tc), u, true)));
   }
 }

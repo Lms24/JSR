@@ -1,5 +1,8 @@
 package at.tugraz.ist.stracke.jsr.core.coverage;
 
+import at.tugraz.ist.stracke.jsr.core.tsr.TSRTestCase;
+import at.tugraz.ist.stracke.jsr.test.TSRData;
+import com.google.common.collect.Table;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -29,6 +32,30 @@ class CoverageReportTest {
     assertThat(r.allUnits.toArray(), is(arrayWithSize(allUnits.size())));
     assertThat(r.coveredUnits.toArray(), is(arrayWithSize(coveredUnits.size())));
     assertThat(r.getCoverageScore(), is(equalTo(0.6)));
+  }
+
+  @Test
+  void testToTable() {
+    CoverageReport r = TSRData.simpleCoverageReport;
+
+    Table<TSRTestCase, CoverageReport.Unit, Boolean> table = r.toTable(true);
+
+    assertThat(table.rowKeySet(), hasSize(4));
+    assertThat(table.columnKeySet(), hasSize(6));
+    assertThat(table.get(new TSRTestCase(TSRData.t1), TSRData.s1), is(true));
+    assertThat(table.get(new TSRTestCase(TSRData.t3), TSRData.s3), anyOf(nullValue(), equalTo(true)));
+  }
+
+  @Test
+  void testToTable2() {
+    CoverageReport r = TSRData.simpleCoverageReport;
+
+    Table<TSRTestCase, CoverageReport.Unit, Boolean> table = r.toTable(false);
+
+    assertThat(table.rowKeySet(), hasSize(4));
+    assertThat(table.columnKeySet(), hasSize(3));
+    assertThat(table.get(new TSRTestCase(TSRData.t1), TSRData.s1), is(true));
+    assertThat(table.get(new TSRTestCase(TSRData.t3), TSRData.s3), anyOf(nullValue(), equalTo(true)));
   }
 
   @Test
