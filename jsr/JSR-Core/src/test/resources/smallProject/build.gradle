@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+}
+
+group 'at.tugrazt.ist.stracke.jsr'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'junit:junit:4.13.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+task testJar(type: Jar) {
+    archiveFileName.set("testJar.jar")
+    from sourceSets.test.output+sourceSets.test.allSource+sourceSets.main.output+sourceSets.main.allSource
+}
