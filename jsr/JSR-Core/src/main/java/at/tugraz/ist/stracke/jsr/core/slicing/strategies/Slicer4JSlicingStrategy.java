@@ -166,7 +166,10 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
         logger.info("Test case was executed successfully.");
         this.writeTraceLog();
       } else {
-        handleTCExecutionError(p);
+        boolean actualError = handleTCExecutionError(p);
+        if (!actualError) {
+          writeTraceLog();
+        }
       }
     } catch (IOException | InterruptedException e) {
       logger.error("Error during test case execution, Caught exception:");
@@ -331,7 +334,12 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
   private void writeTraceLog() throws IOException {
     final File fullLogFile = new File(this.pathToOutDir.toString() + "/" + FileNames.TRACE_FULL_LOG);
     final BufferedReader reader = new BufferedReader(new FileReader(fullLogFile));
-    List<String> slicing = reader.lines().filter(l -> l.contains("SLICING")).collect(Collectors.toList());
+
+    List<String> lines = reader.lines().collect(Collectors.toList());
+    List<String> slicing = lines.stream().filter(l -> l.contains("SLICING")).collect(Collectors.toList());
+
+    // the trace_full.log file contains fail/pass information, which we save here
+    this.testCase.setPassed(lines.stream().anyMatch(l -> l.toLowerCase().contains("test pass")));
 
     final File logFile = new File(this.pathToOutDir.toString() + "/" + FileNames.TRACE_LOG);
 
@@ -345,11 +353,25 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
       .lines().forEach(logger::error);
   }
 
-  private void handleTCExecutionError(@NonNull Process p) {
-    logger.error("Error during test case execution, See trace_full.log for more info");
+  private boolean handleTCExecutionError(@NonNull Process p) {
+    List<String> lines = null;
+    try {
+      lines = Files.readAllLines(Path.of(this.pathToOutDir.toString(), FileNames.TRACE_FULL_LOG));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
 
-    new BufferedReader(new InputStreamReader(p.getErrorStream()))
-      .lines().forEach(logger::error);
+    boolean testJustFailed = lines != null && lines.stream().anyMatch(l -> l.toLowerCase().contains("test fail"));
+
+    if (testJustFailed) {
+      return false;
+    } else {
+
+      logger.error("Error during test case execution, See trace_full.log for more info");
+      new BufferedReader(new InputStreamReader(p.getErrorStream()))
+        .lines().forEach(logger::error);
+      return true;
+    }
   }
 
   private void handleGraphCreationError(@NonNull Process p) {

@@ -47,6 +47,12 @@ public class SFLMatrixCsvExporter implements SFLMatrixExporter {
     this.passMatrixFilename = OUTCOME_MATRIX_FILENAME;
   }
 
+  public SFLMatrixCsvExporter(@NonNull Path outputDir) {
+    this.outputDir = outputDir;
+    this.coverageMatrixFilename = COVERAGE_MATRIX_FILENAME;
+    this.passMatrixFilename = OUTCOME_MATRIX_FILENAME;
+  }
+
   SFLMatrixCsvExporter(@NonNull CoverageReport coverageReport) {
     this.coverageReport = coverageReport;
     this.outputDir = null;
@@ -114,7 +120,7 @@ public class SFLMatrixCsvExporter implements SFLMatrixExporter {
                                             .sorted(Comparator.comparing(TestCase::getFullName))
                                             .forEach(tc -> sb.append(tc.getFullName())
                                                              .append(",")
-                                                             .append("1") //TODO add real verdict here
+                                                             .append(tc.isPassed() ? 1 : 0) //TODO add real verdict here
                                                              .append(System.lineSeparator()));
 
     return sb.toString();

@@ -15,6 +15,8 @@ public abstract class TestCase {
 
   private final List<IStatement> assertions;
 
+  private boolean passed;
+
   public TestCase(String name, String className, List<IStatement> assertions) {
     this.name = name;
     this.className = className;
@@ -63,5 +65,13 @@ public abstract class TestCase {
     return this.name.equals(t.name) &&
            this.className.equals(t.className) &&
            this.assertions.equals(t.assertions);
+  }
+
+  public boolean isPassed() {
+    return passed;
+  }
+
+  public void setPassed(boolean passed) {
+    this.passed = passed;
   }
 }

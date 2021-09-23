@@ -64,7 +64,7 @@ public class JUnitJSRFacadeBuilder {
     this.config.reductionStrategy = new GreedyIHGSReductionStrategy();
     this.config.reducer = new JUnitTestSuiteReducer(this.config.reductionStrategy);
 
-    this.config.exporter = new SFLMatrixCsvExporter();
+    this.config.exporter = new SFLMatrixCsvExporter(this.config.outputDir);
   }
 
   public JUnitJSRFacadeBuilder skipSFLMatrix() {

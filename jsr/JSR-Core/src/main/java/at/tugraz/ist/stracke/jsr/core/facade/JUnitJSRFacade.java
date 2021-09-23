@@ -1,23 +1,13 @@
 package at.tugraz.ist.stracke.jsr.core.facade;
 
 import at.tugraz.ist.stracke.jsr.core.coverage.CoverageReport;
-import at.tugraz.ist.stracke.jsr.core.coverage.strategies.CheckedCoverageStrategy;
 import at.tugraz.ist.stracke.jsr.core.coverage.strategies.CoverageStrategy;
-import at.tugraz.ist.stracke.jsr.core.parsing.JUnitTestSuiteParser;
 import at.tugraz.ist.stracke.jsr.core.parsing.TestSuiteParser;
-import at.tugraz.ist.stracke.jsr.core.parsing.strategies.JavaParserParsingStrategy;
-import at.tugraz.ist.stracke.jsr.core.parsing.strategies.ParsingStrategy;
-import at.tugraz.ist.stracke.jsr.core.sfl.SFLMatrixCsvExporter;
 import at.tugraz.ist.stracke.jsr.core.sfl.SFLMatrixExporter;
 import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
-import at.tugraz.ist.stracke.jsr.core.slicing.JUnitTestSuiteSlicer;
 import at.tugraz.ist.stracke.jsr.core.slicing.TestSuiteSlicer;
-import at.tugraz.ist.stracke.jsr.core.slicing.strategies.Slicer4JSlicingStrategy;
-import at.tugraz.ist.stracke.jsr.core.slicing.strategies.SlicingStrategy;
 import at.tugraz.ist.stracke.jsr.core.tsr.ReducedTestSuite;
-import at.tugraz.ist.stracke.jsr.core.tsr.reducer.JUnitTestSuiteReducer;
 import at.tugraz.ist.stracke.jsr.core.tsr.reducer.TestSuiteReducer;
-import at.tugraz.ist.stracke.jsr.core.tsr.strategies.GreedyIHGSReductionStrategy;
 import at.tugraz.ist.stracke.jsr.core.tsr.strategies.ReductionStrategy;
 import org.checkerframework.checker.nullness.qual.NonNull;
 

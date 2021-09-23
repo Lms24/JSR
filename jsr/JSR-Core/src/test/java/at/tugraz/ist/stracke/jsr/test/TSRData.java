@@ -12,11 +12,11 @@ import java.util.Set;
 
 public class TSRData {
 
-  public static final TestCase t1 = new TSRTestCase("t1", "t1");
-  public static final TestCase t2 = new TSRTestCase("t2", "t2");
-  public static final TestCase t3 = new TSRTestCase("t3", "t3");
-  public static final TestCase t4 = new TSRTestCase("t4", "t4");
-  public static final TestCase t5 = new TSRTestCase("t5", "t5");
+  public static final TestCase t1 = new TSRTestCase("t1", "t1", true);
+  public static final TestCase t2 = new TSRTestCase("t2", "t2", true);
+  public static final TestCase t3 = new TSRTestCase("t3", "t3", true);
+  public static final TestCase t4 = new TSRTestCase("t4", "t4", true);
+  public static final TestCase t5 = new TSRTestCase("t5", "t5", true);
 
   public static final CoverageReport.Unit s1 = new CoverageReport.Unit("s1", 1, 1);
   public static final CoverageReport.Unit s2 = new CoverageReport.Unit("s2", 2, 2);

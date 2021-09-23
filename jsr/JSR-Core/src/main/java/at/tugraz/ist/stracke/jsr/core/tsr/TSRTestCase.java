@@ -16,6 +16,11 @@ public class TSRTestCase extends TestCase {
     super(name, className, Collections.emptyList());
   }
 
+  public TSRTestCase(String name, String className, boolean passed) {
+    super(name, className, Collections.emptyList());
+    super.setPassed(passed);
+  }
+
   @Override
   public String toString() {
     return super.getFullName();
