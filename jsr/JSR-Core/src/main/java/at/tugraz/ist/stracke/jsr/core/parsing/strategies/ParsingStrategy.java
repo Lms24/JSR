@@ -29,5 +29,4 @@ public interface ParsingStrategy {
    * @return a collection of executable {@link Statement}s.
    */
   List<Statement> parseStatements();
-
 }

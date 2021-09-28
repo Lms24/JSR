@@ -1,11 +1,11 @@
 package at.tugraz.ist.stracke.jsr.core.parsing.strategies;
 
+import at.tugraz.ist.stracke.jsr.core.parsing.misc.CompilationUnitExtractor;
 import at.tugraz.ist.stracke.jsr.core.parsing.statements.AssertionStatement;
 import at.tugraz.ist.stracke.jsr.core.parsing.statements.IStatement;
 import at.tugraz.ist.stracke.jsr.core.shared.JUnitTestCase;
 import at.tugraz.ist.stracke.jsr.core.shared.TestCase;
 import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
-import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -13,10 +13,8 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
-import com.github.javaparser.utils.SourceRoot;
 import org.apache.logging.log4j.LogManager;
 
-import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,14 +26,16 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
 
   private static final Logger logger = LogManager.getLogger(ParsingStrategy.class);
   private Path filePath;
-  private String code;
+
+  private final CompilationUnitExtractor cuExtractor;
 
   public JavaParserParsingStrategy(@NonNull String code) {
-    this.code = code;
+    this.cuExtractor = new CompilationUnitExtractor(code);
   }
 
   public JavaParserParsingStrategy(@NonNull Path filePath) {
     this.filePath = filePath;
+    this.cuExtractor = new CompilationUnitExtractor(filePath);
   }
 
 
@@ -59,8 +59,7 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
 
   private TestSuite parseTestSuiteFromFilePath() {
     logger.info("Parsing test suite from File Path");
-    SourceRoot sourceRoot = new SourceRoot(this.filePath);
-    List<CompilationUnit> compilationUnits = getAllCompilationUnits(sourceRoot);
+    List<CompilationUnit> compilationUnits = cuExtractor.getCompilationUnits();
     List<TestSuite> partialSuites = compilationUnits.stream()
                                                     .map(this::parseTestSuite)
                                                     .collect(Collectors.toList());
@@ -71,7 +70,7 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
   private TestSuite parseTestSuiteFromString() {
     logger.info("Parsing test suite from String code");
 
-    CompilationUnit cu = StaticJavaParser.parse(code);
+    CompilationUnit cu = cuExtractor.getCompilationUnits().get(0);
 
     return parseTestSuite(cu);
   }
@@ -129,8 +128,7 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
 
   private List<at.tugraz.ist.stracke.jsr.core.parsing.statements.Statement> parseStatementsFromFilePath() {
     logger.info("Parsing executable lines from File Path");
-    SourceRoot sourceRoot = new SourceRoot(this.filePath);
-    List<CompilationUnit> compilationUnits = getAllCompilationUnits(sourceRoot);
+    List<CompilationUnit> compilationUnits = cuExtractor.getCompilationUnits();
     List<List<at.tugraz.ist.stracke.jsr.core.parsing.statements.Statement>> partialStatementLists =
       compilationUnits.stream()
                       .map(this::parseStatements)
@@ -138,18 +136,10 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
     return this.mergePartialStatementLists(partialStatementLists);
   }
 
-  private List<CompilationUnit> getAllCompilationUnits(SourceRoot sourceRoot) {
-    return sourceRoot.tryToParseParallelized()
-                     .stream()
-                     .filter(pr -> pr.isSuccessful() && pr.getResult().isPresent())
-                     .map(pr -> pr.getResult().get())
-                     .collect(Collectors.toList());
-  }
-
   private List<at.tugraz.ist.stracke.jsr.core.parsing.statements.Statement> parseStatementsFromString() {
     logger.info("Parsing test suite from String code");
 
-    CompilationUnit cu = StaticJavaParser.parse(code);
+    CompilationUnit cu = cuExtractor.getCompilationUnits().get(0);
 
     return parseStatements(cu);
   }
