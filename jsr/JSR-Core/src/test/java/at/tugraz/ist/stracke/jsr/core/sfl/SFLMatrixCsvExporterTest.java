@@ -4,7 +4,6 @@ import at.tugraz.ist.stracke.jsr.test.TSRData;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 
 import static org.hamcrest.MatcherAssert.*;

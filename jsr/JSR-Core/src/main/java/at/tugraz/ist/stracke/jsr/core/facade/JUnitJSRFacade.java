@@ -8,6 +8,7 @@ import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
 import at.tugraz.ist.stracke.jsr.core.slicing.TestSuiteSlicer;
 import at.tugraz.ist.stracke.jsr.core.tsr.ReducedTestSuite;
 import at.tugraz.ist.stracke.jsr.core.tsr.reducer.TestSuiteReducer;
+import at.tugraz.ist.stracke.jsr.core.tsr.serializer.Serializer;
 import at.tugraz.ist.stracke.jsr.core.tsr.strategies.ReductionStrategy;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -29,33 +30,69 @@ public class JUnitJSRFacade implements JSRFacade {
   public ReducedTestSuite reduceTestSuite() {
 
     // Step 1: Parse the test suite
-    TestSuiteParser parser = this.config.testSuiteParser;
-    parser.parse();
-    TestSuite originalTestSuite = parser.getResult();
+    TestSuite originalTestSuite = parseTestSuite();
 
     // Step 2: Code instrumentation, TS execution and Slicing per test case, Coverage
-    TestSuiteSlicer slicer = this.config.slicer;
-    slicer.setTestSuite(originalTestSuite);
-
-    CoverageStrategy coverageStrategy = this.config.coverageStrategy;
-    coverageStrategy.setOriginalTestSuite(originalTestSuite);
-
-    CoverageReport report = coverageStrategy.calculateOverallCoverage();
+    CoverageReport report = calculateCoverage(originalTestSuite);
 
     // Step 3: Perform TSR
+    final ReducedTestSuite reducedTestSuite = reduceTestSuite(originalTestSuite, report);
+
+    // optional step: SFL export
+    if (this.config.exporter != null) {
+      exportSFLMatrices(report);
+    }
+
+    // Optional step: RTS serialization
+    if (this.config.serialize) {
+      serializeReducedTestSuite(reducedTestSuite);
+    }
+
+    return reducedTestSuite;
+  }
+
+  private void serializeReducedTestSuite(ReducedTestSuite reducedTestSuite) {
+    final Serializer serializer = this.config.serializer;
+
+    if (this.config.serializationDirectory != null) {
+      serializer.setOutputDirectory(this.config.serializationDirectory);
+    }
+
+    serializer.setReducedTestSuite(reducedTestSuite)
+              .serialize(true);
+  }
+
+  private void exportSFLMatrices(CoverageReport report) {
+    SFLMatrixExporter exporter = this.config.exporter;
+    exporter.setCoverageReport(report);
+    exporter.exportSFLMatrices();
+  }
+
+  private ReducedTestSuite reduceTestSuite(TestSuite originalTestSuite, CoverageReport report) {
     ReductionStrategy reductionStrategy = this.config.reductionStrategy;
     reductionStrategy.setOriginalTestSuite(originalTestSuite);
     reductionStrategy.setCoverageReport(report);
 
     TestSuiteReducer reducer = this.config.reducer;
 
-    // optional step: SFL export
-    if (this.config.exporter != null) {
-      SFLMatrixExporter exporter = this.config.exporter;
-      exporter.setCoverageReport(report);
-      exporter.exportSFLMatrices();
-    }
+    return reducer.reduce()
+                  .generateReport(this.config.outputDir)
+                  .getReducedTestSuite();
+  }
 
-    return reducer.reduce().generateReport(this.config.outputDir).getReducedTestSuite();
+  private CoverageReport calculateCoverage(TestSuite originalTestSuite) {
+    TestSuiteSlicer slicer = this.config.slicer;
+    slicer.setTestSuite(originalTestSuite);
+
+    CoverageStrategy coverageStrategy = this.config.coverageStrategy;
+    coverageStrategy.setOriginalTestSuite(originalTestSuite);
+
+    return coverageStrategy.calculateOverallCoverage();
+  }
+
+  private TestSuite parseTestSuite() {
+    TestSuiteParser parser = this.config.testSuiteParser;
+    parser.parse();
+    return parser.getResult();
   }
 }

@@ -1,6 +1,7 @@
 package at.tugraz.ist.stracke.jsr.core.tsr.reducer;
 
 import at.tugraz.ist.stracke.jsr.core.tsr.ReducedTestSuite;
+import at.tugraz.ist.stracke.jsr.core.tsr.serializer.Serializer;
 import at.tugraz.ist.stracke.jsr.core.tsr.strategies.ReductionStrategy;
 
 import java.nio.file.Path;
@@ -41,19 +42,6 @@ public interface TestSuiteReducer {
    * @return a reference to self for optional method chaining
    */
   TestSuiteReducer generateReport(Path reportDir, String reportName);
-
-  /**
-   * Serializes the reduced test suite to a file structure,
-   * resembling the original test suite's file and code structure
-   * as closely as possible. Obviously, the removed TCs are no longer
-   * present in the serialization.
-   *
-   * @param srcTestDir is the root directory of the test directory
-   *                   (e.g. myProject/src/test in a typical Java project)
-   *
-   * @return a reference to self for optional method chaining
-   */
-  TestSuiteReducer serialize(Path srcTestDir);
 
   ReducedTestSuite getReducedTestSuite();
 

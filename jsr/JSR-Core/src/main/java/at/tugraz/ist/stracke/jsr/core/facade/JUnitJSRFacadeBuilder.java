@@ -14,6 +14,7 @@ import at.tugraz.ist.stracke.jsr.core.slicing.strategies.Slicer4JSlicingStrategy
 import at.tugraz.ist.stracke.jsr.core.slicing.strategies.SlicingStrategy;
 import at.tugraz.ist.stracke.jsr.core.tsr.reducer.JUnitTestSuiteReducer;
 import at.tugraz.ist.stracke.jsr.core.tsr.reducer.TestSuiteReducer;
+import at.tugraz.ist.stracke.jsr.core.tsr.serializer.JUnit4Serializer;
 import at.tugraz.ist.stracke.jsr.core.tsr.strategies.GreedyIHGSReductionStrategy;
 import at.tugraz.ist.stracke.jsr.core.tsr.strategies.ReductionStrategy;
 
@@ -65,6 +66,11 @@ public class JUnitJSRFacadeBuilder {
     this.config.reducer = new JUnitTestSuiteReducer(this.config.reductionStrategy);
 
     this.config.exporter = new SFLMatrixCsvExporter(this.config.outputDir);
+
+    /* Turning off serialization by default for now */
+    this.config.serialize = false;
+    this.config.serializationDirectory = null;
+    this.config.serializer = new JUnit4Serializer(this.config.testDir);
   }
 
   public JUnitJSRFacadeBuilder skipSFLMatrix() {
@@ -152,6 +158,27 @@ public class JUnitJSRFacadeBuilder {
 
   public JUnitJSRFacadeBuilder sflExporter(SFLMatrixExporter exporter) {
     this.config.exporter = exporter;
+    return this;
+  }
+
+  /**
+   * Directly modifies the test source files and deactivates the
+   * test cases deemed redundant.
+   */
+  public JUnitJSRFacadeBuilder applyModifications() {
+    this.config.serialize = true;
+    return this;
+  }
+
+  /**
+   * Modifies a copy of the test source files and saves them in
+   * the supplied path
+   *
+   * @param copyDirectory the directory path of the modified copies
+   */
+  public JUnitJSRFacadeBuilder applyModificationsAsCopy(Path copyDirectory) {
+    this.config.serializationDirectory = copyDirectory;
+    this.config.serialize = true;
     return this;
   }
 

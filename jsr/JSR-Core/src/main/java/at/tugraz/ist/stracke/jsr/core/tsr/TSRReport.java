@@ -54,5 +54,7 @@ public class TSRReport {
     return sb.toString();
   }
 
-
+  public ReducedTestSuite getReducedTestSuite() {
+    return reducedTestSuite;
+  }
 }

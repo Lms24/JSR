@@ -7,6 +7,7 @@ import at.tugraz.ist.stracke.jsr.core.sfl.SFLMatrixExporter;
 import at.tugraz.ist.stracke.jsr.core.slicing.TestSuiteSlicer;
 import at.tugraz.ist.stracke.jsr.core.slicing.strategies.SlicingStrategy;
 import at.tugraz.ist.stracke.jsr.core.tsr.reducer.TestSuiteReducer;
+import at.tugraz.ist.stracke.jsr.core.tsr.serializer.Serializer;
 import at.tugraz.ist.stracke.jsr.core.tsr.strategies.ReductionStrategy;
 
 import java.nio.file.Path;
@@ -34,6 +35,10 @@ class JSRConfig {
   public ReductionStrategy reductionStrategy;
 
   public SFLMatrixExporter exporter;
+
+  public boolean serialize;
+  public Path serializationDirectory;
+  public Serializer serializer;
 
   public JSRConfig(Path sourceDir, Path testDir, Path jarFile, Path outputDir, Path slicerDir) {
     this.sourceDir = sourceDir;

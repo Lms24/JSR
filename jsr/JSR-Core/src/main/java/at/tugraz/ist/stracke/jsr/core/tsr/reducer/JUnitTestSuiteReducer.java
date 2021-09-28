@@ -2,6 +2,7 @@ package at.tugraz.ist.stracke.jsr.core.tsr.reducer;
 
 import at.tugraz.ist.stracke.jsr.core.tsr.ReducedTestSuite;
 import at.tugraz.ist.stracke.jsr.core.tsr.TSRReport;
+import at.tugraz.ist.stracke.jsr.core.tsr.serializer.Serializer;
 import at.tugraz.ist.stracke.jsr.core.tsr.strategies.ReductionStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -70,13 +71,6 @@ public class JUnitTestSuiteReducer implements TestSuiteReducer {
     logger.info("Generated report and wrote it to {}",
                 reportDir + "/" + reportName);
 
-    return this;
-  }
-
-  @Override
-  public TestSuiteReducer serialize(Path srcTestDir) {
-    // TODO actually reduce the program's test suite
-    //  (i.e. delete unnecessary test cases)
     return this;
   }
 

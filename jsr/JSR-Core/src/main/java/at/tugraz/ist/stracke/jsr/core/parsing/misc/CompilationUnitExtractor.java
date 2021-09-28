@@ -36,7 +36,7 @@ public class CompilationUnitExtractor {
   }
 
   private List<CompilationUnit> parseCompilationUnitsFromFilePath() {
-    logger.info("Collecting compilation units from File Path");
+    logger.info("Collecting compilation units from File Path {}", this.filePath.toString());
     SourceRoot sourceRoot = new SourceRoot(this.filePath);
     return sourceRoot.tryToParseParallelized()
                      .stream()
