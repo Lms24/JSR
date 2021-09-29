@@ -45,6 +45,7 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
   private String jarFileName;
   private String instrumentedJarFileName;
 
+  private final String classPathSeparator;
   /**
    * Initializes a new Slicer4JSlicingStrategy instance
    *
@@ -54,6 +55,8 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
   public Slicer4JSlicingStrategy(String pathToJar,
                                  String pathToSlicer,
                                  String pathToOutDir) {
+
+    this.classPathSeparator = System.getProperty("path.separator");
 
     try {
       this.convertPaths(pathToJar, pathToSlicer, pathToOutDir);
@@ -98,7 +101,7 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
     this.pathToLoggerJar = Path.of("../../slicer/" + Slicer4JCLI.Paths.PATH_LOGGER_JAR)
                                .toAbsolutePath()
                                .toRealPath();
-    final String[] tmp = this.pathToJar.toString().split("/");
+    final String[] tmp = this.pathToJar.toString().split(File.pathSeparator.equals("/") ? "/" : "\\\\");
     this.jarFileName = tmp[tmp.length - 1];
     this.instrumentedJarFileName = this.jarFileName
       .replace(".jar", FileNames.INSTRUMENTED_JAR_SUFFIX + ".jar");
@@ -109,8 +112,9 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
 
     ProcessBuilder pb = new ProcessBuilder()
       .command("java", "-Xmx8g",
-               "-cp", String.format("%s/%s:%s/%s",
+               "-cp", String.format("%s/%s%s%s/%s",
                                     this.pathToSlicer.toString(), Slicer4JCLI.Paths.PATH_SLICER4J_JAR_WITH_DEPENDENCIES,
+                                    this.classPathSeparator,
                                     this.pathToSlicer.toString(), Slicer4JCLI.Paths.PATH_SLICER4J_ALL_LIBS),
                SL4C_MAIN_CLASS,
                Args.ARG_MODE, Args.MODE_INSTRUMENT,
@@ -145,9 +149,11 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
 
     ProcessBuilder pb = new ProcessBuilder()
       .command("java", "-Xmx8g",
-               "-cp", String.format("%s/%s:%s/%s:%s",
+               "-cp", String.format("%s/%s%s%s/%s%s%s",
                                     this.pathToSlicer.toString(), Slicer4JCLI.Paths.PATH_JUNIT4_RUNNER_JAR,
+                                    this.classPathSeparator,
                                     this.pathToSlicer.toString(), Slicer4JCLI.Paths.PATH_JUNIT4_LIB_JAR,
+                                    this.classPathSeparator,
                                     String.format("%s/%s", this.pathToOutDir, this.instrumentedJarFileName)),
                JUNIT4_RUNNER_MAIN_CLASS,
                String.format("%s#%s", this.testCase.getClassName(), this.testCase.getName()))
@@ -201,8 +207,9 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
 
     ProcessBuilder pb = new ProcessBuilder()
       .command("java", "-Xmx8g",
-               "-cp", String.format("%s/%s:%s/%s",
+               "-cp", String.format("%s/%s%s%s/%s",
                                     this.pathToSlicer.toString(), Slicer4JCLI.Paths.PATH_SLICER4J_JAR_WITH_DEPENDENCIES,
+                                    this.classPathSeparator,
                                     this.pathToSlicer.toString(), Slicer4JCLI.Paths.PATH_SLICER4J_ALL_LIBS),
                SL4C_MAIN_CLASS,
                Args.ARG_MODE, Args.MODE_GRAPH,
@@ -271,8 +278,9 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
 
     ProcessBuilder pb = new ProcessBuilder()
       .command("java", "-Xmx8g",
-               "-cp", String.format("%s/%s:%s/%s",
+               "-cp", String.format("%s/%s%s%s/%s",
                                     this.pathToSlicer.toString(), Slicer4JCLI.Paths.PATH_SLICER4J_JAR_WITH_DEPENDENCIES,
+                                    this.classPathSeparator,
                                     this.pathToSlicer.toString(), Slicer4JCLI.Paths.PATH_SLICER4J_ALL_LIBS),
                SL4C_MAIN_CLASS,
                Args.ARG_MODE, Args.MODE_SLICE,
