@@ -15,6 +15,8 @@ public class CoverageReport {
   public final Set<Unit> coveredUnits;
   public final Map<TestCase, Set<Unit>> testCaseCoverageData;
 
+  private List<TSRTestCase> sortedTestCases;
+
   public CoverageReport(Set<Unit> allUnits,
                         Set<Unit> coveredUnits,
                         Map<TestCase, Set<Unit>> testCaseCoverageData) {
@@ -28,11 +30,19 @@ public class CoverageReport {
            this.coveredUnits.size() / (double) this.allUnits.size() : 0;
   }
 
-  public Table<TSRTestCase, Unit, Boolean> toTable(boolean includeUncoveredUnits) {
-    List<TSRTestCase> rows = testCaseCoverageData.keySet().stream()
+  public List<TSRTestCase> getSortedTestCases() {
+    if (this.sortedTestCases == null) {
+      this.sortedTestCases = testCaseCoverageData.keySet()
+                                                 .stream()
                                                  .sorted(Comparator.comparing(TestCase::getFullName))
                                                  .map(TSRTestCase::new)
                                                  .collect(Collectors.toList());
+    }
+    return this.sortedTestCases;
+  }
+
+  public Table<TSRTestCase, Unit, Boolean> toTable(boolean includeUncoveredUnits) {
+    List<TSRTestCase> rows = this.getSortedTestCases();
 
     Set<Unit> columnUnits = includeUncoveredUnits ? this.allUnits : this.coveredUnits;
 

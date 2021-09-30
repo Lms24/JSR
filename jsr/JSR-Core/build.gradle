@@ -15,13 +15,14 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.0-M1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.0-M1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.0'
     testImplementation 'org.hamcrest:hamcrest:2.2'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.1'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.14.1'
-    implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.22.1'
-    implementation("com.google.guava:guava:30.1.1-jre")
+    implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.23.0'
+    implementation('com.google.guava:guava:31.0.1-jre')
+    implementation('io.jenetics:jenetics:6.3.0')
 }
 
 test {

@@ -36,18 +36,16 @@ import java.util.stream.Stream;
  * locally optimal. A better global optimum might exist that is not found by the
  * algorithm/heuristic.
  */
-public class GreedyHGSReductionStrategy implements ReductionStrategy {
-  private TestSuite originalTestsuite;
-  protected Table<TSRTestCase, CoverageReport.Unit, Boolean> table;
+public class GreedyHGSReductionStrategy extends BaseReductionStrategy {
   protected Deque<CoverageReport.Unit> unmarkedRequirements;
 
   public GreedyHGSReductionStrategy() {
+    super();
   }
 
   public GreedyHGSReductionStrategy(@NonNull TestSuite originalTestsuite,
                                     @NonNull CoverageReport coverageReport) {
-    this.originalTestsuite = originalTestsuite;
-    this.table = coverageReport.toTable(false);
+    super(originalTestsuite, coverageReport);
 
     this.unmarkedRequirements =
       coverageReport.coveredUnits.stream()
@@ -80,8 +78,7 @@ public class GreedyHGSReductionStrategy implements ReductionStrategy {
       allReqsMarked = this.unmarkedRequirements.isEmpty();
     }
 
-    final List<TestCase> removedTCs = this.originalTestsuite.testCases.stream().filter(
-      t -> !retainedTCs.contains(t)).collect(Collectors.toList());
+    final List<TestCase> removedTCs = super.getRemovedTCs(retainedTCs);
 
     return new ReducedTestSuite(retainedTCs, removedTCs);
   }
@@ -130,36 +127,12 @@ public class GreedyHGSReductionStrategy implements ReductionStrategy {
     return result;
   }
 
-
-  protected List<TSRTestCase> getTestCasesSatisfyingRequirement(CoverageReport.Unit req) {
-    return this.table.column(req)
-                     .entrySet()
-                     .stream()
-                     .filter(e -> e.getValue() != null && e.getValue())
-                     .map(Map.Entry::getKey)
-                     .collect(Collectors.toList());
-  }
-
-
-  protected List<CoverageReport.Unit> getRequirementsSatisfiedByTestCase(TSRTestCase req) {
-    return this.table.row(req).entrySet()
-                     .stream()
-                     .filter(e -> e.getValue() != null && e.getValue())
-                     .map(Map.Entry::getKey)
-                     .collect(Collectors.toList());
-  }
-
   @Override
   public void setCoverageReport(CoverageReport report) {
-    this.table = report.toTable(false);
+    super.setCoverageReport(report);
     this.unmarkedRequirements =
       report.coveredUnits.stream()
                          .sorted(Comparator.comparing(u -> filterSatisfyingTestCases(u).count()))
                          .collect(Collectors.toCollection(ArrayDeque::new));
-  }
-
-  @Override
-  public void setOriginalTestSuite(TestSuite testSuite) {
-    this.originalTestsuite = testSuite;
   }
 }
