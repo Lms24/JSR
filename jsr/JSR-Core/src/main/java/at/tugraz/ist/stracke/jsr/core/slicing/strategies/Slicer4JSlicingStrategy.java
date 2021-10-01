@@ -101,7 +101,7 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
     this.pathToLoggerJar = Path.of("../../slicer/" + Slicer4JCLI.Paths.PATH_LOGGER_JAR)
                                .toAbsolutePath()
                                .toRealPath();
-    final String[] tmp = this.pathToJar.toString().split(File.pathSeparator.equals("/") ? "/" : "\\\\");
+    final String[] tmp = this.pathToJar.toString().split(File.separator.equals("\\") ? "\\\\" : "/");
     this.jarFileName = tmp[tmp.length - 1];
     this.instrumentedJarFileName = this.jarFileName
       .replace(".jar", FileNames.INSTRUMENTED_JAR_SUFFIX + ".jar");

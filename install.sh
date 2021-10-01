@@ -1,5 +1,5 @@
 #!/bin/bash
-cd "$(dirname "$0")"
+cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" 
 
 
 
