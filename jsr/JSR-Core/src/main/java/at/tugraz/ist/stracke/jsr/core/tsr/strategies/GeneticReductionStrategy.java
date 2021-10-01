@@ -32,12 +32,15 @@ import static io.jenetics.engine.Limits.bySteadyFitness;
  * evolutionarily best result if all requirements are satisfied but with the fewest test cases
  * possible.
  * <p>
- * Evolution happens over generations with the following alteration strategies:
- * TODO not yet decided, update once final
+ * Evolution happens over generations with the following strategies:
+ * Selection: Roulette Wheel strategy
+ * Alteration: Mutation & Single Point Crossover
  *
  * @see <a href="https://jenetics.io/">Jenetics library website</a>
  */
 public class GeneticReductionStrategy extends BaseReductionStrategy {
+
+  private static final int POPULATION_SIZE = 500;
 
   private static final double PROB_BIT_GENE_TRUE_INIT = 0.15;
   private static final double PROB_MUTATOR = 0.55;
@@ -46,10 +49,7 @@ public class GeneticReductionStrategy extends BaseReductionStrategy {
   private static final int LIMIT_STEADY_FITNESS = 7;
   private static final int LIMIT_MAX_GENERATIONS = 100;
 
-
   private final Logger logger = LogManager.getLogger(GeneticReductionStrategy.class);
-
-  int maxNumberOfSatisfyingTestCasesPerUnit;
 
   public GeneticReductionStrategy(@NonNull TestSuite testSuite,
                                   @NonNull CoverageReport coverageReport) {
@@ -61,20 +61,12 @@ public class GeneticReductionStrategy extends BaseReductionStrategy {
 
   @Override
   public @NonNull ReducedTestSuite reduce() {
-    //TODO necessary?
-    maxNumberOfSatisfyingTestCasesPerUnit = this.coverageReport.testCaseCoverageData.values()
-                                                                                    .stream()
-                                                                                    .map(Set::size)
-                                                                                    .max(
-                                                                                      Comparator.comparingInt(s -> s))
-                                                                                    .orElse(0);
-
     final int chromosomeLength = coverageReport.testCaseCoverageData.keySet().size();
 
     Engine<BitGene, Integer> engine =
       Engine.builder(this::getFitness,
                      BitChromosome.of(chromosomeLength, PROB_BIT_GENE_TRUE_INIT))
-            .populationSize(500)
+            .populationSize(POPULATION_SIZE)
             .selector(new RouletteWheelSelector<>())
             .alterers(new Mutator<>(PROB_MUTATOR),
                       new SinglePointCrossover<>(PROB_ROULETTE))
@@ -119,22 +111,24 @@ public class GeneticReductionStrategy extends BaseReductionStrategy {
   }
 
   int getFitnessFromSelection(List<TSRTestCase> tcSelection) {
-    List<CoverageReport.Unit> allCoveredUnits = tcSelection.stream()
-                                                           .map(this::getRequirementsSatisfiedByTestCase)
-                                                           .flatMap(Collection::stream)
-                                                           .collect(Collectors.toList());
+    List<CoverageReport.Unit> allCoveredReqs = tcSelection.stream()
+                                                          .map(this::getRequirementsSatisfiedByTestCase)
+                                                          .flatMap(Collection::stream)
+                                                          .collect(Collectors.toList());
 
-    Set<CoverageReport.Unit> uniqueCoveredUnits = new HashSet<>(allCoveredUnits);
+    Set<CoverageReport.Unit> uniqueCoveredReqs = new HashSet<>(allCoveredReqs);
 
-    List<Integer> frequencyOfDuplicatedCoveredUnits = uniqueCoveredUnits.stream()
-                                                              .map(u -> Collections.frequency(allCoveredUnits, u))
-                                                              .filter(f -> f > 1)
-                                                              .map(f -> f - 1)
-                                                              .collect(Collectors.toList());
+    List<Integer> numberOfDuplicatedCoveredReqs = uniqueCoveredReqs.stream()
+                                                                   .map(u -> Collections.frequency(allCoveredReqs, u))
+                                                                   .filter(f -> f > 1)
+                                                                   .map(f -> f - 1)
+                                                                   .collect(Collectors.toList());
 
-    int sumDuplicates = frequencyOfDuplicatedCoveredUnits.stream().mapToInt(i -> i).sum();
+    int sumDuplicates = numberOfDuplicatedCoveredReqs.stream()
+                                                     .mapToInt(i -> i)
+                                                     .sum();
 
-    return Math.max(uniqueCoveredUnits.size() -  sumDuplicates, 1);
+    return Math.max(uniqueCoveredReqs.size() - sumDuplicates, 1);
   }
 
   private List<TSRTestCase> getTestCaseSelectionFromBitGenotype(final Genotype<BitGene> geneGenotype) {

@@ -92,18 +92,16 @@ public class SFLMatrixCsvExporter implements SFLMatrixExporter {
     sb.append(System.lineSeparator());
 
     // write coverage rows
-    table.rowMap().forEach((tc, map) -> {
-      sb.append(tc.getFullName())
-        .append(",")
-        .append(map.entrySet()
-                   .stream()
-                   .sorted(Comparator.comparing(e -> e.getKey().toString()))
-                   .collect(Collectors.toList())
-                   .stream()
-                   .map(b -> b.getValue() != null && b.getValue() ? "1" : "0").collect(
-            Collectors.joining(",")))
-        .append(System.lineSeparator());
-    });
+    table.rowMap().forEach((tc, map) -> sb.append(tc.getFullName())
+                                          .append(",")
+                                          .append(map.entrySet()
+                                                     .stream()
+                                                     .sorted(Comparator.comparing(e -> e.getKey().toString()))
+                                                     .collect(Collectors.toList())
+                                                     .stream()
+                                                     .map(b -> b.getValue() != null && b.getValue() ? "1" : "0")
+                                                     .collect(Collectors.joining(",")))
+                                          .append(System.lineSeparator()));
 
     return sb.toString();
   }
@@ -120,7 +118,7 @@ public class SFLMatrixCsvExporter implements SFLMatrixExporter {
                                             .sorted(Comparator.comparing(TestCase::getFullName))
                                             .forEach(tc -> sb.append(tc.getFullName())
                                                              .append(",")
-                                                             .append(tc.isPassed() ? 1 : 0) //TODO add real verdict here
+                                                             .append(tc.isPassed() ? 1 : 0)
                                                              .append(System.lineSeparator()));
 
     return sb.toString();

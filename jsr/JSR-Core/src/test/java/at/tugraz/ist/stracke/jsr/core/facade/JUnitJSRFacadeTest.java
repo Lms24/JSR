@@ -66,20 +66,20 @@ class JUnitJSRFacadeTest {
                  is(true));
 
       assertThat(passMatrixLines.stream().anyMatch(
-        l -> l.contains("at.tugraz.ist.stracke.jsr.CalculatorTest:divideZeroByNotZero,1")),
+                   l -> l.contains("at.tugraz.ist.stracke.jsr.CalculatorTest:divideZeroByNotZero,1")),
                  is(true));
       assertThat(
         passMatrixLines.stream().anyMatch(l -> l.contains("at.tugraz.ist.stracke.jsr.CalculatorTest:shouldFail,0")),
         is(true));
 
       assertThat(covMatrixLines.stream().anyMatch(
-        l -> l.contains("at.tugraz.ist.stracke.jsr.MessageTest:testEquals,0,0,0,1,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0")),
+                   l -> l.contains("at.tugraz.ist.stracke.jsr.MessageTest:testEquals,0,0,0,1,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0")),
                  is(true));
       assertThat(covMatrixLines.stream().anyMatch(
-        l -> l.contains("at.tugraz.ist.stracke.jsr.MessageTest:testEquals2,0,0,0,1,1,1,0,0,0,0,0,1,1,0,1,0,0,0,0")),
+                   l -> l.contains("at.tugraz.ist.stracke.jsr.MessageTest:testEquals2,0,0,0,1,1,1,0,0,0,0,0,1,1,0,1,0,0,0,0")),
                  is(true));
       assertThat(covMatrixLines.stream().anyMatch(
-        l -> l.contains("at.tugraz.ist.stracke.jsr.MessageTest:testGetters,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1")),
+                   l -> l.contains("at.tugraz.ist.stracke.jsr.MessageTest:testGetters,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1")),
                  is(true));
 
     } catch (IOException e) {
@@ -106,7 +106,7 @@ class JUnitJSRFacadeTest {
                                                                     Path.of(slicerDir));
 
     JSRFacade facade = facadeBuilder.applyModificationsAsCopy(Path.of(serialDir))
-                                    .build();
+      .build();
 
     ReducedTestSuite rts = facade.reduceTestSuite();
 
@@ -118,20 +118,30 @@ class JUnitJSRFacadeTest {
     Path passMatrix = Path.of(outDir, "outcomeMatrix.csv");
     Path tsrReport = Path.of(outDir, "tsr-report.xml");
     Path instrumentedJar = Path.of(outDir, "testJar_i.jar");
+    Path serializedCalculatorTest = Path.of(serialDir, "CalculatorTest.java");
+    Path serializedMessageTest = Path.of(serialDir, "MessageTest.java");
 
     assertThat(covMatrix.toFile().exists(), is(true));
     assertThat(passMatrix.toFile().exists(), is(true));
     assertThat(tsrReport.toFile().exists(), is(true));
     assertThat(instrumentedJar.toFile().exists(), is(true));
+    assertThat(serializedCalculatorTest.toFile().exists(), is(true));
+    assertThat(serializedMessageTest.toFile().exists(), is(true));
 
     try {
       List<String> covMatrixLines = Files.readAllLines(covMatrix);
       List<String> passMatrixLines = Files.readAllLines(passMatrix);
       List<String> tsrReportLines = Files.readAllLines(tsrReport);
 
+      List<String> serCalcTestLines = Files.readAllLines(serializedCalculatorTest);
+      List<String> serMsgTestLines = Files.readAllLines(serializedMessageTest);
+
       assertThat(covMatrixLines, hasSize(15));
       assertThat(passMatrixLines, hasSize(15));
       assertThat(tsrReportLines, hasSize(68));
+
+      assertThat(serCalcTestLines, hasSize(66));
+      assertThat(serMsgTestLines, hasSize(57));
 
       assertThat(tsrReportLines.stream().anyMatch(l -> l.contains("<nrOriginalTestCases>14</nrOriginalTestCases>")),
                  is(true));
@@ -141,21 +151,31 @@ class JUnitJSRFacadeTest {
                  is(true));
 
       assertThat(passMatrixLines.stream().anyMatch(
-        l -> l.contains("at.tugraz.ist.stracke.jsr.CalculatorTest:divideZeroByNotZero,1")),
+                   l -> l.contains("at.tugraz.ist.stracke.jsr.CalculatorTest:divideZeroByNotZero,1")),
                  is(true));
       assertThat(
         passMatrixLines.stream().anyMatch(l -> l.contains("at.tugraz.ist.stracke.jsr.CalculatorTest:shouldFail,0")),
         is(true));
 
       assertThat(covMatrixLines.stream().anyMatch(
-        l -> l.contains("at.tugraz.ist.stracke.jsr.MessageTest:testEquals,0,0,0,1,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0")),
+                   l -> l.contains("at.tugraz.ist.stracke.jsr.MessageTest:testEquals,0,0,0,1,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0")),
                  is(true));
       assertThat(covMatrixLines.stream().anyMatch(
-        l -> l.contains("at.tugraz.ist.stracke.jsr.MessageTest:testEquals2,0,0,0,1,1,1,0,0,0,0,0,1,1,0,1,0,0,0,0")),
+                   l -> l.contains("at.tugraz.ist.stracke.jsr.MessageTest:testEquals2,0,0,0,1,1,1,0,0,0,0,0,1,1,0,1,0,0,0,0")),
                  is(true));
       assertThat(covMatrixLines.stream().anyMatch(
-        l -> l.contains("at.tugraz.ist.stracke.jsr.MessageTest:testGetters,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1")),
+                   l -> l.contains("at.tugraz.ist.stracke.jsr.MessageTest:testGetters,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1")),
                  is(true));
+
+      assertThat(serCalcTestLines.stream()
+                                 .filter(l -> l.contains("@Ignore(\"Redundant Test Case (identified by JSR)\")"))
+                                 .count(),
+                 is(equalTo(6L)));
+
+      assertThat(serMsgTestLines.stream()
+                                .filter(l -> l.contains("@Ignore(\"Redundant Test Case (identified by JSR)\")"))
+                                .count(),
+                 is(equalTo(2L)));
 
     } catch (IOException e) {
       e.printStackTrace();
@@ -171,6 +191,7 @@ class JUnitJSRFacadeTest {
     String jarDir = "./src/test/resources/smallProject/build/libs/testJar.jar";
     String outDir = "./src/test/resources/smallProject/jsr";
     String slicerDir = "../../slicer/Slicer4J";
+    String serialDir = "./src/test/resources/smallProject/jsr/serializedFiles";
 
     JUnitJSRFacadeBuilder facadeBuilder = new JUnitJSRFacadeBuilder(Path.of(srcDir),
                                                                     Path.of(testDir),
@@ -179,6 +200,7 @@ class JUnitJSRFacadeTest {
                                                                     Path.of(slicerDir));
     JSRFacade facade = facadeBuilder
       .reductionStrategy(new GeneticReductionStrategy())
+      .applyModificationsAsCopy(Path.of(serialDir))
       .build();
 
     ReducedTestSuite rts = facade.reduceTestSuite();
@@ -191,20 +213,30 @@ class JUnitJSRFacadeTest {
     Path passMatrix = Path.of(outDir, "outcomeMatrix.csv");
     Path tsrReport = Path.of(outDir, "tsr-report.xml");
     Path instrumentedJar = Path.of(outDir, "testJar_i.jar");
+    Path serializedCalculatorTest = Path.of(serialDir, "CalculatorTest.java");
+    Path serializedMessageTest = Path.of(serialDir, "MessageTest.java");
 
     assertThat(covMatrix.toFile().exists(), is(true));
     assertThat(passMatrix.toFile().exists(), is(true));
     assertThat(tsrReport.toFile().exists(), is(true));
     assertThat(instrumentedJar.toFile().exists(), is(true));
+    assertThat(serializedCalculatorTest.toFile().exists(), is(true));
+    assertThat(serializedMessageTest.toFile().exists(), is(true));
 
     try {
       List<String> covMatrixLines = Files.readAllLines(covMatrix);
       List<String> passMatrixLines = Files.readAllLines(passMatrix);
       List<String> tsrReportLines = Files.readAllLines(tsrReport);
 
+      List<String> serCalcTestLines = Files.readAllLines(serializedCalculatorTest);
+      List<String> serMsgTestLines = Files.readAllLines(serializedMessageTest);
+
       assertThat(covMatrixLines, hasSize(15));
       assertThat(passMatrixLines, hasSize(15));
       assertThat(tsrReportLines, hasSize(68));
+
+      assertThat(serCalcTestLines, hasSize(66));
+      assertThat(serMsgTestLines, hasSize(57));
 
       assertThat(tsrReportLines.stream().anyMatch(l -> l.contains("<nrOriginalTestCases>14</nrOriginalTestCases>")),
                  is(true));
@@ -214,21 +246,31 @@ class JUnitJSRFacadeTest {
                  is(true));
 
       assertThat(passMatrixLines.stream().anyMatch(
-        l -> l.contains("at.tugraz.ist.stracke.jsr.CalculatorTest:divideZeroByNotZero,1")),
+                   l -> l.contains("at.tugraz.ist.stracke.jsr.CalculatorTest:divideZeroByNotZero,1")),
                  is(true));
       assertThat(
         passMatrixLines.stream().anyMatch(l -> l.contains("at.tugraz.ist.stracke.jsr.CalculatorTest:shouldFail,0")),
         is(true));
 
       assertThat(covMatrixLines.stream().anyMatch(
-        l -> l.contains("at.tugraz.ist.stracke.jsr.MessageTest:testEquals,0,0,0,1,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0")),
+                   l -> l.contains("at.tugraz.ist.stracke.jsr.MessageTest:testEquals,0,0,0,1,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0")),
                  is(true));
       assertThat(covMatrixLines.stream().anyMatch(
-        l -> l.contains("at.tugraz.ist.stracke.jsr.MessageTest:testEquals2,0,0,0,1,1,1,0,0,0,0,0,1,1,0,1,0,0,0,0")),
+                   l -> l.contains("at.tugraz.ist.stracke.jsr.MessageTest:testEquals2,0,0,0,1,1,1,0,0,0,0,0,1,1,0,1,0,0,0,0")),
                  is(true));
       assertThat(covMatrixLines.stream().anyMatch(
-        l -> l.contains("at.tugraz.ist.stracke.jsr.MessageTest:testGetters,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1")),
+                   l -> l.contains("at.tugraz.ist.stracke.jsr.MessageTest:testGetters,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1")),
                  is(true));
+
+      assertThat(serCalcTestLines.stream()
+                                 .filter(l -> l.contains("@Ignore(\"Redundant Test Case (identified by JSR)\")"))
+                                 .count(),
+                 is(equalTo(6L)));
+
+      assertThat(serMsgTestLines.stream()
+                                .filter(l -> l.contains("@Ignore(\"Redundant Test Case (identified by JSR)\")"))
+                                .count(),
+                 is(equalTo(2L)));
 
     } catch (IOException e) {
       e.printStackTrace();

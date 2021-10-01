@@ -3,9 +3,13 @@ package at.tugraz.ist.stracke.jsr.core.tsr.strategies;
 import at.tugraz.ist.stracke.jsr.core.shared.TestCase;
 import at.tugraz.ist.stracke.jsr.core.tsr.ReducedTestSuite;
 import at.tugraz.ist.stracke.jsr.test.TSRData;
+import io.jenetics.BitChromosome;
+import io.jenetics.BitGene;
+import io.jenetics.Genotype;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -28,15 +32,70 @@ class GeneticReductionStrategyTest {
   }
 
   @Test
-  void testGetFitness() {
+  void testGetFitnessInvalidSelection() {
     GeneticReductionStrategy strategy = new GeneticReductionStrategy(TSRData.smallOriginalTS,
                                                                      TSRData.smallCoverageReport);
-    //Genotype<BitGene> geneGenotype = Genotype.of(BitChromosome.of(BitSet.valueOf([0,1,1,0,0,1])));
+    final BitSet bits = new BitSet(5);
+    bits.set(0, true);
+    bits.set(1, false);
+    bits.set(2, false);
+    bits.set(3, false);
+    bits.set(4, false);
+    Genotype<BitGene> geneGenotype = Genotype.of(BitChromosome.of(bits, 5));
 
-    strategy.maxNumberOfSatisfyingTestCasesPerUnit = 10;
+    int fitness = strategy.getFitness(geneGenotype);
 
-    int fitness = strategy.getFitness(null);
+    assertThat(fitness, is(equalTo(0)));
+  }
 
-    assertThat(fitness, is(equalTo(10)));
+  @Test
+  void testGetFitnessBadSelection() {
+    GeneticReductionStrategy strategy = new GeneticReductionStrategy(TSRData.smallOriginalTS,
+                                                                     TSRData.smallCoverageReport);
+    final BitSet bits = new BitSet(5);
+    bits.set(0, true);
+    bits.set(1, true);
+    bits.set(2, true);
+    bits.set(3, true);
+    bits.set(4, true);
+    Genotype<BitGene> geneGenotype = Genotype.of(BitChromosome.of(bits, 5));
+
+    int fitness = strategy.getFitness(geneGenotype);
+
+    assertThat(fitness, is(equalTo(1)));
+  }
+
+  @Test
+  void testGetFitnessNormalSelection() {
+    GeneticReductionStrategy strategy = new GeneticReductionStrategy(TSRData.smallOriginalTS,
+                                                                     TSRData.smallCoverageReport);
+    final BitSet bits = new BitSet(5);
+    bits.set(0, true);
+    bits.set(1, true);
+    bits.set(2, false);
+    bits.set(3, true);
+    bits.set(4, false);
+    Genotype<BitGene> geneGenotype = Genotype.of(BitChromosome.of(bits, 5));
+
+    int fitness = strategy.getFitness(geneGenotype);
+
+    assertThat(fitness, is(equalTo(3)));
+  }
+
+  @Test
+  void testGetFitnessBestSelection() {
+    GeneticReductionStrategy strategy = new GeneticReductionStrategy(TSRData.smallOriginalTS,
+                                                                     TSRData.smallCoverageReport);
+    final BitSet bits = new BitSet(5);
+    bits.set(0, false);
+    bits.set(1, false);
+    bits.set(2, false);
+    bits.set(3, true);
+    bits.set(4, true);
+    Genotype<BitGene> geneGenotype = Genotype.of(BitChromosome.of(bits, 5));
+
+    int fitness = strategy.getFitness(geneGenotype);
+
+    assertThat(fitness, is(equalTo(6)));
   }
 }
