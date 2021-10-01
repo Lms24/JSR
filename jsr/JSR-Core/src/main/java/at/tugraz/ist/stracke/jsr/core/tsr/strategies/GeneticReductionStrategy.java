@@ -41,7 +41,7 @@ public class GeneticReductionStrategy extends BaseReductionStrategy {
 
   private static final double PROB_BIT_GENE_TRUE_INIT = 0.15;
   private static final double PROB_MUTATOR = 0.55;
-  private static final double PROB_ROULETTE = 0.06;
+  private static final double PROB_ROULETTE = 0.15;
 
   private static final int LIMIT_STEADY_FITNESS = 7;
   private static final int LIMIT_MAX_GENERATIONS = 100;
@@ -50,7 +50,6 @@ public class GeneticReductionStrategy extends BaseReductionStrategy {
   private final Logger logger = LogManager.getLogger(GeneticReductionStrategy.class);
 
   int maxNumberOfSatisfyingTestCasesPerUnit;
-  private int smallestValidTestSuiteSize = Integer.MAX_VALUE;
 
   public GeneticReductionStrategy(@NonNull TestSuite testSuite,
                                   @NonNull CoverageReport coverageReport) {
@@ -75,7 +74,7 @@ public class GeneticReductionStrategy extends BaseReductionStrategy {
     Engine<BitGene, Integer> engine =
       Engine.builder(this::getFitness,
                      BitChromosome.of(chromosomeLength, PROB_BIT_GENE_TRUE_INIT))
-            .populationSize(50)
+            .populationSize(500)
             .selector(new RouletteWheelSelector<>())
             .alterers(new Mutator<>(PROB_MUTATOR),
                       new SinglePointCrossover<>(PROB_ROULETTE))
@@ -116,6 +115,10 @@ public class GeneticReductionStrategy extends BaseReductionStrategy {
       return 0;
     }
 
+    return getFitnessFromSelection(tcSelection);
+  }
+
+  int getFitnessFromSelection(List<TSRTestCase> tcSelection) {
     List<CoverageReport.Unit> allCoveredUnits = tcSelection.stream()
                                                            .map(this::getRequirementsSatisfiedByTestCase)
                                                            .flatMap(Collection::stream)
@@ -126,6 +129,7 @@ public class GeneticReductionStrategy extends BaseReductionStrategy {
     List<Integer> frequencyOfDuplicatedCoveredUnits = uniqueCoveredUnits.stream()
                                                               .map(u -> Collections.frequency(allCoveredUnits, u))
                                                               .filter(f -> f > 1)
+                                                              .map(f -> f - 1)
                                                               .collect(Collectors.toList());
 
     int sumDuplicates = frequencyOfDuplicatedCoveredUnits.stream().mapToInt(i -> i).sum();
