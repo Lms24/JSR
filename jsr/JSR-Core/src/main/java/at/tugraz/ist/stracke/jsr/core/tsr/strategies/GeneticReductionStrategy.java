@@ -50,6 +50,7 @@ public class GeneticReductionStrategy extends BaseReductionStrategy {
   private final Logger logger = LogManager.getLogger(GeneticReductionStrategy.class);
 
   int maxNumberOfSatisfyingTestCasesPerUnit;
+  private int smallestValidTestSuiteSize = Integer.MAX_VALUE;
 
   public GeneticReductionStrategy(@NonNull TestSuite testSuite,
                                   @NonNull CoverageReport coverageReport) {
@@ -109,14 +110,27 @@ public class GeneticReductionStrategy extends BaseReductionStrategy {
   }
 
   Integer getFitness(final Genotype<BitGene> geneGenotype) {
-
     final List<TSRTestCase> tcSelection = this.getTestCaseSelectionFromBitGenotype(geneGenotype);
 
     if (!tcCollectionSatisfiesAllReqs(tcSelection)) {
       return 0;
     }
 
-    return 1; //TODO
+    List<CoverageReport.Unit> allCoveredUnits = tcSelection.stream()
+                                                           .map(this::getRequirementsSatisfiedByTestCase)
+                                                           .flatMap(Collection::stream)
+                                                           .collect(Collectors.toList());
+
+    Set<CoverageReport.Unit> uniqueCoveredUnits = new HashSet<>(allCoveredUnits);
+
+    List<Integer> frequencyOfDuplicatedCoveredUnits = uniqueCoveredUnits.stream()
+                                                              .map(u -> Collections.frequency(allCoveredUnits, u))
+                                                              .filter(f -> f > 1)
+                                                              .collect(Collectors.toList());
+
+    int sumDuplicates = frequencyOfDuplicatedCoveredUnits.stream().mapToInt(i -> i).sum();
+
+    return Math.max(uniqueCoveredUnits.size() -  sumDuplicates, 1);
   }
 
   private List<TSRTestCase> getTestCaseSelectionFromBitGenotype(final Genotype<BitGene> geneGenotype) {
