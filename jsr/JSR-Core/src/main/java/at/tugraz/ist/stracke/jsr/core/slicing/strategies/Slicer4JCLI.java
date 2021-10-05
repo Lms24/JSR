@@ -1,18 +1,18 @@
 package at.tugraz.ist.stracke.jsr.core.slicing.strategies;
 
-class Slicer4JCLI {
+public class Slicer4JCLI {
 
   static final String SL4C_MAIN_CLASS = "ca.ubc.ece.resess.slicer.dynamic.slicer4j.Slicer";
-  static final String JUNIT4_RUNNER_MAIN_CLASS = "SingleJUnitTestRunner";
+  public static final String JUNIT4_RUNNER_MAIN_CLASS = "SingleJUnitTestRunner";
 
-  static class Paths {
+  public static class Paths {
     static final String PATH_LOGGER_JAR = "DynamicSlicingCore/DynamicSlicingLoggingClasses/DynamicSlicingLogger.jar";
 
     static final String PATH_SLICER4J_JAR_WITH_DEPENDENCIES = "Slicer4J/target/slicer4j-jar-with-dependencies.jar";
     static final String PATH_SLICER4J_ALL_LIBS = "Slicer4J/target/lib/*";
 
-    static final String PATH_JUNIT4_RUNNER_JAR = "scripts/SingleJUnitTestRunner.jar";
-    static final String PATH_JUNIT4_LIB_JAR = "scripts/junit-4.8.2.jar";
+    public static final String PATH_JUNIT4_RUNNER_JAR = "scripts/SingleJUnitTestRunner.jar";
+    public static final String PATH_JUNIT4_LIB_JAR = "scripts/junit-4.8.2.jar";
 
     static final String PATH_SUMMARIES_MANUAL = "models/summariesManual";
     static final String PATH_TAINT_WRAPPER_SOURCE = "models/EasyTaintWrapperSource.txt";
