@@ -66,7 +66,10 @@ public class CheckedCoverageStrategy implements CoverageStrategy {
                                                                   .filter(u -> allUnits.stream().anyMatch(u2 -> u.name.equals(u2.name) && u.positionStart == u2.positionStart)) // only units that we marked as executable should be in here
                                                                   .collect(Collectors.toSet())));
 
-    CoverageReport report = new CoverageReport(allUnits, coveredUnits, testCaseData);
+    CoverageReport report = new CoverageReport("Checked",
+                                               allUnits,
+                                               coveredUnits,
+                                               testCaseData);
 
     logger.info("Generated Checked Coverage Report:");
     logger.info("Found {} coverable lines, {} covered lines. Coverage Score: {}",

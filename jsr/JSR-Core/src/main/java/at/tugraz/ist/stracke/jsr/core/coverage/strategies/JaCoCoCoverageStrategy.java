@@ -19,9 +19,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Objects;
+import java.util.*;
 
 import static at.tugraz.ist.stracke.jsr.core.coverage.strategies.JaCoCoCLI.Args.*;
 import static at.tugraz.ist.stracke.jsr.core.coverage.strategies.JaCoCoCLI.FileNames.*;
@@ -41,6 +39,12 @@ abstract class JaCoCoCoverageStrategy implements CoverageStrategy {
   private Path pathToSources;
   private Path pathToSlicer;
   private String basePackage;
+
+  protected final Set<CoverageReport.Unit> allUnits = new HashSet<>();
+  protected final Set<CoverageReport.Unit> coveredUnits = new HashSet<>();
+  protected final Map<TestCase, Set<CoverageReport.Unit>> coverageData = new HashMap<>();
+
+  boolean firstIteration = true;
 
   public JaCoCoCoverageStrategy(Path pathToJar,
                                 Path pathToClasses,
@@ -68,15 +72,21 @@ abstract class JaCoCoCoverageStrategy implements CoverageStrategy {
     }
   }
 
-  /**
-   * Template method to be implemented by the concrete class.
-   * All relevant data was collected before this method is called.
-   * It is now up to the concrete class to assemble it into a coverage
-   * report w/ the respective coverage metric.
-   *
-   * @return the final coverage report or <code>null</code> on error.
-   */
-  abstract CoverageReport createTestSuiteCoverageReport();
+  CoverageReport createTestSuiteCoverageReport() {
+    boolean collectedIndividualData =
+      originalTestSuite.testCases.stream()
+                                 .allMatch(this::processTestCaseCoverageReportData);
+
+    if (!collectedIndividualData) {
+      return null;
+    }
+
+    return assembleReport();
+  }
+
+  abstract CoverageReport assembleReport();
+
+  abstract boolean processTestCaseCoverageReportData(TestCase tc);
 
   private Path convertOutPutPath(Path outDir) throws IOException {
     outDir = Path.of(outDir.toString(), "coverage");
@@ -256,16 +266,25 @@ abstract class JaCoCoCoverageStrategy implements CoverageStrategy {
     return false;
   }
 
-  protected Document parseXmlReport(String testCaseId) throws ParserConfigurationException,
-                                                              IOException,
-                                                              SAXException {
-    Path xmlReportPath = Path.of(this.pathToOutDir.toString(), testCaseId, REPORT_XML);
-    DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-    final String xmlString = Files.readString(xmlReportPath).replace(
-      "<!DOCTYPE report PUBLIC \"-//JACOCO//DTD Report 1.1//EN\" \"report.dtd\">",
-      "");
-    return documentBuilder.parse(new InputSource(new StringReader(xmlString)));
+  protected Document parseXmlReport(String testCaseId) {
+
+    logger.info("Reading report of {}", testCaseId);
+
+    try {
+      Path xmlReportPath = Path.of(this.pathToOutDir.toString(), testCaseId, REPORT_XML);
+      DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+      final String xmlString = Files.readString(xmlReportPath).replace(
+        "<!DOCTYPE report PUBLIC \"-//JACOCO//DTD Report 1.1//EN\" \"report.dtd\">",
+        "");
+      return documentBuilder.parse(new InputSource(new StringReader(xmlString)));
+    } catch (ParserConfigurationException | IOException | SAXException e) {
+      logger.error("Error while reading report of {}.", testCaseId);
+      e.printStackTrace();
+      return null;
+    }
+
+
   }
 
   @Override

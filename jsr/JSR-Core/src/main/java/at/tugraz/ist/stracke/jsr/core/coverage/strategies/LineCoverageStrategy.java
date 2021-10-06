@@ -11,18 +11,10 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public class LineCoverageStrategy extends JaCoCoCoverageStrategy {
-
-  private final Set<CoverageReport.Unit> allUnits = new HashSet<>();
-  private final Set<CoverageReport.Unit> coveredUnits = new HashSet<>();
-  private final Map<TestCase, Set<CoverageReport.Unit>> coverageData = new HashMap<>();
-
-  private boolean firstIteration = true;
 
   public LineCoverageStrategy(Path pathToJar,
                               Path pathToClasses,
@@ -40,40 +32,11 @@ public class LineCoverageStrategy extends JaCoCoCoverageStrategy {
   }
 
   @Override
-  CoverageReport createTestSuiteCoverageReport() {
-    boolean collectedIndividualData =
-      originalTestSuite.testCases.stream()
-                                 .allMatch(this::processTestCaseCoverageReportData);
-
-    if (!collectedIndividualData) {
-      return null;
-    }
-
-    final CoverageReport report = new CoverageReport(this.allUnits, this.coveredUnits, this.coverageData);
-
-    logger.info("Successfully created coverage report: {} of {} lines covered. Coverage score: {}",
-                report.coveredUnits.size(),
-                report.allUnits.size(),
-                report.getCoverageScore());
-
-    return report;
-  }
-
-  private boolean processTestCaseCoverageReportData(TestCase tc) {
+  boolean processTestCaseCoverageReportData(TestCase tc) {
+    final Set<CoverageReport.Unit> tmpCoveredUnits = new HashSet<>();
     String tcId = String.format("%s#%s", tc.getClassName(), tc.getName());
-    Set<CoverageReport.Unit> tmpCoveredUnits = new HashSet<>();
 
-    logger.info("Reading report of {}", tcId);
-
-    Document document;
-
-    try {
-      document = parseXmlReport(tcId);
-    } catch (ParserConfigurationException | IOException | SAXException e) {
-      logger.error("Error while reading report of {}.", tcId);
-      e.printStackTrace();
-      return false;
-    }
+    Document document = parseXmlReport(tcId);
 
     NodeList classes = document.getElementsByTagName("class");
     for (int i = 0; i < classes.getLength(); i++) {
@@ -126,5 +89,20 @@ public class LineCoverageStrategy extends JaCoCoCoverageStrategy {
       }
     }
     return null;
+  }
+
+  @Override
+  CoverageReport assembleReport() {
+    final CoverageReport report = new CoverageReport("Line",
+                                                     this.allUnits,
+                                                     this.coveredUnits,
+                                                     this.coverageData);
+
+    logger.info("Successfully created coverage report: {} of {} lines covered. Coverage score: {}",
+                report.coveredUnits.size(),
+                report.allUnits.size(),
+                report.getCoverageScore());
+
+    return report;
   }
 }

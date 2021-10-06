@@ -27,6 +27,7 @@ public class TSRData {
 
   public static final TestSuite smallOriginalTS = new TestSuite(List.of(t1, t2, t3, t4, t5));
   public static final CoverageReport smallCoverageReport = new CoverageReport(
+    "Abstract",
     Set.of(s1, s2, s3 ,s4, s5, s6),
     Set.of(s1, s2, s3, s4, s5, s6),
     Map.of(t1, Set.of(s1, s3, s5),
@@ -38,6 +39,7 @@ public class TSRData {
 
   public static final TestSuite simpleOriginalTS = new TestSuite(List.of(t1, t2, t3, t4));
   public static final CoverageReport simpleCoverageReport = new CoverageReport(
+    "Abstract",
     Set.of(s1, s2, s3 ,s4, s5, s6),
     Set.of(s1, s2, s3),
     Map.of(t1, Set.of(s1, s3, s2),
@@ -47,6 +49,7 @@ public class TSRData {
   );
 
   public static final CoverageReport simpleCoverageReport2 = new CoverageReport(
+    "Abstract",
     Set.of(s1, s2, s3 ,s4, s5, s6),
     Set.of(s1, s2, s3, s4),
     Map.of(t1, Set.of( s1,  s2,  s3/**/),
