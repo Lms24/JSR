@@ -114,7 +114,7 @@ abstract class JaCoCoCoverageStrategy implements CoverageStrategy {
     String tcId = String.format("%s#%s", tc.getClassName(), tc.getName());
     String tcExecFileName = String.format("%s.exec", tcId);
 
-    boolean success = this.instrumentAndExecuteTestCase(tcId, tcExecFileName);
+    boolean success = this.instrumentAndExecuteTestCase(tcId, tcExecFileName, tc);
     if (!success) return false;
 
     success = this.createReport(tcId, tcExecFileName);
@@ -167,7 +167,7 @@ abstract class JaCoCoCoverageStrategy implements CoverageStrategy {
     return true;
   }
 
-  private boolean instrumentAndExecuteTestCase(String tcId, String tcExecFileName) {
+  private boolean instrumentAndExecuteTestCase(String tcId, String tcExecFileName, TestCase tc) {
     logger.info("Executing testcase {}", tcId);
 
     ProcessBuilder pb = new ProcessBuilder()
@@ -201,6 +201,7 @@ abstract class JaCoCoCoverageStrategy implements CoverageStrategy {
       // 0.. test pass, 1.. test fail, rest.. Error
       if (p.exitValue() == 0 || p.exitValue() == 1) {
         logger.info("Test case was instrumented and executed successfully.");
+        tc.setPassed(p.exitValue() == 0);
       } else {
         logger.error("Error while instrumenting and executing {}, see {} for details", tcId, EXEC_LOG);
       }

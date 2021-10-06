@@ -104,7 +104,9 @@ public class LineCoverageStrategy extends JaCoCoCoverageStrategy {
       int lineNr = Integer.parseInt(line.getAttributes().getNamedItem("nr").getTextContent());
       int coveredInstructions = Integer.parseInt(line.getAttributes().getNamedItem("ci").getTextContent());
 
-      final CoverageReport.Unit lineUnit = new CoverageReport.Unit(className, lineNr, lineNr);
+      final CoverageReport.Unit lineUnit = new CoverageReport.Unit(String.format("%s:%s", className, lineNr),
+                                                                   lineNr,
+                                                                   lineNr);
       if (firstIteration) {
         this.allUnits.add(lineUnit);
       }
