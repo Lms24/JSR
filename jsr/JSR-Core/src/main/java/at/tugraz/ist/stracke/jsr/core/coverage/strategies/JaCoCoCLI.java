@@ -14,6 +14,7 @@ class JaCoCoCLI {
     static final String CLI_CLASS_FILES = "--classfiles";
     static final String CLI_SOURCE_FILES = "--sourcefiles";
     static final String CLI_XML = "--xml";
+    static final String CLI_CSV = "--csv";
     static final String CLI_HTML = "--html";
   }
 

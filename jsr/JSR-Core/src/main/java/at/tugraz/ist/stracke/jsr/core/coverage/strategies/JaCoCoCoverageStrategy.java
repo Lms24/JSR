@@ -6,12 +6,15 @@ import at.tugraz.ist.stracke.jsr.core.shared.TestCase;
 import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
 import at.tugraz.ist.stracke.jsr.core.slicing.TestSuiteSlicer;
 import at.tugraz.ist.stracke.jsr.core.slicing.strategies.Slicer4JCLI;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Objects;
 
 import static at.tugraz.ist.stracke.jsr.core.coverage.strategies.JaCoCoCLI.Args.*;
 import static at.tugraz.ist.stracke.jsr.core.coverage.strategies.JaCoCoCLI.FileNames.EXEC_LOG;
@@ -20,23 +23,24 @@ import static at.tugraz.ist.stracke.jsr.core.coverage.strategies.JaCoCoCLI.Paths
 import static at.tugraz.ist.stracke.jsr.core.coverage.strategies.JaCoCoCLI.Paths.CLI_JAR;
 import static at.tugraz.ist.stracke.jsr.core.slicing.strategies.Slicer4JCLI.JUNIT4_RUNNER_MAIN_CLASS;
 
-public class JaCoCoCoverageStrategy implements CoverageStrategy {
+abstract class JaCoCoCoverageStrategy implements CoverageStrategy {
 
-  private static final Logger logger = LogManager.getLogger(JaCoCoCoverageStrategy.class);
+  protected final Logger logger;
   private final String classPathSeparator;
   private Path pathToJar;
   private Path pathToClasses;
   private Path pathToSources;
   private Path pathToSlicer;
-  private Path pathToOutDir;
-  private TestSuite originalTestSuite;
+  protected Path pathToOutDir;
+  protected TestSuite originalTestSuite;
 
   public JaCoCoCoverageStrategy(Path pathToJar,
                                 Path pathToClasses,
                                 Path pathToSources,
                                 Path pathToSlicer,
-                                Path pathToOutDir) {
-
+                                Path pathToOutDir,
+                                Logger concreteLogger) {
+    this.logger = concreteLogger;
     this.classPathSeparator = System.getProperty("path.separator");
 
     try {
@@ -51,8 +55,18 @@ public class JaCoCoCoverageStrategy implements CoverageStrategy {
     }
   }
 
+  /**
+   * Template method to be implemented by the concrete class.
+   * All relevant data was collected before this method is called.
+   * It is now up to the concrete class to assemble it into a coverage
+   * report w/ the respective coverage metric.
+   *
+   * @return the final coverage report or <code>null</code> on error.
+   */
+  abstract CoverageReport createTestSuiteCoverageReport();
+
   private Path convertOutPutPath(Path outDir) throws IOException {
-    outDir = Path.of(outDir.toString(), "jacoco");
+    outDir = Path.of(outDir.toString(), "coverage");
     File outFile = outDir.toFile();
 
     if (!outFile.exists()) {
@@ -67,33 +81,54 @@ public class JaCoCoCoverageStrategy implements CoverageStrategy {
 
   @Override
   public CoverageReport calculateOverallCoverage() {
-    originalTestSuite.testCases.forEach(this::runTestCase);
-    return null;
+    boolean collectedAllTCData = originalTestSuite.testCases.stream().allMatch(this::runTestCase);
+
+    if (!collectedAllTCData) {
+      logger.error("Could not collect all individual test case data. Aborting...");
+      return null;
+    }
+
+    CoverageReport report = createTestSuiteCoverageReport();
+
+    if (report != null) {
+      this.cleanup();
+    }
+
+    return report;
   }
 
-  private void runTestCase(TestCase tc) {
+  private boolean runTestCase(TestCase tc) {
     String tcId = String.format("%s#%s", tc.getClassName(), tc.getName());
     String tcExecFileName = String.format("%s.exec", tcId);
 
     boolean success = this.instrumentAndExecuteTestCase(tcId, tcExecFileName);
-    if (!success) return;
+    if (!success) return false;
 
+    success = this.createReport(tcId, tcExecFileName);
+    return success;
+  }
+
+  private boolean createReport(String tcId, String tcExecFileName) {
     Path tcOutDir = Path.of(this.pathToOutDir.toString(), tcId);
+
+    boolean success = true;
     if (!tcOutDir.toFile().exists()) {
       success = tcOutDir.toFile().mkdirs();
     }
+
     if (!success) {
-      logger.error("Could not create directory{}", tcOutDir.toString());
-      return;
+      logger.error("Could not create directory {}", tcOutDir.toString());
+      return false;
     }
 
     ProcessBuilder pb = new ProcessBuilder()
       .command("java",
                "-jar", CLI_JAR,
-               CLI_REPORT, this.pathToOutDir.toString() + tcExecFileName,
+               CLI_REPORT, this.pathToOutDir.toString() + "/" + tcExecFileName,
                CLI_CLASS_FILES, this.pathToClasses.toString(),
                CLI_SOURCE_FILES, this.pathToSources.toString(),
                CLI_XML, String.format("%s/report.xml", tcOutDir),
+        /*CLI_CSV, String.format("%s/report.csv", tcOutDir),*/
                CLI_HTML, tcOutDir.toString())
       .redirectOutput(ProcessBuilder.Redirect.to(new File(
         String.format("%s/%s", this.pathToOutDir.toString(), REPORT_LOG))))
@@ -108,11 +143,15 @@ public class JaCoCoCoverageStrategy implements CoverageStrategy {
         logger.info("Report for {} was generated successfully", tcId);
       } else {
         logger.error("Error while generating report for {}. See {} for details", tcId, REPORT_LOG);
+        return false;
       }
     } catch (IOException | InterruptedException e) {
       logger.error("Error during report generation for {}:", tcId);
       e.printStackTrace();
+      return false;
     }
+
+    return true;
   }
 
   private boolean instrumentAndExecuteTestCase(String tcId, String tcExecFileName) {
@@ -122,7 +161,7 @@ public class JaCoCoCoverageStrategy implements CoverageStrategy {
       .command("java",
                String.format("-javaagent:%s=%s",
                              AGENT_JAR,
-                             String.format("%s=%s", AGENT_DEST_FILE, this.pathToOutDir.toString() + tcExecFileName)),
+                             String.format("%s=%s/%s", AGENT_DEST_FILE, this.pathToOutDir.toString(), tcExecFileName)),
                "-cp", String.format("%s/%s%s%s/%s%s%s",
                                     this.pathToSlicer.toString(), Slicer4JCLI.Paths.PATH_JUNIT4_RUNNER_JAR,
                                     this.classPathSeparator,
@@ -140,7 +179,9 @@ public class JaCoCoCoverageStrategy implements CoverageStrategy {
       logger.debug("Instrumentation and execution command: {}", String.join(" ", pb.command()));
       Process p = pb.start();
       p.waitFor();
-      if (p.exitValue() == 0) {
+
+      // 0.. test pass, 1.. test fail, rest.. Error
+      if (p.exitValue() == 0 || p.exitValue() == 1) {
         logger.info("Test case was instrumented and executed successfully.");
       } else {
         logger.error("Error while instrumenting and executing {}, see {} for details", tcId, EXEC_LOG);
@@ -152,6 +193,46 @@ public class JaCoCoCoverageStrategy implements CoverageStrategy {
     }
 
     return true;
+  }
+
+  private void cleanup() {
+    final File[] outDirFiles = Objects.requireNonNull(this.pathToOutDir.toFile().listFiles());
+
+    boolean deletedAllExecFiles = Arrays.stream(outDirFiles)
+                                        .filter(file -> file.getName().endsWith(".exec"))
+                                        .allMatch(File::delete);
+
+    boolean deletedAllLogFiles = Arrays.stream(outDirFiles)
+                                       .filter(file -> file.getName().endsWith(".log"))
+                                       .allMatch(File::delete);
+
+    boolean deletedIndividualReports = Arrays.stream(outDirFiles)
+                                             .filter(File::isDirectory)
+                                             .map(File::toPath)
+                                             .allMatch(p -> {
+                                               try {
+                                                 return Files.walk(p)
+                                                             .sorted(Comparator.reverseOrder())
+                                                             .map(Path::toFile)
+                                                             .allMatch(File::delete);
+                                               } catch (IOException e) {
+                                                 e.printStackTrace();
+                                                 logger.error("Could not delete all individual reports.");
+                                                 return false;
+                                               }
+                                             });
+
+    if (!deletedAllExecFiles) {
+      logger.error("Could not delete all exec files.");
+    }
+
+    if (!deletedAllLogFiles) {
+      logger.error("Could not delete all log files.");
+    }
+
+    if (deletedAllExecFiles && deletedAllLogFiles && deletedIndividualReports) {
+      logger.debug("Cleanup successful!");
+    }
   }
 
   @Override
