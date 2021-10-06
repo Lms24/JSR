@@ -9,6 +9,7 @@ class JaCoCoCLI {
 
   static class Args {
     static final String AGENT_DEST_FILE = "destfile";
+    static final String AGENT_INCLUDE = "includes";
 
     static final String CLI_REPORT = "report";
     static final String CLI_CLASS_FILES = "--classfiles";
@@ -21,5 +22,6 @@ class JaCoCoCLI {
   static class FileNames {
     static final String EXEC_LOG = "execution.log";
     static final String REPORT_LOG = "report.log";
+    static final String REPORT_XML = "report.xml";
   }
 }

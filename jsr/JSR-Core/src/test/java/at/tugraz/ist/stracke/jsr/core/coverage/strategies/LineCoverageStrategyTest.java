@@ -35,16 +35,28 @@ class LineCoverageStrategyTest {
     assertThat("This path must exist", pathToSources.toFile().exists());
     assertThat("This path must exist", pathToSlicer.toFile().exists());
 
-    CoverageStrategy strat = new LineCoverageStrategy(pathToJar,
-                                                      pathTOClasses,
-                                                      pathToSources,
-                                                      pathToSlicer,
-                                                      pathToOutDir);
+    LineCoverageStrategy strat = new LineCoverageStrategy(pathToJar,
+                                                          pathTOClasses,
+                                                          pathToSources,
+                                                          pathToSlicer,
+                                                          pathToOutDir,
+                                                          "at.tugraz.ist.stracke.jsr");
 
     strat.setOriginalTestSuite(ts);
+
+    // disable cleanup to check for presence of all files
+    strat.performCleanup = false;
 
     CoverageReport report = strat.calculateOverallCoverage();
 
     assertThat(report, is(not(nullValue())));
+    assertThat(report.allUnits, hasSize(31));
+    assertThat(report.coveredUnits, hasSize(28));
+    assertThat(report.testCaseCoverageData, is(aMapWithSize(14)));
+    assertThat(report.testCaseCoverageData.size(), is(equalTo(ts.testCases.size())));
+    assertThat(report.testCaseCoverageData.get(ts.testCases.get(0)), hasSize(4)); // CalculatorTest::testAdd()
+    assertThat(report.testCaseCoverageData.get(ts.testCases.get(10)), hasSize(6)); // MessageTest::testEquals()
+
+    assertThat("Cleanup is successful", strat.cleanup());
   }
 }

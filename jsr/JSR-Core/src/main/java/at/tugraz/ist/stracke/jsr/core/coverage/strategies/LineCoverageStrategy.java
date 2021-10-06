@@ -6,14 +6,10 @@ import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
-import java.nio.file.Files;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,90 +22,96 @@ public class LineCoverageStrategy extends JaCoCoCoverageStrategy {
   private final Set<CoverageReport.Unit> coveredUnits = new HashSet<>();
   private final Map<TestCase, Set<CoverageReport.Unit>> coverageData = new HashMap<>();
 
+  private boolean firstIteration = true;
+
   public LineCoverageStrategy(Path pathToJar,
                               Path pathToClasses,
                               Path pathToSources,
                               Path pathToSlicer,
-                              Path pathToOutDir) {
+                              Path pathToOutDir,
+                              String basePackage) {
     super(pathToJar,
           pathToClasses,
           pathToSources,
           pathToSlicer,
           pathToOutDir,
+          basePackage,
           LogManager.getLogger(LineCoverageStrategy.class));
   }
 
   @Override
   CoverageReport createTestSuiteCoverageReport() {
-    boolean collectedIndividualData = originalTestSuite.testCases.stream()
-                                                                 .allMatch(this::processTestCaseCoverageReportData);
+    boolean collectedIndividualData =
+      originalTestSuite.testCases.stream()
+                                 .allMatch(this::processTestCaseCoverageReportData);
 
     if (!collectedIndividualData) {
       return null;
     }
 
-    return new CoverageReport(this.allUnits, this.coveredUnits, this.coverageData);
+    final CoverageReport report = new CoverageReport(this.allUnits, this.coveredUnits, this.coverageData);
+
+    logger.info("Successfully created coverage report: {} of {} lines covered. Coverage score: {}",
+                report.coveredUnits.size(),
+                report.allUnits.size(),
+                report.getCoverageScore());
+
+    return report;
   }
 
-  private boolean firstIteration = true;
   private boolean processTestCaseCoverageReportData(TestCase tc) {
     String tcId = String.format("%s#%s", tc.getClassName(), tc.getName());
+    Set<CoverageReport.Unit> tmpCoveredUnits = new HashSet<>();
 
     logger.info("Reading report of {}", tcId);
-    Path xmlReportPath = Path.of(this.pathToOutDir.toString(), tcId, "report.xml");
+
+    Document document;
+
     try {
-      Document document = parseXmlDocument(xmlReportPath);
-
-      NodeList classes = document.getElementsByTagName("class");
-      Set<CoverageReport.Unit> tmpCoveredUnits = new HashSet<>();
-      for (int i = 0; i < classes.getLength(); i++) {
-        Node clazz = classes.item(i);
-        String className = clazz.getAttributes().getNamedItem("name").getTextContent().replace("/", ".");
-        String sourceFileName = clazz.getAttributes().getNamedItem("sourcefilename").getTextContent();
-        Node sourceFile = this.getSourceFileByName(sourceFileName, document);
-
-        assert sourceFile != null;
-        NodeList lineNodes = sourceFile.getChildNodes();
-
-
-        for (int j = 0; j < lineNodes.getLength(); j++) {
-          Node line = lineNodes.item(j);
-          if (!line.getNodeName().equals("line")) {
-            continue;
-          }
-          int lineNr = Integer.parseInt(line.getAttributes().getNamedItem("nr").getTextContent());
-          int coveredInstructions = Integer.parseInt(line.getAttributes().getNamedItem("ci").getTextContent());
-
-          final CoverageReport.Unit lineUnit = new CoverageReport.Unit(className, lineNr, lineNr);
-          if (firstIteration) {
-            this.allUnits.add(lineUnit);
-          }
-          if (coveredInstructions > 0) {
-            tmpCoveredUnits.add(lineUnit);
-          }
-        }
-      }
-      this.coveredUnits.addAll(tmpCoveredUnits);
-      this.coverageData.put(tc, tmpCoveredUnits);
+      document = parseXmlReport(tcId);
     } catch (ParserConfigurationException | IOException | SAXException e) {
+      logger.error("Error while reading report of {}.", tcId);
       e.printStackTrace();
       return false;
     }
+
+    NodeList classes = document.getElementsByTagName("class");
+    for (int i = 0; i < classes.getLength(); i++) {
+      Node clazz = classes.item(i);
+      collectClassData(document, tmpCoveredUnits, clazz);
+    }
+
+    this.coveredUnits.addAll(tmpCoveredUnits);
+    this.coverageData.put(tc, tmpCoveredUnits);
+
     firstIteration = false;
     return true;
   }
 
-  private Document parseXmlDocument(Path xmlReportPath) throws
-                                                        ParserConfigurationException,
-                                                        IOException,
-                                                        SAXException {
+  private void collectClassData(Document document, Set<CoverageReport.Unit> tmpCoveredUnits, Node clazz) {
+    String className = clazz.getAttributes().getNamedItem("name").getTextContent().replace("/", ".");
+    String sourceFileName = clazz.getAttributes().getNamedItem("sourcefilename").getTextContent();
+    Node sourceFile = this.getSourceFileByName(sourceFileName, document);
 
-    DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-    final String xmlString = Files.readString(xmlReportPath).replace(
-      "<!DOCTYPE report PUBLIC \"-//JACOCO//DTD Report 1.1//EN\" \"report.dtd\">",
-      "");
-    return documentBuilder.parse(new InputSource(new StringReader(xmlString)));
+    assert sourceFile != null;
+    NodeList lineNodes = sourceFile.getChildNodes();
+
+    for (int j = 0; j < lineNodes.getLength(); j++) {
+      Node line = lineNodes.item(j);
+      if (!line.getNodeName().equals("line")) {
+        continue;
+      }
+      int lineNr = Integer.parseInt(line.getAttributes().getNamedItem("nr").getTextContent());
+      int coveredInstructions = Integer.parseInt(line.getAttributes().getNamedItem("ci").getTextContent());
+
+      final CoverageReport.Unit lineUnit = new CoverageReport.Unit(className, lineNr, lineNr);
+      if (firstIteration) {
+        this.allUnits.add(lineUnit);
+      }
+      if (coveredInstructions > 0) {
+        tmpCoveredUnits.add(lineUnit);
+      }
+    }
   }
 
   private Node getSourceFileByName(String sourceFileName, Document document) {

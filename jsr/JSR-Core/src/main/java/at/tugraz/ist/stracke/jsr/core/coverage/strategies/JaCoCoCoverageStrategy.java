@@ -7,9 +7,16 @@ import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
 import at.tugraz.ist.stracke.jsr.core.slicing.TestSuiteSlicer;
 import at.tugraz.ist.stracke.jsr.core.slicing.strategies.Slicer4JCLI;
 import org.apache.logging.log4j.Logger;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -17,8 +24,7 @@ import java.util.Comparator;
 import java.util.Objects;
 
 import static at.tugraz.ist.stracke.jsr.core.coverage.strategies.JaCoCoCLI.Args.*;
-import static at.tugraz.ist.stracke.jsr.core.coverage.strategies.JaCoCoCLI.FileNames.EXEC_LOG;
-import static at.tugraz.ist.stracke.jsr.core.coverage.strategies.JaCoCoCLI.FileNames.REPORT_LOG;
+import static at.tugraz.ist.stracke.jsr.core.coverage.strategies.JaCoCoCLI.FileNames.*;
 import static at.tugraz.ist.stracke.jsr.core.coverage.strategies.JaCoCoCLI.Paths.AGENT_JAR;
 import static at.tugraz.ist.stracke.jsr.core.coverage.strategies.JaCoCoCLI.Paths.CLI_JAR;
 import static at.tugraz.ist.stracke.jsr.core.slicing.strategies.Slicer4JCLI.JUNIT4_RUNNER_MAIN_CLASS;
@@ -27,19 +33,26 @@ abstract class JaCoCoCoverageStrategy implements CoverageStrategy {
 
   protected final Logger logger;
   private final String classPathSeparator;
+  protected Path pathToOutDir;
+  protected TestSuite originalTestSuite;
+  boolean performCleanup = true;
   private Path pathToJar;
   private Path pathToClasses;
   private Path pathToSources;
   private Path pathToSlicer;
-  protected Path pathToOutDir;
-  protected TestSuite originalTestSuite;
+  private String basePackage;
 
   public JaCoCoCoverageStrategy(Path pathToJar,
                                 Path pathToClasses,
                                 Path pathToSources,
                                 Path pathToSlicer,
                                 Path pathToOutDir,
+                                String basePackage,
                                 Logger concreteLogger) {
+    this.basePackage = basePackage;
+    if (!this.basePackage.endsWith(".*")) {
+      this.basePackage += ".*";
+    }
     this.logger = concreteLogger;
     this.classPathSeparator = System.getProperty("path.separator");
 
@@ -90,7 +103,7 @@ abstract class JaCoCoCoverageStrategy implements CoverageStrategy {
 
     CoverageReport report = createTestSuiteCoverageReport();
 
-    if (report != null) {
+    if (report != null && this.performCleanup) {
       this.cleanup();
     }
 
@@ -127,7 +140,7 @@ abstract class JaCoCoCoverageStrategy implements CoverageStrategy {
                CLI_REPORT, this.pathToOutDir.toString() + "/" + tcExecFileName,
                CLI_CLASS_FILES, this.pathToClasses.toString(),
                CLI_SOURCE_FILES, this.pathToSources.toString(),
-               CLI_XML, String.format("%s/report.xml", tcOutDir),
+               CLI_XML, String.format("%s/%s", tcOutDir, REPORT_XML),
         /*CLI_CSV, String.format("%s/report.csv", tcOutDir),*/
                CLI_HTML, tcOutDir.toString())
       .redirectOutput(ProcessBuilder.Redirect.to(new File(
@@ -161,7 +174,12 @@ abstract class JaCoCoCoverageStrategy implements CoverageStrategy {
       .command("java",
                String.format("-javaagent:%s=%s",
                              AGENT_JAR,
-                             String.format("%s=%s/%s", AGENT_DEST_FILE, this.pathToOutDir.toString(), tcExecFileName)),
+                             String.format("%s=%s/%s,%s=%s",
+                                           AGENT_DEST_FILE,
+                                           this.pathToOutDir.toString(),
+                                           tcExecFileName,
+                                           AGENT_INCLUDE,
+                                           this.basePackage)),
                "-cp", String.format("%s/%s%s%s/%s%s%s",
                                     this.pathToSlicer.toString(), Slicer4JCLI.Paths.PATH_JUNIT4_RUNNER_JAR,
                                     this.classPathSeparator,
@@ -195,7 +213,7 @@ abstract class JaCoCoCoverageStrategy implements CoverageStrategy {
     return true;
   }
 
-  private void cleanup() {
+  boolean cleanup() {
     final File[] outDirFiles = Objects.requireNonNull(this.pathToOutDir.toFile().listFiles());
 
     boolean deletedAllExecFiles = Arrays.stream(outDirFiles)
@@ -232,7 +250,21 @@ abstract class JaCoCoCoverageStrategy implements CoverageStrategy {
 
     if (deletedAllExecFiles && deletedAllLogFiles && deletedIndividualReports) {
       logger.debug("Cleanup successful!");
+      return true;
     }
+    return false;
+  }
+
+  protected Document parseXmlReport(String testCaseId) throws ParserConfigurationException,
+                                                              IOException,
+                                                              SAXException {
+    Path xmlReportPath = Path.of(this.pathToOutDir.toString(), testCaseId, REPORT_XML);
+    DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+    final String xmlString = Files.readString(xmlReportPath).replace(
+      "<!DOCTYPE report PUBLIC \"-//JACOCO//DTD Report 1.1//EN\" \"report.dtd\">",
+      "");
+    return documentBuilder.parse(new InputSource(new StringReader(xmlString)));
   }
 
   @Override
