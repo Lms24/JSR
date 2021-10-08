@@ -11,15 +11,18 @@ import java.util.stream.Collectors;
 
 public class CoverageReport {
 
+  public final String coverageType;
   public final Set<Unit> allUnits;
   public final Set<Unit> coveredUnits;
   public final Map<TestCase, Set<Unit>> testCaseCoverageData;
 
   private List<TSRTestCase> sortedTestCases;
 
-  public CoverageReport(Set<Unit> allUnits,
+  public CoverageReport(String coverageType,
+                        Set<Unit> allUnits,
                         Set<Unit> coveredUnits,
                         Map<TestCase, Set<Unit>> testCaseCoverageData) {
+    this.coverageType = coverageType;
     this.allUnits = allUnits;
     this.coveredUnits = coveredUnits;
     this.testCaseCoverageData = testCaseCoverageData;

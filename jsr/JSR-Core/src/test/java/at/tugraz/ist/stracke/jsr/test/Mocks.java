@@ -64,6 +64,11 @@ public class Mocks {
       this.tc = testCase;
       return this;
     }
+
+    @Override
+    public SlicingStrategy instrumentJar() {
+      return this;
+    }
   }
 
   public static class MockedTestSuiteParser implements TestSuiteParser {

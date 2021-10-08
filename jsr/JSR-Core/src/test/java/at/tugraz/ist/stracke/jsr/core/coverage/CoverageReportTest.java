@@ -27,7 +27,7 @@ class CoverageReportTest {
       new CoverageReport.Unit("u5", 5, 5)
     ));
 
-    CoverageReport r = new CoverageReport(allUnits, coveredUnits, Collections.emptyMap());
+    CoverageReport r = new CoverageReport("Misc", allUnits, coveredUnits, Collections.emptyMap());
 
     assertThat(r.allUnits.toArray(), is(arrayWithSize(allUnits.size())));
     assertThat(r.coveredUnits.toArray(), is(arrayWithSize(coveredUnits.size())));

@@ -53,4 +53,10 @@ public class Message {
     public String getMsg() {
         return msg;
     }
+
+    public String getShortMessage() {
+        String str = this.msg.substring(0, 5);
+        str = str + "...";
+        return str;
+    }
 }
