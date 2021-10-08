@@ -28,6 +28,8 @@ public class JUnitTestSuiteSlicer implements TestSuiteSlicer {
 
   @Override
   public TestSuiteSliceResult slice() {
+    this.slicingStrategy.instrumentJar();
+
     List<TestCaseSliceResult> tcSlices =
       this.testSuite.getTestCases().stream()
                     .map(tc -> this.slicingStrategy.setTestCase(tc).execute())

@@ -320,14 +320,12 @@ class JUnitJSRFacadeTest {
     Path covMatrix = Path.of(outDir, "coverageMatrix.csv");
     Path passMatrix = Path.of(outDir, "outcomeMatrix.csv");
     Path tsrReport = Path.of(outDir, "tsr-report.xml");
-    Path instrumentedJar = Path.of(outDir, "testJar_i.jar");
     Path serializedCalculatorTest = Path.of(serialDir, "CalculatorTest.java");
     Path serializedMessageTest = Path.of(serialDir, "MessageTest.java");
 
     assertThat(covMatrix.toFile().exists(), is(true));
     assertThat(passMatrix.toFile().exists(), is(true));
     assertThat(tsrReport.toFile().exists(), is(true));
-    assertThat(instrumentedJar.toFile().exists(), is(true));
     assertThat(serializedCalculatorTest.toFile().exists(), is(true));
     assertThat(serializedMessageTest.toFile().exists(), is(true));
 
@@ -427,14 +425,12 @@ class JUnitJSRFacadeTest {
     Path covMatrix = Path.of(outDir, "coverageMatrix.csv");
     Path passMatrix = Path.of(outDir, "outcomeMatrix.csv");
     Path tsrReport = Path.of(outDir, "tsr-report.xml");
-    Path instrumentedJar = Path.of(outDir, "testJar_i.jar");
     Path serializedCalculatorTest = Path.of(serialDir, "CalculatorTest.java");
     Path serializedMessageTest = Path.of(serialDir, "MessageTest.java");
 
     assertThat(covMatrix.toFile().exists(), is(true));
     assertThat(passMatrix.toFile().exists(), is(true));
     assertThat(tsrReport.toFile().exists(), is(true));
-    assertThat(instrumentedJar.toFile().exists(), is(true));
     assertThat(serializedCalculatorTest.toFile().exists(), is(true));
     assertThat(serializedMessageTest.toFile().exists(), is(true));
 
@@ -534,14 +530,12 @@ class JUnitJSRFacadeTest {
     Path covMatrix = Path.of(outDir, "coverageMatrix.csv");
     Path passMatrix = Path.of(outDir, "outcomeMatrix.csv");
     Path tsrReport = Path.of(outDir, "tsr-report.xml");
-    Path instrumentedJar = Path.of(outDir, "testJar_i.jar");
     Path serializedCalculatorTest = Path.of(serialDir, "CalculatorTest.java");
     Path serializedMessageTest = Path.of(serialDir, "MessageTest.java");
 
     assertThat(covMatrix.toFile().exists(), is(true));
     assertThat(passMatrix.toFile().exists(), is(true));
     assertThat(tsrReport.toFile().exists(), is(true));
-    assertThat(instrumentedJar.toFile().exists(), is(true));
     assertThat(serializedCalculatorTest.toFile().exists(), is(true));
     assertThat(serializedMessageTest.toFile().exists(), is(true));
 

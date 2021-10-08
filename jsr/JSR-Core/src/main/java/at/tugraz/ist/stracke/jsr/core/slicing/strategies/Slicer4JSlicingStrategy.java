@@ -66,8 +66,6 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
     }
 
     this.logPaths();
-
-    this.instrumentJar();
   }
 
   @Override
@@ -107,7 +105,8 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
       .replace(".jar", FileNames.INSTRUMENTED_JAR_SUFFIX + ".jar");
   }
 
-  private void instrumentJar() throws IllegalStateException {
+  @Override
+  public SlicingStrategy instrumentJar() throws IllegalStateException {
     logger.info("Starting to instrument Jar...");
 
     ProcessBuilder pb = new ProcessBuilder()
@@ -142,6 +141,8 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
       logger.error("Error during Instrumentation, Caught exception:");
       e.printStackTrace();
     }
+
+    return this;
   }
 
   private void executeTestCase() {

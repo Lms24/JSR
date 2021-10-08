@@ -22,4 +22,11 @@ public interface SlicingStrategy {
    * @return A reference to the slicing strategy instance for method chaining
    */
   SlicingStrategy setTestCase(TestCase testCase);
+
+  /**
+   * Instrument the jar file containing the compiled test and source classes
+   *
+   * @return A reference to the slicing strategy instance for method chaining
+   */
+  SlicingStrategy instrumentJar();
 }
