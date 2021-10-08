@@ -500,7 +500,7 @@ class JUnitJSRFacadeTest {
     String jarDir = "./src/test/resources/smallProject/build/libs/testJar.jar";
     String outDir = "./build/jsr/integTest02";
     String slicerDir = "../../slicer/Slicer4J";
-    String serialDir = "./build/jsr/integTest01/serial";
+    String serialDir = outDir + "/serial";
     String classDir = "./src/test/resources/smallProject/build/classes/java/main";
 
     CoverageStrategy methodCoverage = new MethodCoverageStrategy(Path.of(jarDir),
