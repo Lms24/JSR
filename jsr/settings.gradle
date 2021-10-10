@@ -1,2 +1,4 @@
 rootProject.name = 'jsr'
 include 'JSR-Core', 'JSR-CLI'
+include 'JSR-IntelliJ-Plugin'
+

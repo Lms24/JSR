@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/JSR-CLI" />
             <option value="$PROJECT_DIR$/JSR-Core" />
+            <option value="$PROJECT_DIR$/JSR-IntelliJ-Plugin" />
           </set>
         </option>
       </GradleProjectSettings>
