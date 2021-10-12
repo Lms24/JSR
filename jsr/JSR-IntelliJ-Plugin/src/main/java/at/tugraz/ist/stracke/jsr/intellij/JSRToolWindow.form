@@ -17,6 +17,8 @@
     <children>
       <grid id="c22be" binding="pnlSettingsWrapper" layout-manager="FormLayout">
         <rowspec value="center:max(d;4px):noGrow"/>
+        <rowspec value="top:4dlu:noGrow"/>
+        <rowspec value="center:max(d;4px):noGrow"/>
         <rowspec value="top:2dlu:noGrow"/>
         <rowspec value="center:d:grow"/>
         <colspec value="fill:d:grow"/>
@@ -29,16 +31,19 @@
         <children>
           <component id="24132" class="javax.swing.JLabel" binding="lblSettingsWrapper">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-              <forms/>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <forms top="0" left="4" bottom="0" right="0"/>
             </constraints>
             <properties>
               <alignmentX value="0.0"/>
               <alignmentY value="0.0"/>
               <background color="-13749965"/>
               <font size="16" style="1"/>
-              <horizontalAlignment value="0"/>
-              <horizontalTextPosition value="0"/>
+              <horizontalAlignment value="2"/>
+              <horizontalTextPosition value="4"/>
+              <icon value="ide/notification/expand_dark.png"/>
+              <iconTextGap value="4"/>
+              <inheritsPopupMenu value="true"/>
               <text resource-bundle="i18n/en" key="lbl.settings"/>
               <verticalAlignment value="0"/>
             </properties>
@@ -46,30 +51,23 @@
           <grid id="e9b0a" binding="pnlSettings" layout-manager="FormLayout">
             <rowspec value="center:max(d;4px):noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="top:4dlu:noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="top:4dlu:noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="top:4dlu:noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="top:4dlu:noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="top:4dlu:noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="top:4dlu:noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="top:4dlu:noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
             <colspec value="fill:d:grow"/>
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
             <properties/>
@@ -98,7 +96,7 @@
               </component>
               <component id="e7657" class="javax.swing.JLabel" binding="lblMainSources">
                 <constraints>
-                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <forms top="4" left="4" bottom="0" right="0"/>
                 </constraints>
                 <properties>
@@ -108,7 +106,7 @@
               </component>
               <component id="dc23" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="tfSourcePath" custom-create="true">
                 <constraints>
-                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
                   <forms defaultalign-horz="false"/>
@@ -117,7 +115,7 @@
               </component>
               <component id="dc806" class="javax.swing.JLabel" binding="lblJarFile">
                 <constraints>
-                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <forms top="4" left="4" bottom="0" right="0"/>
                 </constraints>
                 <properties>
@@ -127,7 +125,7 @@
               </component>
               <component id="88549" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="tfJarPath" custom-create="true">
                 <constraints>
-                  <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                  <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
                   <forms defaultalign-horz="false"/>
@@ -136,7 +134,7 @@
               </component>
               <component id="d36e3" class="javax.swing.JLabel" binding="lblClassesPath">
                 <constraints>
-                  <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <forms top="4" left="4" bottom="0" right="0"/>
                 </constraints>
                 <properties>
@@ -146,7 +144,7 @@
               </component>
               <component id="cd688" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="tfClassesPath" custom-create="true">
                 <constraints>
-                  <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                  <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
                   <forms defaultalign-horz="false"/>
@@ -155,7 +153,7 @@
               </component>
               <component id="927c4" class="javax.swing.JLabel" binding="lblBasePackage">
                 <constraints>
-                  <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <forms top="4" left="4" bottom="0" right="0"/>
                 </constraints>
                 <properties>
@@ -165,7 +163,7 @@
               </component>
               <component id="34f72" class="javax.swing.JTextField" binding="tfBasePackage">
                 <constraints>
-                  <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                  <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
                   <forms defaultalign-horz="false"/>
@@ -174,7 +172,7 @@
               </component>
               <component id="8a28c" class="javax.swing.JLabel" binding="lblSlicerPath">
                 <constraints>
-                  <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <forms top="4" left="4" bottom="0" right="0"/>
                 </constraints>
                 <properties>
@@ -184,7 +182,7 @@
               </component>
               <component id="f604a" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="tfSlicerPath" custom-create="true">
                 <constraints>
-                  <grid row="16" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                  <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
                   <forms defaultalign-horz="false"/>
@@ -193,7 +191,7 @@
               </component>
               <component id="75cec" class="javax.swing.JLabel" binding="lblOutPath">
                 <constraints>
-                  <grid row="18" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <forms top="4" left="4" bottom="0" right="0"/>
                 </constraints>
                 <properties>
@@ -203,7 +201,7 @@
               </component>
               <component id="62cfe" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="tfOutputPath" custom-create="true">
                 <constraints>
-                  <grid row="19" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                  <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
                   <forms defaultalign-horz="false"/>
@@ -212,7 +210,7 @@
               </component>
               <component id="c4092" class="javax.swing.JLabel" binding="lblSerialDir">
                 <constraints>
-                  <grid row="21" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <forms top="4" left="4" bottom="0" right="0"/>
                 </constraints>
                 <properties>
@@ -222,7 +220,7 @@
               </component>
               <component id="dc392" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="tfSerialPath" custom-create="true">
                 <constraints>
-                  <grid row="22" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                  <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
                   <forms defaultalign-horz="false"/>
@@ -248,20 +246,21 @@
           <component id="f9746" class="javax.swing.JLabel" binding="lblParamsWrapper">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-              <forms/>
+              <forms top="0" left="4" bottom="0" right="0"/>
             </constraints>
             <properties>
               <alignmentX value="1.0"/>
               <alignmentY value="1.0"/>
               <background color="-13749965"/>
               <font size="16" style="1"/>
-              <horizontalAlignment value="0"/>
-              <horizontalTextPosition value="0"/>
+              <horizontalAlignment value="2"/>
+              <horizontalTextPosition value="4"/>
+              <icon value="ide/notification/expand_dark.png"/>
               <text resource-bundle="i18n/en" key="lbl.params"/>
               <verticalAlignment value="0"/>
             </properties>
           </component>
-          <grid id="db286" layout-manager="FormLayout">
+          <grid id="db286" binding="pnlParams" layout-manager="FormLayout">
             <rowspec value="center:max(d;4px):noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
@@ -286,7 +285,7 @@
                   <text resource-bundle="i18n/en" key="lbl.cov.metric"/>
                 </properties>
               </component>
-              <component id="50aa7" class="javax.swing.JComboBox" binding="cbCovMetric">
+              <component id="50aa7" class="com.intellij.openapi.ui.ComboBox" binding="cbCovMetric" custom-create="true">
                 <constraints>
                   <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                   <forms/>
@@ -300,10 +299,10 @@
                 </constraints>
                 <properties>
                   <iconTextGap value="4"/>
-                  <text resource-bundle="i18n/en" key="lbl.cov.metric"/>
+                  <text resource-bundle="i18n/en" key="lbl.tsr.alg"/>
                 </properties>
               </component>
-              <component id="e6250" class="javax.swing.JComboBox" binding="cbReductionAlg">
+              <component id="e6250" class="com.intellij.openapi.ui.ComboBox" binding="cbReductionAlg" custom-create="true">
                 <constraints>
                   <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                   <forms/>
@@ -316,6 +315,7 @@
                   <forms/>
                 </constraints>
                 <properties>
+                  <selected value="true"/>
                   <text resource-bundle="i18n/en" key="cb.useLastCovReport"/>
                 </properties>
               </component>
