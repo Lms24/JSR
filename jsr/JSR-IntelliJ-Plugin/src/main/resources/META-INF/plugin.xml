@@ -24,7 +24,7 @@
                     secondary="true"
                     icon="AllIcons.General.Modified"
                     anchor="left"
-                    factoryClass="at.tugraz.ist.stracke.jsr.intellij.MyToolWindowFactory"/>
+                    factoryClass="at.tugraz.ist.stracke.jsr.intellij.JSRToolWindowFactory"/>
     </extensions>
 
     <actions>
