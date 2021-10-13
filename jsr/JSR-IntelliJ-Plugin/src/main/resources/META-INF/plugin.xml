@@ -25,6 +25,7 @@
                     icon="AllIcons.General.Modified"
                     anchor="left"
                     factoryClass="at.tugraz.ist.stracke.jsr.intellij.JSRToolWindowFactory"/>
+        <projectService serviceImplementation="at.tugraz.ist.stracke.jsr.intellij.state.StateService"/>
     </extensions>
 
     <actions>

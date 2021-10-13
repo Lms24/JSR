@@ -5,4 +5,15 @@
     <file type="web" url="file://$PROJECT_DIR$" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_16" project-jdk-name="11" project-jdk-type="JavaSDK" />
+  <component name="jsr.xml">
+    <option name="pathTestSources" value="$PROJECT_DIR$/src/test/java" />
+    <option name="pathSources" value="$PROJECT_DIR$/src/main/java" />
+    <option name="pathJar" value="$PROJECT_DIR$/build/libs/testJar.jar" />
+    <option name="pathClasses" value="$PROJECT_DIR$/build/classes/java/main" />
+    <option name="pathSlicer" value="$PROJECT_DIR$/../../../../../../slicer" />
+    <option name="pathOutput" value="$PROJECT_DIR$/../../../../../JSR-IntelliJ-Plugin/build/jsr/plugin" />
+    <option name="pathSerialOut" value="$PROJECT_DIR$/../../../../../JSR-IntelliJ-Plugin/build/jsr/plugin/gen" />
+    <option name="basePackage" value="at.tugraz.ist.stracke.jsr" />
+    <option name="paramsExpanded" value="true" />
+  </component>
 </project>

@@ -18,7 +18,7 @@ public class JSRToolWindowFactory implements ToolWindowFactory {
    * @param toolWindow current tool window
    */
   public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-    JSRToolWindow JSRToolWindow = new JSRToolWindow(toolWindow);
+    JSRToolWindow JSRToolWindow = new JSRToolWindow(toolWindow, project);
     ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
     Content content = contentFactory.createContent(JSRToolWindow.getContent(), "", false);
     toolWindow.getContentManager().addContent(content);

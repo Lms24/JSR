@@ -315,7 +315,6 @@
                   <forms/>
                 </constraints>
                 <properties>
-                  <selected value="true"/>
                   <text resource-bundle="i18n/en" key="cb.useLastCovReport"/>
                 </properties>
               </component>
