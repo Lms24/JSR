@@ -14,8 +14,6 @@
     <option name="pathOutput" value="$PROJECT_DIR$/build/jsr/pluginTest01" />
     <option name="pathSerialOut" value="$PROJECT_DIR$/build/jsr/pluginTest01/gen" />
     <option name="basePackage" value="at.tugraz" />
-    <option name="coverageMetric" value="METHOD_COVERAGE" />
-    <option name="paramsExpanded" value="true" />
-    <option name="resultsExpanded" value="true" />
+    <option name="coverageMetric" value="LINE_COVERAGE" />
   </component>
 </project>

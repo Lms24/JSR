@@ -6,10 +6,11 @@ import com.google.common.collect.ArrayTable;
 import com.google.common.collect.Table;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class CoverageReport {
+public class CoverageReport implements Serializable {
 
   public final String coverageType;
   public final Set<Unit> allUnits;
@@ -60,7 +61,7 @@ public class CoverageReport {
     return table;
   }
 
-  public static class Unit {
+  public static class Unit implements Serializable{
     final public String name;
     final public int positionStart;
     final public int positionEnd;

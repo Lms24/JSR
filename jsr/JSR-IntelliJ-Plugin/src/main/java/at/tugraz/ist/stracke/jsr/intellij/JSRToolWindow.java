@@ -67,7 +67,6 @@ public class JSRToolWindow {
   private JLabel lblCovMetric;
   private JLabel lblReductionAlg;
   private ComboBox<String> cbReductionAlg;
-  private JCheckBox chkLastReport;
   private JPanel pnlParams;
   private JLabel lblStatus;
   private JCheckBox chkDeactivate;
@@ -79,6 +78,11 @@ public class JSRToolWindow {
   private JLabel lblRemoved;
   private JPanel pnlResults;
   private JScrollBar scrollBar1;
+  private JRadioButton rbNewRep;
+  private JRadioButton rbOldRep;
+  private JPanel pnlReportSel;
+  private ComboBox<String> cbOldCovReport;
+  private JLabel lblSelOld;
   private StateService.State state;
 
   public JSRToolWindow(ToolWindow toolWindow, Project project) {
@@ -90,6 +94,7 @@ public class JSRToolWindow {
     initComponentStateFromPersistedState();
     listenToInputChanges();
     initStartTsrButton();
+    initRadioButtons();
   }
 
   private void listenToInputChanges() {
@@ -101,15 +106,20 @@ public class JSRToolWindow {
     this.listenToTextFieldChanges(tfOutputPath.getTextField());
     this.listenToTextFieldChanges(tfBasePackage);
 
-    tfTestPath.addActionListener(actionEvent -> persistState());
-    tfSourcePath.addActionListener(actionEvent -> persistState());
-    tfJarPath.addActionListener(actionEvent -> persistState());
-    tfClassesPath.addActionListener(actionEvent -> persistState());
-    tfSlicerPath.addActionListener(actionEvent -> persistState());
-    tfOutputPath.addActionListener(actionEvent -> persistState());
-    tfSerialPath.addActionListener(actionEvent -> persistState());
+    tfTestPath.addActionListener(e -> persistState());
+    tfSourcePath.addActionListener(e -> persistState());
+    tfJarPath.addActionListener(e -> persistState());
+    tfClassesPath.addActionListener(e -> persistState());
+    tfSlicerPath.addActionListener(e -> persistState());
+    tfOutputPath.addActionListener(e -> persistState());
+    tfSerialPath.addActionListener(e -> persistState());
 
-    this.chkLastReport.addActionListener(actionEvent -> persistState());
+    rbNewRep.addActionListener(e -> persistState());
+    rbOldRep.addActionListener(e -> persistState());
+
+    cbReductionAlg.addActionListener(e -> persistState());
+    cbCovMetric.addActionListener(e -> persistState());
+    cbOldCovReport.addActionListener(e -> persistState());
   }
 
   private void listenToTextFieldChanges(JTextField textField) {
@@ -226,11 +236,15 @@ public class JSRToolWindow {
 
     AtomicLong lastEvent = new AtomicLong();
     if (lstRetained.getListSelectionListeners().length == 0) {
-      lstRetained.addListSelectionListener(listSelectionEvent -> onTestCaseSelect(sortedRetainedTCs, lastEvent, listSelectionEvent));
+      lstRetained.addListSelectionListener(listSelectionEvent -> onTestCaseSelect(sortedRetainedTCs,
+                                                                                  lastEvent,
+                                                                                  listSelectionEvent));
     }
 
     if (lstRemoved.getListSelectionListeners().length == 0) {
-      lstRemoved.addListSelectionListener(listSelectionEvent -> onTestCaseSelect(sortedRemovedTCs, lastEvent, listSelectionEvent));
+      lstRemoved.addListSelectionListener(listSelectionEvent -> onTestCaseSelect(sortedRemovedTCs,
+                                                                                 lastEvent,
+                                                                                 listSelectionEvent));
     }
   }
 
@@ -284,7 +298,7 @@ public class JSRToolWindow {
 
     this.state.basePackage = tfBasePackage.getText();
 
-    this.state.useLastCoverageReport = this.chkLastReport.isSelected();
+    this.state.useLastCoverageReport = this.rbOldRep.isSelected();
     this.state.deactivateTCs = this.chkDeactivate.isSelected();
 
     this.state.settingsExpanded = this.pnlSettings.isVisible();
@@ -352,8 +366,9 @@ public class JSRToolWindow {
     }
     this.cbReductionAlg.setItem(redAlgoItem);
 
-    this.chkLastReport.setSelected(state.useLastCoverageReport);
     this.chkDeactivate.setSelected(state.deactivateTCs);
+
+    this.toggleReportSelection(state.useLastCoverageReport);
 
     this.lblStatus.setVisible(false);
   }
@@ -451,5 +466,33 @@ public class JSRToolWindow {
 
     cbCovMetric = new ComboBox<>(covMetricItems.toArray(new String[0]));
     cbReductionAlg = new ComboBox<>(algorithmItems.toArray(new String[0]));
+  }
+
+  private void initRadioButtons() {
+    rbOldRep.addActionListener(actionEvent -> {
+      if (rbOldRep.isSelected()) {
+        this.toggleReportSelection(true);
+      } else {
+        this.rbOldRep.setSelected(true);
+      }
+    });
+
+    rbNewRep.addActionListener(actionEvent -> {
+      if (rbNewRep.isSelected()) {
+        this.toggleReportSelection(false);
+      } else {
+        this.rbNewRep.setSelected(true);
+      }
+    });
+  }
+
+  private void toggleReportSelection(boolean useOldReport) {
+    this.rbOldRep.setSelected(useOldReport);
+    this.rbNewRep.setSelected(!useOldReport);
+
+    this.lblCovMetric.setVisible(!useOldReport);
+    this.cbCovMetric.setVisible(!useOldReport);
+    this.lblSelOld.setVisible(useOldReport);
+    this.cbOldCovReport.setVisible(useOldReport);
   }
 }

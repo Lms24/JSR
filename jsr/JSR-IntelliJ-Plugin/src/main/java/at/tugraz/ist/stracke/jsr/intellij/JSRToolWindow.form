@@ -238,7 +238,7 @@
       <grid id="d8cb" binding="pnlParamsWrapper" layout-manager="FormLayout">
         <rowspec value="bottom:27px:noGrow"/>
         <rowspec value="top:4dlu:noGrow"/>
-        <rowspec value="fill:p:noGrow"/>
+        <rowspec value="fill:m:noGrow"/>
         <colspec value="fill:d:grow"/>
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -266,7 +266,12 @@
           </component>
           <grid id="db286" binding="pnlParams" layout-manager="FormLayout">
             <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="center:32px:noGrow"/>
+            <rowspec value="top:4dlu:noGrow"/>
+            <rowspec value="center:max(m;4px):noGrow"/>
+            <rowspec value="center:m:noGrow"/>
+            <rowspec value="center:max(m;4px):noGrow"/>
+            <rowspec value="center:m:noGrow"/>
+            <rowspec value="center:4dlu:noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
@@ -283,7 +288,7 @@
             <children>
               <component id="ff69b" class="javax.swing.JLabel" binding="lblCovMetric">
                 <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <forms top="4" left="4" bottom="0" right="0"/>
                 </constraints>
                 <properties>
@@ -293,14 +298,14 @@
               </component>
               <component id="50aa7" class="com.intellij.openapi.ui.ComboBox" binding="cbCovMetric" custom-create="true">
                 <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                   <forms/>
                 </constraints>
                 <properties/>
               </component>
               <component id="267d8" class="javax.swing.JLabel" binding="lblReductionAlg">
                 <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <forms top="4" left="4" bottom="0" right="0"/>
                 </constraints>
                 <properties>
@@ -310,29 +315,58 @@
               </component>
               <component id="e6250" class="com.intellij.openapi.ui.ComboBox" binding="cbReductionAlg" custom-create="true">
                 <constraints>
-                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                   <forms/>
                 </constraints>
                 <properties/>
               </component>
-              <component id="2e332" class="javax.swing.JCheckBox" binding="chkLastReport">
-                <constraints>
-                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <forms/>
-                </constraints>
-                <properties>
-                  <enabled value="false"/>
-                  <text resource-bundle="i18n/en" key="cb.useLastCovReport"/>
-                </properties>
-              </component>
               <component id="ae5e2" class="javax.swing.JCheckBox" binding="chkDeactivate">
                 <constraints>
-                  <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <forms/>
                 </constraints>
                 <properties>
                   <text resource-bundle="i18n/en" key="lbl.deactivate"/>
                 </properties>
+              </component>
+              <grid id="4b7d1" binding="pnlReportSel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="e7b40" class="javax.swing.JRadioButton" binding="rbNewRep">
+                    <constraints/>
+                    <properties>
+                      <text resource-bundle="i18n/en" key="lbl.repSel.new"/>
+                    </properties>
+                  </component>
+                  <component id="26e28" class="javax.swing.JRadioButton" binding="rbOldRep">
+                    <constraints/>
+                    <properties>
+                      <text resource-bundle="i18n/en" key="lbl.repSel.old"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <component id="8518d" class="javax.swing.JLabel" binding="lblSelOld">
+                <constraints>
+                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms top="4" left="4" bottom="0" right="0"/>
+                </constraints>
+                <properties>
+                  <iconTextGap value="4"/>
+                  <text resource-bundle="i18n/en" key="lbl.selOld"/>
+                </properties>
+              </component>
+              <component id="b5e2c" class="com.intellij.openapi.ui.ComboBox" binding="cbOldCovReport">
+                <constraints>
+                  <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties/>
               </component>
             </children>
           </grid>
