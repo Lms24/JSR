@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 @Service({Service.Level.PROJECT})
-@State(name = "jsr.xml")
+@State(name = "jsrConfig")
 public class StateService implements PersistentStateComponent<StateService.State> {
   private static StateService instance;
 
@@ -55,6 +55,8 @@ public class StateService implements PersistentStateComponent<StateService.State
     public boolean useLastCoverageReport;
     public boolean settingsExpanded;
     public boolean paramsExpanded;
+    public boolean resultsExpanded;
+    public boolean deactivateTCs;
 
     public State() {
       this.pathTestSources = "";
@@ -70,6 +72,8 @@ public class StateService implements PersistentStateComponent<StateService.State
       this.useLastCoverageReport = false;
       this.settingsExpanded = false;
       this.paramsExpanded = false;
+      this.resultsExpanded = false;
+      this.deactivateTCs = true;
     }
 
     @Override
@@ -89,7 +93,9 @@ public class StateService implements PersistentStateComponent<StateService.State
              Objects.equals(reductionAlgorithm, state.reductionAlgorithm) &&
              Objects.equals(useLastCoverageReport, state.useLastCoverageReport) &&
              Objects.equals(settingsExpanded, state.settingsExpanded) &&
-             Objects.equals(paramsExpanded, state.paramsExpanded);
+             Objects.equals(paramsExpanded, state.paramsExpanded) &&
+             Objects.equals(resultsExpanded, state.resultsExpanded) &&
+             Objects.equals(deactivateTCs, state.deactivateTCs);
     }
 
     @Override
@@ -106,7 +112,9 @@ public class StateService implements PersistentStateComponent<StateService.State
                           reductionAlgorithm,
                           useLastCoverageReport,
                           settingsExpanded,
-                          paramsExpanded);
+                          paramsExpanded,
+                          resultsExpanded,
+                          deactivateTCs);
     }
   }
 }

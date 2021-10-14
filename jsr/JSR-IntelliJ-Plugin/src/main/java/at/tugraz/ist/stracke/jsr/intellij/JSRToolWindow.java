@@ -2,29 +2,44 @@
 
 package at.tugraz.ist.stracke.jsr.intellij;
 
+import at.tugraz.ist.stracke.jsr.core.shared.TestCase;
+import at.tugraz.ist.stracke.jsr.core.tsr.ReducedTestSuite;
 import at.tugraz.ist.stracke.jsr.intellij.misc.CoverageMetric;
 import at.tugraz.ist.stracke.jsr.intellij.misc.ReductionAlgorithm;
+import at.tugraz.ist.stracke.jsr.intellij.services.ReductionService;
 import at.tugraz.ist.stracke.jsr.intellij.state.StateService;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.TextBrowseFolderListener;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.impl.JavaPsiFacadeEx;
+import com.intellij.psi.impl.JavaPsiFacadeImpl;
+import com.intellij.ui.AnimatedIcon;
+import com.intellij.ui.CollectionListModel;
 
 import javax.swing.*;
-import java.awt.*;
+import javax.swing.event.ListSelectionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 public class JSRToolWindow {
 
+  private final Project project;
   private JPanel jsrToolWindowContent;
   private JPanel pnlSettings;
   private TextFieldWithBrowseButton tfTestPath;
@@ -54,14 +69,23 @@ public class JSRToolWindow {
   private ComboBox<String> cbReductionAlg;
   private JCheckBox chkLastReport;
   private JPanel pnlParams;
-
-  private Project project;
+  private JLabel lblStatus;
+  private JCheckBox chkDeactivate;
+  private JPanel pnlResultsWrapper;
+  private JLabel lblResultsWrapper;
+  private JList<String> lstRetained;
+  private JList<String> lstRemoved;
+  private JLabel lblRetained;
+  private JLabel lblRemoved;
+  private JPanel pnlResults;
+  private JScrollBar scrollBar1;
   private StateService.State state;
 
   public JSRToolWindow(ToolWindow toolWindow, Project project) {
     this.project = project;
     listenToPanelClicks(lblSettingsWrapper, pnlSettings, "settings");
     listenToPanelClicks(lblParamsWrapper, pnlParams, "params");
+    listenToPanelClicks(lblResultsWrapper, pnlResults, "results");
     initStatePersistence();
     initComponentStateFromPersistedState();
     listenToInputChanges();
@@ -107,9 +131,144 @@ public class JSRToolWindow {
 
   private void initStartTsrButton() {
     this.btnStartTSR.addActionListener((actionEvent) -> {
-      System.out.println("Clicked Button");
       persistState();
+      ResourceBundle rb = ResourceBundle.getBundle("i18n/en");
+
+      lblStatus.setVisible(true);
+      lblStatus.setText(rb.getString("status.loading"));
+      lblStatus.setIcon(new AnimatedIcon.Default());
+
+      pnlResultsWrapper.setVisible(false);
+      togglePanel(pnlResults, lblResultsWrapper, false, "results");
+
+      new Thread(this::startTSR).start();
     });
+  }
+
+  private void startTSR() {
+    ReductionService reductionService = project.getService(ReductionService.class);
+    ReducedTestSuite rts;
+
+    try {
+      rts = reductionService.startTSReduction(state.pathTestSources,
+                                              state.pathSources,
+                                              state.pathJar,
+                                              state.pathClasses,
+                                              state.pathSlicer,
+                                              state.pathOutput,
+                                              state.pathSerialOut,
+                                              state.basePackage,
+                                              state.coverageMetric,
+                                              state.reductionAlgorithm,
+                                              state.deactivateTCs,
+                                              state.useLastCoverageReport);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      rts = null;
+    }
+
+    ReducedTestSuite finalRts = rts;
+    SwingUtilities.invokeLater(() -> onReductionFinished(finalRts));
+  }
+
+  private void onReductionFinished(ReducedTestSuite rts) {
+    System.out.println("onreductionfinished");
+    ResourceBundle rb = ResourceBundle.getBundle("i18n/en");
+    boolean success = (rts != null);
+
+    if (success) {
+      lblStatus.setText(rb.getString("status.success"));
+      lblStatus.setIcon(AllIcons.Actions.Checked);
+      this.togglePanel(pnlSettings, lblSettingsWrapper, false, "settings");
+      this.togglePanel(pnlParams, lblParamsWrapper, false, "params");
+      this.showTSRResults(rts);
+    } else {
+      lblStatus.setText(rb.getString("status.error"));
+      lblStatus.setIcon(AllIcons.General.BalloonError);
+    }
+  }
+
+  private void showTSRResults(ReducedTestSuite rts) {
+    this.pnlResultsWrapper.setVisible(true);
+    this.togglePanel(pnlResults, lblResultsWrapper, true, "results");
+
+    List<TestCase> sortedRetainedTCs = rts.testCases.stream()
+                                                    .sorted(Comparator.comparing(TestCase::getFullName))
+                                                    .collect(Collectors.toList());
+    List<TestCase> sortedRemovedTCs = rts.removedTestCases.stream()
+                                                          .sorted(Comparator.comparing(TestCase::getFullName))
+                                                          .collect(Collectors.toList());
+
+    List<String> retainedTCs = sortedRetainedTCs.stream()
+                                                .map(tc -> {
+                                                  String[] tmp = tc.getFullName().split("\\.");
+                                                  String[] classAndMethod = tmp[tmp.length - 1].split(":");
+                                                  return String.format("%s::%s", classAndMethod[0], classAndMethod[1]);
+                                                })
+                                                .collect(Collectors.toList());
+
+    List<String> removedTCs = sortedRemovedTCs.stream()
+                                              .map(tc -> {
+                                                String[] tmp = tc.getFullName().split("\\.");
+                                                String[] classAndMethod = tmp[tmp.length - 1].split(":");
+                                                return String.format("%s::%s",
+                                                                     classAndMethod[0],
+                                                                     classAndMethod[1]);
+                                              })
+                                              .sorted()
+                                              .collect(Collectors.toList());
+
+    ListModel<String> retainedModel = new CollectionListModel<>(retainedTCs);
+    ListModel<String> removedModel = new CollectionListModel<>(removedTCs);
+
+    this.lstRetained.setModel(retainedModel);
+    this.lstRemoved.setModel(removedModel);
+
+    AtomicLong lastEvent = new AtomicLong();
+    if (lstRetained.getListSelectionListeners().length == 0) {
+      lstRetained.addListSelectionListener(listSelectionEvent -> onTestCaseSelect(sortedRetainedTCs, lastEvent, listSelectionEvent));
+    }
+
+    if (lstRemoved.getListSelectionListeners().length == 0) {
+      lstRemoved.addListSelectionListener(listSelectionEvent -> onTestCaseSelect(sortedRemovedTCs, lastEvent, listSelectionEvent));
+    }
+  }
+
+  private void onTestCaseSelect(List<TestCase> sortedRetainedTCs,
+                                AtomicLong lastEvent,
+                                ListSelectionEvent listSelectionEvent) {
+    long eventFiredAt = System.currentTimeMillis();
+    if (eventFiredAt - lastEvent.get() <= 500) {
+      return;
+    }
+
+    // Since the ListSelectionEvent is designed for multiple
+    // selections it behaves weirdly with single selections
+    // Thus we have to check which index was actually selected
+    final int firstIndex = listSelectionEvent.getFirstIndex();
+    final int lastIndex = listSelectionEvent.getLastIndex();
+    final JList<?> lsm = (JList<?>) listSelectionEvent.getSource();
+    int index = firstIndex;
+    for (int i = firstIndex; i <= lastIndex; i++) {
+      if (lsm.isSelectedIndex(i)) {
+        index = i;
+        break;
+      }
+    }
+
+    TestCase selTc = sortedRetainedTCs.get(index);
+    navigateToTestCaseInEditor(selTc);
+    lastEvent.set(eventFiredAt);
+  }
+
+  private void navigateToTestCaseInEditor(TestCase selTc) {
+    JavaPsiFacadeEx facade = new JavaPsiFacadeImpl(project);
+    PsiClass tcClass = facade.findClass(selTc.getClassName());
+    VirtualFile tcFile = tcClass.getContainingFile().getVirtualFile();
+    PsiMethod tcMethod = tcClass.findMethodsByName(selTc.getName(), true)[0];
+
+    OpenFileDescriptor open = new OpenFileDescriptor(project, tcFile, tcMethod.getTextOffset());
+    open.navigate(true);
   }
 
   private void persistState() {
@@ -126,9 +285,11 @@ public class JSRToolWindow {
     this.state.basePackage = tfBasePackage.getText();
 
     this.state.useLastCoverageReport = this.chkLastReport.isSelected();
+    this.state.deactivateTCs = this.chkDeactivate.isSelected();
 
-    this.state.settingsExpanded = this.pnlSettingsWrapper.isVisible();
-    this.state.paramsExpanded = this.pnlParamsWrapper.isVisible();
+    this.state.settingsExpanded = this.pnlSettings.isVisible();
+    this.state.paramsExpanded = this.pnlParams.isVisible();
+    this.state.paramsExpanded = this.pnlResults.isVisible();
 
     final String selCovItemTxt = this.cbCovMetric.getItem();
     if (rb.getString("cov.line").equals(selCovItemTxt)) {
@@ -152,6 +313,10 @@ public class JSRToolWindow {
 
     this.togglePanel(pnlSettings, lblSettingsWrapper, state.settingsExpanded, "settings");
     this.togglePanel(pnlParams, lblParamsWrapper, state.paramsExpanded, "params");
+    // results panel should always be closed initially, as long as we do not
+    // persist the lists from last run (which I really don't want to bother with atm)
+    this.togglePanel(pnlResults, lblResultsWrapper, false, "results");
+    this.pnlResultsWrapper.setVisible(false);
 
     this.tfTestPath.setText(state.pathTestSources);
     this.tfSourcePath.setText(state.pathSources);
@@ -181,12 +346,16 @@ public class JSRToolWindow {
       case GENETIC:
         redAlgoItem = rb.getString("alg.gen");
         break;
+      case GREEDY_HGS:
       default:
         redAlgoItem = rb.getString("alg.hgs");
     }
     this.cbReductionAlg.setItem(redAlgoItem);
 
     this.chkLastReport.setSelected(state.useLastCoverageReport);
+    this.chkDeactivate.setSelected(state.deactivateTCs);
+
+    this.lblStatus.setVisible(false);
   }
 
   private void initStatePersistence() {
@@ -221,6 +390,9 @@ public class JSRToolWindow {
         case "params":
           state.paramsExpanded = nowVisible;
           break;
+        case "results":
+          state.resultsExpanded = nowVisible;
+          break;
       }
     }
   }
@@ -249,11 +421,11 @@ public class JSRToolWindow {
                                                                              false,
                                                                              false).withShowHiddenFiles(true);
     FileChooserDescriptor chooseJarDescriptor = new FileChooserDescriptor(false,
-                                                                           false,
-                                                                           true,
-                                                                           false,
-                                                                           false,
-                                                                           false).withShowHiddenFiles(true);
+                                                                          false,
+                                                                          true,
+                                                                          false,
+                                                                          false,
+                                                                          false).withShowHiddenFiles(true);
 
     tfTestPath.addBrowseFolderListener(new TextBrowseFolderListener(chooseFolderDescriptor));
     tfSourcePath.addBrowseFolderListener(new TextBrowseFolderListener(chooseFolderDescriptor));

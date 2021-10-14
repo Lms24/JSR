@@ -96,7 +96,8 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
     Path out = Path.of(pathToOutDir).toAbsolutePath();
     this.pathToOutDir = out.toFile().exists() ? out.toRealPath() : out;
 
-    this.pathToLoggerJar = Path.of("../../slicer/" + Slicer4JCLI.Paths.PATH_LOGGER_JAR)
+    this.pathToLoggerJar = Path.of(pathToSlicer + "/../"
+                                   + Slicer4JCLI.Paths.PATH_LOGGER_JAR)
                                .toAbsolutePath()
                                .toRealPath();
     final String[] tmp = this.pathToJar.toString().split(File.separator.equals("\\") ? "\\\\" : "/");
