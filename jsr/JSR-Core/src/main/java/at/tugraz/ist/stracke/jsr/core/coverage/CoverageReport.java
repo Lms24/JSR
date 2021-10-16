@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 public class CoverageReport implements Serializable {
 
   public final String coverageType;
+  public final Date createdAt;
+
   public final Set<Unit> allUnits;
   public final Set<Unit> coveredUnits;
   public final Map<TestCase, Set<Unit>> testCaseCoverageData;
@@ -27,6 +29,7 @@ public class CoverageReport implements Serializable {
     this.allUnits = allUnits;
     this.coveredUnits = coveredUnits;
     this.testCaseCoverageData = testCaseCoverageData;
+    this.createdAt = new Date();
   }
 
   public double getCoverageScore() {
@@ -87,7 +90,7 @@ public class CoverageReport implements Serializable {
       Unit u = (Unit) obj;
       return this.name.equals(u.name) &&
              this.positionStart == u.positionStart;
-      // Note: relaxing the quality criterion here, as sliced statements do not have the end line information
+      // Note: relaxing the equality criterion here, as sliced statements do not have the end line information
       /*&& this.positionEnd == u.positionEnd;*/
     }
 

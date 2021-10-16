@@ -2,8 +2,8 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="at.tugraz.ist.stracke.jsr.intellij.JSRToolWindow">
   <grid id="27dc6" binding="jsrToolWindowContent" layout-manager="FormLayout">
     <rowspec value="top:m:noGrow"/>
-    <rowspec value="fill:d:noGrow"/>
-    <rowspec value="center:max(d;4px):noGrow"/>
+    <rowspec value="fill:m:noGrow"/>
+    <rowspec value="center:max(m;4px):noGrow"/>
     <rowspec value="top:4dlu:noGrow"/>
     <rowspec value="center:max(d;4px):noGrow"/>
     <colspec value="fill:d:grow"/>
@@ -267,7 +267,7 @@
           <grid id="db286" binding="pnlParams" layout-manager="FormLayout">
             <rowspec value="center:max(d;4px):noGrow"/>
             <rowspec value="top:4dlu:noGrow"/>
-            <rowspec value="center:max(m;4px):noGrow"/>
+            <rowspec value="center:17px:noGrow"/>
             <rowspec value="center:m:noGrow"/>
             <rowspec value="center:max(m;4px):noGrow"/>
             <rowspec value="center:m:noGrow"/>
@@ -372,11 +372,8 @@
           </grid>
         </children>
       </grid>
-      <grid id="d0da3" layout-manager="FormLayout">
-        <rowspec value="center:max(d;4px):noGrow"/>
-        <rowspec value="top:16dlu:noGrow"/>
-        <rowspec value="center:max(d;4px):noGrow"/>
-        <rowspec value="top:4dlu:noGrow"/>
+      <grid id="d0da3" binding="pnlStart" layout-manager="FormLayout">
+        <rowspec value="center:max(m;4px):noGrow"/>
         <rowspec value="center:max(d;4px):noGrow"/>
         <colspec value="fill:d:grow"/>
         <constraints>
@@ -388,7 +385,7 @@
         <children>
           <component id="fe4a9" class="javax.swing.JLabel" binding="lblStatus">
             <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
             <properties>
@@ -399,7 +396,7 @@
           </component>
           <component id="37391" class="javax.swing.JButton" binding="btnStartTSR">
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
             <properties>

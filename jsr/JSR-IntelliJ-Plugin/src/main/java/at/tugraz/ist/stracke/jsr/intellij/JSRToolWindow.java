@@ -2,13 +2,17 @@
 
 package at.tugraz.ist.stracke.jsr.intellij;
 
+import at.tugraz.ist.stracke.jsr.core.coverage.CoverageReport;
 import at.tugraz.ist.stracke.jsr.core.shared.TestCase;
 import at.tugraz.ist.stracke.jsr.core.tsr.ReducedTestSuite;
 import at.tugraz.ist.stracke.jsr.intellij.misc.CoverageMetric;
+import at.tugraz.ist.stracke.jsr.intellij.misc.CoverageReportListItem;
 import at.tugraz.ist.stracke.jsr.intellij.misc.ReductionAlgorithm;
+import at.tugraz.ist.stracke.jsr.intellij.model.CoverageReportComboboxModel;
 import at.tugraz.ist.stracke.jsr.intellij.services.ReductionService;
 import at.tugraz.ist.stracke.jsr.intellij.state.StateService;
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
@@ -26,14 +30,9 @@ import com.intellij.ui.CollectionListModel;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.awt.event.*;
+import java.nio.file.Path;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -81,9 +80,12 @@ public class JSRToolWindow {
   private JRadioButton rbNewRep;
   private JRadioButton rbOldRep;
   private JPanel pnlReportSel;
-  private ComboBox<String> cbOldCovReport;
+  private ComboBox<CoverageReportListItem> cbOldCovReport;
   private JLabel lblSelOld;
+  private JPanel pnlStart;
   private StateService.State state;
+
+  private CoverageReportListItem selItem;
 
   public JSRToolWindow(ToolWindow toolWindow, Project project) {
     this.project = project;
@@ -95,6 +97,7 @@ public class JSRToolWindow {
     listenToInputChanges();
     initStartTsrButton();
     initRadioButtons();
+    loadCoverageReports();
   }
 
   private void listenToInputChanges() {
@@ -103,7 +106,6 @@ public class JSRToolWindow {
     this.listenToTextFieldChanges(tfJarPath.getTextField());
     this.listenToTextFieldChanges(tfClassesPath.getTextField());
     this.listenToTextFieldChanges(tfSlicerPath.getTextField());
-    this.listenToTextFieldChanges(tfOutputPath.getTextField());
     this.listenToTextFieldChanges(tfBasePackage);
 
     tfTestPath.addActionListener(e -> persistState());
@@ -111,8 +113,26 @@ public class JSRToolWindow {
     tfJarPath.addActionListener(e -> persistState());
     tfClassesPath.addActionListener(e -> persistState());
     tfSlicerPath.addActionListener(e -> persistState());
-    tfOutputPath.addActionListener(e -> persistState());
     tfSerialPath.addActionListener(e -> persistState());
+
+    /* tfOutputPath is special as we need to look for
+       coverage reports inside the changed directory */
+    tfOutputPath.getTextField().addFocusListener(new FocusListener() {
+      @Override
+      public void focusGained(FocusEvent focusEvent) {
+      }
+
+      @Override
+      public void focusLost(FocusEvent focusEvent) {
+        persistState();
+        loadCoverageReports();
+      }
+    });
+
+    tfOutputPath.addActionListener(e -> {
+      persistState();
+      this.loadCoverageReports();
+    });
 
     rbNewRep.addActionListener(e -> persistState());
     rbOldRep.addActionListener(e -> persistState());
@@ -151,11 +171,13 @@ public class JSRToolWindow {
       pnlResultsWrapper.setVisible(false);
       togglePanel(pnlResults, lblResultsWrapper, false, "results");
 
-      new Thread(this::startTSR).start();
+      this.selItem = state.useLastCoverageReport ? cbOldCovReport.getItem() : null;
+      CoverageReport oldReport = state.useLastCoverageReport ? cbOldCovReport.getItem().coverageReport : null;
+      new Thread(() -> startTSR(oldReport)).start();
     });
   }
 
-  private void startTSR() {
+  private void startTSR(CoverageReport oldReport) {
     ReductionService reductionService = project.getService(ReductionService.class);
     ReducedTestSuite rts;
 
@@ -171,18 +193,17 @@ public class JSRToolWindow {
                                               state.coverageMetric,
                                               state.reductionAlgorithm,
                                               state.deactivateTCs,
-                                              state.useLastCoverageReport);
+                                              oldReport);
     } catch (Exception ex) {
       ex.printStackTrace();
       rts = null;
     }
 
     ReducedTestSuite finalRts = rts;
-    SwingUtilities.invokeLater(() -> onReductionFinished(finalRts));
+    ApplicationManager.getApplication().invokeLater(() -> onReductionPerformed(finalRts));
   }
 
-  private void onReductionFinished(ReducedTestSuite rts) {
-    System.out.println("onreductionfinished");
+  public void onReductionPerformed(ReducedTestSuite rts) {
     ResourceBundle rb = ResourceBundle.getBundle("i18n/en");
     boolean success = (rts != null);
 
@@ -192,6 +213,7 @@ public class JSRToolWindow {
       this.togglePanel(pnlSettings, lblSettingsWrapper, false, "settings");
       this.togglePanel(pnlParams, lblParamsWrapper, false, "params");
       this.showTSRResults(rts);
+      this.loadCoverageReports();
     } else {
       lblStatus.setText(rb.getString("status.error"));
       lblStatus.setIcon(AllIcons.General.BalloonError);
@@ -426,8 +448,11 @@ public class JSRToolWindow {
     tfJarPath = new TextFieldWithBrowseButton();
     tfClassesPath = new TextFieldWithBrowseButton();
     tfSlicerPath = new TextFieldWithBrowseButton();
-    tfOutputPath = new TextFieldWithBrowseButton();
     tfSerialPath = new TextFieldWithBrowseButton();
+    tfOutputPath = new TextFieldWithBrowseButton(actionEvent -> {
+      this.persistState();
+      this.loadCoverageReports();
+    });
 
     FileChooserDescriptor chooseFolderDescriptor = new FileChooserDescriptor(false,
                                                                              true,
@@ -494,5 +519,33 @@ public class JSRToolWindow {
     this.cbCovMetric.setVisible(!useOldReport);
     this.lblSelOld.setVisible(useOldReport);
     this.cbOldCovReport.setVisible(useOldReport);
+  }
+
+  private void loadCoverageReports() {
+    ReductionService reductionService = project.getService(ReductionService.class);
+    Path reportsPath = Path.of(this.state.pathOutput, "coverage");
+    System.out.println("loading crs " + reportsPath);
+    List<CoverageReport> reports = reductionService.loadCoverageReportsFromDisk(reportsPath)
+                                                   .stream()
+                                                   .sorted(Comparator.comparing(coverageReport -> coverageReport.createdAt))
+                                                   .collect(Collectors.toList());
+    Collections.reverse(reports);
+    System.out.println("got " + reports.size() + " reports");
+    if (reports.isEmpty()) {
+      this.toggleReportSelection(false);
+      this.rbOldRep.setEnabled(false);
+      return;
+    }
+
+    this.rbOldRep.setEnabled(true);
+
+    List<CoverageReportListItem> reportItems = reports.stream()
+                                                      .map(CoverageReportListItem::new)
+                                                      .collect(Collectors.toList());
+
+    ComboBoxModel<CoverageReportListItem> reportItemsModel = new CoverageReportComboboxModel(reportItems);
+
+    this.cbOldCovReport.setModel(reportItemsModel);
+    this.cbOldCovReport.setItem(this.selItem != null ? this.selItem : reportItems.get(0));
   }
 }
