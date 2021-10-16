@@ -4,7 +4,7 @@
     <rowspec value="top:m:noGrow"/>
     <rowspec value="fill:m:noGrow"/>
     <rowspec value="center:max(m;4px):noGrow"/>
-    <rowspec value="top:4dlu:noGrow"/>
+    <rowspec value="fill:d:grow"/>
     <rowspec value="center:max(d;4px):noGrow"/>
     <colspec value="fill:d:grow"/>
     <constraints>
@@ -13,323 +13,46 @@
     <properties>
       <autoscrolls value="true"/>
       <inheritsPopupMenu value="false"/>
-      <minimumSize width="123" height="800"/>
+      <minimumSize width="123" height="900"/>
       <preferredSize width="349" height="750"/>
       <visible value="true"/>
     </properties>
     <border type="none"/>
     <children>
-      <grid id="c22be" binding="pnlSettingsWrapper" layout-manager="FormLayout">
-        <rowspec value="center:max(d;4px):noGrow"/>
-        <rowspec value="top:4dlu:noGrow"/>
-        <rowspec value="center:max(d;4px):noGrow"/>
-        <rowspec value="top:2dlu:noGrow"/>
-        <rowspec value="center:d:grow"/>
-        <colspec value="fill:d:grow"/>
+      <scrollpane id="8be9c" binding="spMain">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="0" row-span="5" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms/>
         </constraints>
-        <properties/>
-        <border type="none"/>
+        <properties>
+          <autoscrolls value="true"/>
+          <doubleBuffered value="true"/>
+          <horizontalScrollBar value=""/>
+          <horizontalScrollBarPolicy value="31"/>
+          <verticalScrollBar value="edfff"/>
+          <verticalScrollBarPolicy value="20"/>
+          <wheelScrollingEnabled value="true"/>
+        </properties>
+        <border type="empty"/>
         <children>
-          <component id="24132" class="javax.swing.JLabel" binding="lblSettingsWrapper">
-            <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-              <forms top="0" left="4" bottom="0" right="0"/>
-            </constraints>
-            <properties>
-              <alignmentX value="0.0"/>
-              <alignmentY value="0.0"/>
-              <background color="-13749965"/>
-              <font size="16" style="1"/>
-              <horizontalAlignment value="2"/>
-              <horizontalTextPosition value="4"/>
-              <icon value="ide/notification/expand_dark.png"/>
-              <iconTextGap value="4"/>
-              <inheritsPopupMenu value="true"/>
-              <text resource-bundle="i18n/en" key="lbl.settings"/>
-              <verticalAlignment value="0"/>
-            </properties>
-          </component>
-          <grid id="e9b0a" binding="pnlSettings" layout-manager="FormLayout">
-            <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="center:max(d;4px):noGrow"/>
+          <grid id="895a4" binding="pnlWrapper" layout-manager="FormLayout">
+            <rowspec value="top:m:noGrow"/>
+            <rowspec value="fill:m:noGrow"/>
+            <rowspec value="center:max(m;4px):noGrow"/>
+            <rowspec value="top:4dlu:noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
             <colspec value="fill:d:grow"/>
-            <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <forms/>
-            </constraints>
+            <constraints/>
             <properties/>
             <border type="none"/>
             <children>
-              <component id="d78af" class="javax.swing.JLabel" binding="lblTestSources">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <forms top="4" left="4" bottom="0" right="0"/>
-                </constraints>
-                <properties>
-                  <iconTextGap value="4"/>
-                  <text resource-bundle="i18n/en" key="lbl.test.sources.path"/>
-                </properties>
-              </component>
-              <component id="ac870" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="tfTestPath" custom-create="true">
-                <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="-1"/>
-                  </grid>
-                  <forms defaultalign-horz="false"/>
-                </constraints>
-                <properties>
-                  <name value="test123"/>
-                </properties>
-              </component>
-              <component id="e7657" class="javax.swing.JLabel" binding="lblMainSources">
-                <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <forms top="4" left="4" bottom="0" right="0"/>
-                </constraints>
-                <properties>
-                  <iconTextGap value="4"/>
-                  <text resource-bundle="i18n/en" key="lbl.main.sources.path"/>
-                </properties>
-              </component>
-              <component id="dc23" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="tfSourcePath" custom-create="true">
-                <constraints>
-                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="-1"/>
-                  </grid>
-                  <forms defaultalign-horz="false"/>
-                </constraints>
-                <properties/>
-              </component>
-              <component id="dc806" class="javax.swing.JLabel" binding="lblJarFile">
-                <constraints>
-                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <forms top="4" left="4" bottom="0" right="0"/>
-                </constraints>
-                <properties>
-                  <iconTextGap value="4"/>
-                  <text resource-bundle="i18n/en" key="lbl.jar.path"/>
-                </properties>
-              </component>
-              <component id="88549" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="tfJarPath" custom-create="true">
-                <constraints>
-                  <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="-1"/>
-                  </grid>
-                  <forms defaultalign-horz="false"/>
-                </constraints>
-                <properties/>
-              </component>
-              <component id="d36e3" class="javax.swing.JLabel" binding="lblClassesPath">
-                <constraints>
-                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <forms top="4" left="4" bottom="0" right="0"/>
-                </constraints>
-                <properties>
-                  <iconTextGap value="4"/>
-                  <text resource-bundle="i18n/en" key="lbl.classes.path"/>
-                </properties>
-              </component>
-              <component id="cd688" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="tfClassesPath" custom-create="true">
-                <constraints>
-                  <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="-1"/>
-                  </grid>
-                  <forms defaultalign-horz="false"/>
-                </constraints>
-                <properties/>
-              </component>
-              <component id="927c4" class="javax.swing.JLabel" binding="lblBasePackage">
-                <constraints>
-                  <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <forms top="4" left="4" bottom="0" right="0"/>
-                </constraints>
-                <properties>
-                  <iconTextGap value="4"/>
-                  <text resource-bundle="i18n/en" key="lbl.base.package"/>
-                </properties>
-              </component>
-              <component id="34f72" class="javax.swing.JTextField" binding="tfBasePackage">
-                <constraints>
-                  <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="-1"/>
-                  </grid>
-                  <forms defaultalign-horz="false"/>
-                </constraints>
-                <properties/>
-              </component>
-              <component id="8a28c" class="javax.swing.JLabel" binding="lblSlicerPath">
-                <constraints>
-                  <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <forms top="4" left="4" bottom="0" right="0"/>
-                </constraints>
-                <properties>
-                  <iconTextGap value="4"/>
-                  <text resource-bundle="i18n/en" key="lbl.slicer.path"/>
-                </properties>
-              </component>
-              <component id="f604a" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="tfSlicerPath" custom-create="true">
-                <constraints>
-                  <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="-1"/>
-                  </grid>
-                  <forms defaultalign-horz="false"/>
-                </constraints>
-                <properties/>
-              </component>
-              <component id="75cec" class="javax.swing.JLabel" binding="lblOutPath">
-                <constraints>
-                  <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <forms top="4" left="4" bottom="0" right="0"/>
-                </constraints>
-                <properties>
-                  <iconTextGap value="4"/>
-                  <text resource-bundle="i18n/en" key="lbl.out.path"/>
-                </properties>
-              </component>
-              <component id="62cfe" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="tfOutputPath" custom-create="true">
-                <constraints>
-                  <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="-1"/>
-                  </grid>
-                  <forms defaultalign-horz="false"/>
-                </constraints>
-                <properties/>
-              </component>
-              <component id="c4092" class="javax.swing.JLabel" binding="lblSerialDir">
-                <constraints>
-                  <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <forms top="4" left="4" bottom="0" right="0"/>
-                </constraints>
-                <properties>
-                  <iconTextGap value="4"/>
-                  <text resource-bundle="i18n/en" key="lbl.serial.path"/>
-                </properties>
-              </component>
-              <component id="dc392" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="tfSerialPath" custom-create="true">
-                <constraints>
-                  <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="-1"/>
-                  </grid>
-                  <forms defaultalign-horz="false"/>
-                </constraints>
-                <properties/>
-              </component>
-            </children>
-          </grid>
-        </children>
-      </grid>
-      <grid id="d8cb" binding="pnlParamsWrapper" layout-manager="FormLayout">
-        <rowspec value="bottom:27px:noGrow"/>
-        <rowspec value="top:4dlu:noGrow"/>
-        <rowspec value="fill:m:noGrow"/>
-        <colspec value="fill:d:grow"/>
-        <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <forms defaultalign-vert="false"/>
-        </constraints>
-        <properties/>
-        <border type="none"/>
-        <children>
-          <component id="f9746" class="javax.swing.JLabel" binding="lblParamsWrapper">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-              <forms top="0" left="4" bottom="0" right="0"/>
-            </constraints>
-            <properties>
-              <alignmentX value="1.0"/>
-              <alignmentY value="1.0"/>
-              <background color="-13749965"/>
-              <font size="16" style="1"/>
-              <horizontalAlignment value="2"/>
-              <horizontalTextPosition value="4"/>
-              <icon value="ide/notification/expand_dark.png"/>
-              <text resource-bundle="i18n/en" key="lbl.params"/>
-              <verticalAlignment value="0"/>
-            </properties>
-          </component>
-          <grid id="db286" binding="pnlParams" layout-manager="FormLayout">
-            <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="top:4dlu:noGrow"/>
-            <rowspec value="center:17px:noGrow"/>
-            <rowspec value="center:m:noGrow"/>
-            <rowspec value="center:max(m;4px):noGrow"/>
-            <rowspec value="center:m:noGrow"/>
-            <rowspec value="center:4dlu:noGrow"/>
-            <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="fill:m:noGrow"/>
-            <colspec value="fill:d:grow"/>
-            <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <forms defaultalign-vert="false"/>
-            </constraints>
-            <properties>
-              <minimumSize width="239" height="220"/>
-            </properties>
-            <border type="none"/>
-            <children>
-              <component id="ff69b" class="javax.swing.JLabel" binding="lblCovMetric">
-                <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <forms top="4" left="4" bottom="0" right="0"/>
-                </constraints>
-                <properties>
-                  <iconTextGap value="4"/>
-                  <text resource-bundle="i18n/en" key="lbl.cov.metric"/>
-                </properties>
-              </component>
-              <component id="50aa7" class="com.intellij.openapi.ui.ComboBox" binding="cbCovMetric" custom-create="true">
-                <constraints>
-                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-                  <forms/>
-                </constraints>
-                <properties/>
-              </component>
-              <component id="267d8" class="javax.swing.JLabel" binding="lblReductionAlg">
-                <constraints>
-                  <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <forms top="4" left="4" bottom="0" right="0"/>
-                </constraints>
-                <properties>
-                  <iconTextGap value="4"/>
-                  <text resource-bundle="i18n/en" key="lbl.tsr.alg"/>
-                </properties>
-              </component>
-              <component id="e6250" class="com.intellij.openapi.ui.ComboBox" binding="cbReductionAlg" custom-create="true">
-                <constraints>
-                  <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-                  <forms/>
-                </constraints>
-                <properties/>
-              </component>
-              <component id="ae5e2" class="javax.swing.JCheckBox" binding="chkDeactivate">
-                <constraints>
-                  <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <forms/>
-                </constraints>
-                <properties>
-                  <text resource-bundle="i18n/en" key="lbl.deactivate"/>
-                </properties>
-              </component>
-              <grid id="4b7d1" binding="pnlReportSel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
+              <grid id="c22be" binding="pnlSettingsWrapper" layout-manager="FormLayout">
+                <rowspec value="center:max(d;4px):noGrow"/>
+                <rowspec value="top:4dlu:noGrow"/>
+                <rowspec value="center:max(d;4px):noGrow"/>
+                <rowspec value="top:2dlu:noGrow"/>
+                <rowspec value="center:d:grow"/>
+                <colspec value="fill:d:grow"/>
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                   <forms/>
@@ -337,178 +60,496 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="e7b40" class="javax.swing.JRadioButton" binding="rbNewRep">
-                    <constraints/>
+                  <component id="24132" class="javax.swing.JLabel" binding="lblSettingsWrapper">
+                    <constraints>
+                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <forms top="0" left="4" bottom="0" right="0"/>
+                    </constraints>
                     <properties>
-                      <text resource-bundle="i18n/en" key="lbl.repSel.new"/>
+                      <alignmentX value="0.0"/>
+                      <alignmentY value="0.0"/>
+                      <background color="-13749965"/>
+                      <font size="16" style="1"/>
+                      <horizontalAlignment value="2"/>
+                      <horizontalTextPosition value="4"/>
+                      <icon value="ide/notification/expand_dark.png"/>
+                      <iconTextGap value="4"/>
+                      <inheritsPopupMenu value="true"/>
+                      <text resource-bundle="i18n/en" key="lbl.settings"/>
+                      <verticalAlignment value="0"/>
                     </properties>
                   </component>
-                  <component id="26e28" class="javax.swing.JRadioButton" binding="rbOldRep">
-                    <constraints/>
+                  <grid id="e9b0a" binding="pnlSettings" layout-manager="FormLayout">
+                    <rowspec value="center:max(d;4px):noGrow"/>
+                    <rowspec value="center:max(d;4px):noGrow"/>
+                    <rowspec value="center:max(d;4px):noGrow"/>
+                    <rowspec value="center:max(d;4px):noGrow"/>
+                    <rowspec value="center:max(d;4px):noGrow"/>
+                    <rowspec value="center:max(d;4px):noGrow"/>
+                    <rowspec value="center:max(d;4px):noGrow"/>
+                    <rowspec value="center:max(d;4px):noGrow"/>
+                    <rowspec value="center:max(d;4px):noGrow"/>
+                    <rowspec value="center:max(d;4px):noGrow"/>
+                    <rowspec value="center:max(d;4px):noGrow"/>
+                    <rowspec value="center:max(d;4px):noGrow"/>
+                    <rowspec value="center:max(d;4px):noGrow"/>
+                    <rowspec value="center:max(d;4px):noGrow"/>
+                    <rowspec value="center:max(d;4px):noGrow"/>
+                    <rowspec value="center:max(d;4px):noGrow"/>
+                    <colspec value="fill:d:grow"/>
+                    <constraints>
+                      <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <forms/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="d78af" class="javax.swing.JLabel" binding="lblTestSources">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <forms top="4" left="4" bottom="0" right="0"/>
+                        </constraints>
+                        <properties>
+                          <iconTextGap value="4"/>
+                          <text resource-bundle="i18n/en" key="lbl.test.sources.path"/>
+                        </properties>
+                      </component>
+                      <component id="ac870" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="tfTestPath" custom-create="true">
+                        <constraints>
+                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="150" height="-1"/>
+                          </grid>
+                          <forms defaultalign-horz="false"/>
+                        </constraints>
+                        <properties>
+                          <name value="test123"/>
+                        </properties>
+                      </component>
+                      <component id="e7657" class="javax.swing.JLabel" binding="lblMainSources">
+                        <constraints>
+                          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <forms top="4" left="4" bottom="0" right="0"/>
+                        </constraints>
+                        <properties>
+                          <iconTextGap value="4"/>
+                          <text resource-bundle="i18n/en" key="lbl.main.sources.path"/>
+                        </properties>
+                      </component>
+                      <component id="dc23" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="tfSourcePath" custom-create="true">
+                        <constraints>
+                          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="150" height="-1"/>
+                          </grid>
+                          <forms defaultalign-horz="false"/>
+                        </constraints>
+                        <properties/>
+                      </component>
+                      <component id="dc806" class="javax.swing.JLabel" binding="lblJarFile">
+                        <constraints>
+                          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <forms top="4" left="4" bottom="0" right="0"/>
+                        </constraints>
+                        <properties>
+                          <iconTextGap value="4"/>
+                          <text resource-bundle="i18n/en" key="lbl.jar.path"/>
+                        </properties>
+                      </component>
+                      <component id="88549" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="tfJarPath" custom-create="true">
+                        <constraints>
+                          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="150" height="-1"/>
+                          </grid>
+                          <forms defaultalign-horz="false"/>
+                        </constraints>
+                        <properties/>
+                      </component>
+                      <component id="d36e3" class="javax.swing.JLabel" binding="lblClassesPath">
+                        <constraints>
+                          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <forms top="4" left="4" bottom="0" right="0"/>
+                        </constraints>
+                        <properties>
+                          <iconTextGap value="4"/>
+                          <text resource-bundle="i18n/en" key="lbl.classes.path"/>
+                        </properties>
+                      </component>
+                      <component id="cd688" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="tfClassesPath" custom-create="true">
+                        <constraints>
+                          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="150" height="-1"/>
+                          </grid>
+                          <forms defaultalign-horz="false"/>
+                        </constraints>
+                        <properties/>
+                      </component>
+                      <component id="927c4" class="javax.swing.JLabel" binding="lblBasePackage">
+                        <constraints>
+                          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <forms top="4" left="4" bottom="0" right="0"/>
+                        </constraints>
+                        <properties>
+                          <iconTextGap value="4"/>
+                          <text resource-bundle="i18n/en" key="lbl.base.package"/>
+                        </properties>
+                      </component>
+                      <component id="34f72" class="javax.swing.JTextField" binding="tfBasePackage">
+                        <constraints>
+                          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="150" height="-1"/>
+                          </grid>
+                          <forms defaultalign-horz="false"/>
+                        </constraints>
+                        <properties/>
+                      </component>
+                      <component id="8a28c" class="javax.swing.JLabel" binding="lblSlicerPath">
+                        <constraints>
+                          <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <forms top="4" left="4" bottom="0" right="0"/>
+                        </constraints>
+                        <properties>
+                          <iconTextGap value="4"/>
+                          <text resource-bundle="i18n/en" key="lbl.slicer.path"/>
+                        </properties>
+                      </component>
+                      <component id="f604a" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="tfSlicerPath" custom-create="true">
+                        <constraints>
+                          <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="150" height="-1"/>
+                          </grid>
+                          <forms defaultalign-horz="false"/>
+                        </constraints>
+                        <properties/>
+                      </component>
+                      <component id="75cec" class="javax.swing.JLabel" binding="lblOutPath">
+                        <constraints>
+                          <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <forms top="4" left="4" bottom="0" right="0"/>
+                        </constraints>
+                        <properties>
+                          <iconTextGap value="4"/>
+                          <text resource-bundle="i18n/en" key="lbl.out.path"/>
+                        </properties>
+                      </component>
+                      <component id="62cfe" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="tfOutputPath" custom-create="true">
+                        <constraints>
+                          <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="150" height="-1"/>
+                          </grid>
+                          <forms defaultalign-horz="false"/>
+                        </constraints>
+                        <properties/>
+                      </component>
+                      <component id="c4092" class="javax.swing.JLabel" binding="lblSerialDir">
+                        <constraints>
+                          <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <forms top="4" left="4" bottom="0" right="0"/>
+                        </constraints>
+                        <properties>
+                          <iconTextGap value="4"/>
+                          <text resource-bundle="i18n/en" key="lbl.serial.path"/>
+                        </properties>
+                      </component>
+                      <component id="dc392" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="tfSerialPath" custom-create="true">
+                        <constraints>
+                          <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="150" height="-1"/>
+                          </grid>
+                          <forms defaultalign-horz="false"/>
+                        </constraints>
+                        <properties/>
+                      </component>
+                    </children>
+                  </grid>
+                </children>
+              </grid>
+              <grid id="d8cb" binding="pnlParamsWrapper" layout-manager="FormLayout">
+                <rowspec value="bottom:27px:noGrow"/>
+                <rowspec value="top:4dlu:noGrow"/>
+                <rowspec value="fill:m:noGrow"/>
+                <colspec value="fill:d:grow"/>
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-vert="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="f9746" class="javax.swing.JLabel" binding="lblParamsWrapper">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <forms top="0" left="4" bottom="0" right="0"/>
+                    </constraints>
                     <properties>
-                      <text resource-bundle="i18n/en" key="lbl.repSel.old"/>
+                      <alignmentX value="1.0"/>
+                      <alignmentY value="1.0"/>
+                      <background color="-13749965"/>
+                      <font size="16" style="1"/>
+                      <horizontalAlignment value="2"/>
+                      <horizontalTextPosition value="4"/>
+                      <icon value="ide/notification/expand_dark.png"/>
+                      <text resource-bundle="i18n/en" key="lbl.params"/>
+                      <verticalAlignment value="0"/>
+                    </properties>
+                  </component>
+                  <grid id="db286" binding="pnlParams" layout-manager="FormLayout">
+                    <rowspec value="center:max(d;4px):noGrow"/>
+                    <rowspec value="center:max(d;4px):noGrow"/>
+                    <rowspec value="top:4dlu:noGrow"/>
+                    <rowspec value="center:m:noGrow"/>
+                    <rowspec value="center:m:noGrow"/>
+                    <rowspec value="center:m:noGrow"/>
+                    <rowspec value="center:m:noGrow"/>
+                    <rowspec value="center:4dlu:noGrow"/>
+                    <rowspec value="center:max(d;4px):noGrow"/>
+                    <rowspec value="center:max(d;4px):noGrow"/>
+                    <rowspec value="center:max(d;4px):noGrow"/>
+                    <rowspec value="fill:m:noGrow"/>
+                    <colspec value="fill:d:grow"/>
+                    <constraints>
+                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <forms defaultalign-vert="false"/>
+                    </constraints>
+                    <properties>
+                      <minimumSize width="239" height="220"/>
+                    </properties>
+                    <border type="none"/>
+                    <children>
+                      <component id="ff69b" class="javax.swing.JLabel" binding="lblCovMetric">
+                        <constraints>
+                          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <forms top="4" left="4" bottom="0" right="0"/>
+                        </constraints>
+                        <properties>
+                          <iconTextGap value="4"/>
+                          <text resource-bundle="i18n/en" key="lbl.cov.metric"/>
+                        </properties>
+                      </component>
+                      <component id="50aa7" class="com.intellij.openapi.ui.ComboBox" binding="cbCovMetric" custom-create="true">
+                        <constraints>
+                          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                          <forms/>
+                        </constraints>
+                        <properties/>
+                      </component>
+                      <component id="267d8" class="javax.swing.JLabel" binding="lblReductionAlg">
+                        <constraints>
+                          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <forms top="4" left="4" bottom="0" right="0"/>
+                        </constraints>
+                        <properties>
+                          <iconTextGap value="4"/>
+                          <text resource-bundle="i18n/en" key="lbl.tsr.alg"/>
+                        </properties>
+                      </component>
+                      <component id="e6250" class="com.intellij.openapi.ui.ComboBox" binding="cbReductionAlg" custom-create="true">
+                        <constraints>
+                          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                          <forms/>
+                        </constraints>
+                        <properties/>
+                      </component>
+                      <component id="ae5e2" class="javax.swing.JCheckBox" binding="chkDeactivate">
+                        <constraints>
+                          <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <forms/>
+                        </constraints>
+                        <properties>
+                          <text resource-bundle="i18n/en" key="lbl.deactivate"/>
+                        </properties>
+                      </component>
+                      <grid id="4b7d1" binding="pnlReportSel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
+                        <constraints>
+                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                          <forms/>
+                        </constraints>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="e7b40" class="javax.swing.JRadioButton" binding="rbNewRep">
+                            <constraints/>
+                            <properties>
+                              <text resource-bundle="i18n/en" key="lbl.repSel.new"/>
+                            </properties>
+                          </component>
+                          <component id="26e28" class="javax.swing.JRadioButton" binding="rbOldRep">
+                            <constraints/>
+                            <properties>
+                              <text resource-bundle="i18n/en" key="lbl.repSel.old"/>
+                            </properties>
+                          </component>
+                        </children>
+                      </grid>
+                      <component id="8518d" class="javax.swing.JLabel" binding="lblSelOld">
+                        <constraints>
+                          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <forms top="4" left="4" bottom="0" right="0"/>
+                        </constraints>
+                        <properties>
+                          <iconTextGap value="4"/>
+                          <text resource-bundle="i18n/en" key="lbl.selOld"/>
+                        </properties>
+                      </component>
+                      <component id="b5e2c" class="com.intellij.openapi.ui.ComboBox" binding="cbOldCovReport">
+                        <constraints>
+                          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                          <forms/>
+                        </constraints>
+                        <properties/>
+                      </component>
+                      <component id="86bb4" class="javax.swing.JLabel" binding="lblSelCovReport">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                          <forms top="0" left="4" bottom="0" right="0"/>
+                        </constraints>
+                        <properties>
+                          <text resource-bundle="i18n/en" key="lbl.selOld"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
+                </children>
+              </grid>
+              <grid id="d0da3" binding="pnlStart" layout-manager="FormLayout">
+                <rowspec value="center:max(m;4px):noGrow"/>
+                <rowspec value="center:max(d;4px):noGrow"/>
+                <colspec value="fill:d:grow"/>
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-vert="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="fe4a9" class="javax.swing.JLabel" binding="lblStatus">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <forms/>
+                    </constraints>
+                    <properties>
+                      <horizontalAlignment value="0"/>
+                      <icon value="icons/loading.gif"/>
+                      <text resource-bundle="i18n/en" key="status.loading"/>
+                    </properties>
+                  </component>
+                  <component id="37391" class="javax.swing.JButton" binding="btnStartTSR">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <forms/>
+                    </constraints>
+                    <properties>
+                      <horizontalAlignment value="0"/>
+                      <horizontalTextPosition value="0"/>
+                      <label resource-bundle="i18n/en" key="start.tsr"/>
+                      <maximumSize width="-1" height="-1"/>
+                      <text resource-bundle="i18n/en" key="start.tsr"/>
                     </properties>
                   </component>
                 </children>
               </grid>
-              <component id="8518d" class="javax.swing.JLabel" binding="lblSelOld">
+              <grid id="7cd8f" binding="pnlResultsWrapper" layout-manager="FormLayout">
+                <rowspec value="center:max(d;4px):noGrow"/>
+                <rowspec value="top:4dlu:noGrow"/>
+                <rowspec value="top:max(d;4px):noGrow"/>
+                <colspec value="fill:d:grow"/>
                 <constraints>
-                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <forms top="4" left="4" bottom="0" right="0"/>
-                </constraints>
-                <properties>
-                  <iconTextGap value="4"/>
-                  <text resource-bundle="i18n/en" key="lbl.selOld"/>
-                </properties>
-              </component>
-              <component id="b5e2c" class="com.intellij.openapi.ui.ComboBox" binding="cbOldCovReport">
-                <constraints>
-                  <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                   <forms/>
                 </constraints>
                 <properties/>
-              </component>
+                <border type="none"/>
+                <children>
+                  <component id="22976" class="javax.swing.JLabel" binding="lblResultsWrapper">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <forms top="0" left="4" bottom="0" right="0"/>
+                    </constraints>
+                    <properties>
+                      <alignmentX value="0.0"/>
+                      <alignmentY value="0.0"/>
+                      <background color="-13749965"/>
+                      <font size="16" style="1"/>
+                      <horizontalAlignment value="2"/>
+                      <horizontalTextPosition value="4"/>
+                      <icon value="ide/notification/expand_dark.png"/>
+                      <iconTextGap value="4"/>
+                      <inheritsPopupMenu value="true"/>
+                      <text resource-bundle="i18n/en" key="lbl.results"/>
+                      <verticalAlignment value="0"/>
+                    </properties>
+                  </component>
+                  <grid id="9046f" binding="pnlResults" layout-manager="FormLayout">
+                    <rowspec value="center:m:noGrow"/>
+                    <rowspec value="top:8px:noGrow"/>
+                    <rowspec value="center:d:grow"/>
+                    <rowspec value="top:4dlu:noGrow"/>
+                    <rowspec value="top:m:noGrow"/>
+                    <rowspec value="top:4dlu:noGrow"/>
+                    <rowspec value="center:d:grow"/>
+                    <colspec value="fill:d:grow"/>
+                    <constraints>
+                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <forms/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="4ac88" class="javax.swing.JLabel" binding="lblRetained">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <forms top="4" left="4" bottom="0" right="0"/>
+                        </constraints>
+                        <properties>
+                          <font style="1"/>
+                          <iconTextGap value="4"/>
+                          <text resource-bundle="i18n/en" key="lbl.retained"/>
+                        </properties>
+                      </component>
+                      <component id="b0f27" class="javax.swing.JList" binding="lstRetained">
+                        <constraints>
+                          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="2" anchor="1" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="150" height="50"/>
+                          </grid>
+                          <forms top="0" left="4" bottom="0" right="0" defaultalign-vert="false"/>
+                        </constraints>
+                        <properties>
+                          <selectionMode value="0"/>
+                        </properties>
+                      </component>
+                      <component id="a6c76" class="javax.swing.JLabel" binding="lblRemoved">
+                        <constraints>
+                          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <forms top="4" left="4" bottom="0" right="0"/>
+                        </constraints>
+                        <properties>
+                          <font style="1"/>
+                          <iconTextGap value="4"/>
+                          <text resource-bundle="i18n/en" key="lbl.removed"/>
+                        </properties>
+                      </component>
+                      <component id="1eaf7" class="javax.swing.JList" binding="lstRemoved">
+                        <constraints>
+                          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                            <preferred-size width="150" height="50"/>
+                          </grid>
+                          <forms top="0" left="4" bottom="0" right="0" defaultalign-vert="false"/>
+                        </constraints>
+                        <properties/>
+                      </component>
+                      <component id="edfff" class="javax.swing.JScrollBar" binding="scrollBar1" default-binding="true">
+                        <constraints>
+                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="0" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                          <forms defaultalign-vert="false"/>
+                        </constraints>
+                        <properties/>
+                      </component>
+                    </children>
+                  </grid>
+                </children>
+              </grid>
             </children>
           </grid>
         </children>
-      </grid>
-      <grid id="d0da3" binding="pnlStart" layout-manager="FormLayout">
-        <rowspec value="center:max(m;4px):noGrow"/>
-        <rowspec value="center:max(d;4px):noGrow"/>
-        <colspec value="fill:d:grow"/>
-        <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
-          <forms defaultalign-vert="false"/>
-        </constraints>
-        <properties/>
-        <border type="none"/>
-        <children>
-          <component id="fe4a9" class="javax.swing.JLabel" binding="lblStatus">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-              <forms/>
-            </constraints>
-            <properties>
-              <horizontalAlignment value="0"/>
-              <icon value="icons/loading.gif"/>
-              <text resource-bundle="i18n/en" key="status.loading"/>
-            </properties>
-          </component>
-          <component id="37391" class="javax.swing.JButton" binding="btnStartTSR">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <forms/>
-            </constraints>
-            <properties>
-              <horizontalAlignment value="0"/>
-              <horizontalTextPosition value="0"/>
-              <label resource-bundle="i18n/en" key="start.tsr"/>
-              <maximumSize width="-1" height="-1"/>
-              <text resource-bundle="i18n/en" key="start.tsr"/>
-            </properties>
-          </component>
-        </children>
-      </grid>
-      <grid id="7cd8f" binding="pnlResultsWrapper" layout-manager="FormLayout">
-        <rowspec value="center:max(d;4px):noGrow"/>
-        <rowspec value="top:4dlu:noGrow"/>
-        <rowspec value="top:max(d;4px):noGrow"/>
-        <colspec value="fill:d:grow"/>
-        <constraints>
-          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <forms/>
-        </constraints>
-        <properties/>
-        <border type="none"/>
-        <children>
-          <component id="22976" class="javax.swing.JLabel" binding="lblResultsWrapper">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-              <forms top="0" left="4" bottom="0" right="0"/>
-            </constraints>
-            <properties>
-              <alignmentX value="0.0"/>
-              <alignmentY value="0.0"/>
-              <background color="-13749965"/>
-              <font size="16" style="1"/>
-              <horizontalAlignment value="2"/>
-              <horizontalTextPosition value="4"/>
-              <icon value="ide/notification/expand_dark.png"/>
-              <iconTextGap value="4"/>
-              <inheritsPopupMenu value="true"/>
-              <text resource-bundle="i18n/en" key="lbl.results"/>
-              <verticalAlignment value="0"/>
-            </properties>
-          </component>
-          <grid id="9046f" binding="pnlResults" layout-manager="FormLayout">
-            <rowspec value="center:m:noGrow"/>
-            <rowspec value="top:8px:noGrow"/>
-            <rowspec value="center:d:grow"/>
-            <rowspec value="top:4dlu:noGrow"/>
-            <rowspec value="top:m:noGrow"/>
-            <rowspec value="top:4dlu:noGrow"/>
-            <rowspec value="center:d:grow"/>
-            <colspec value="fill:d:grow"/>
-            <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <forms/>
-            </constraints>
-            <properties/>
-            <border type="none"/>
-            <children>
-              <component id="4ac88" class="javax.swing.JLabel" binding="lblRetained">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <forms top="4" left="4" bottom="0" right="0"/>
-                </constraints>
-                <properties>
-                  <font style="1"/>
-                  <iconTextGap value="4"/>
-                  <text resource-bundle="i18n/en" key="lbl.retained"/>
-                </properties>
-              </component>
-              <component id="b0f27" class="javax.swing.JList" binding="lstRetained">
-                <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="2" anchor="1" fill="1" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="50"/>
-                  </grid>
-                  <forms top="0" left="4" bottom="0" right="0" defaultalign-vert="false"/>
-                </constraints>
-                <properties>
-                  <selectionMode value="0"/>
-                </properties>
-              </component>
-              <component id="a6c76" class="javax.swing.JLabel" binding="lblRemoved">
-                <constraints>
-                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <forms top="4" left="4" bottom="0" right="0"/>
-                </constraints>
-                <properties>
-                  <font style="1"/>
-                  <iconTextGap value="4"/>
-                  <text resource-bundle="i18n/en" key="lbl.removed"/>
-                </properties>
-              </component>
-              <component id="1eaf7" class="javax.swing.JList" binding="lstRemoved">
-                <constraints>
-                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="50"/>
-                  </grid>
-                  <forms top="0" left="4" bottom="0" right="0" defaultalign-vert="false"/>
-                </constraints>
-                <properties/>
-              </component>
-              <component id="edfff" class="javax.swing.JScrollBar" binding="scrollBar1" default-binding="true">
-                <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="0" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-                  <forms defaultalign-vert="false"/>
-                </constraints>
-                <properties/>
-              </component>
-            </children>
-          </grid>
-        </children>
-      </grid>
+      </scrollpane>
     </children>
   </grid>
 </form>

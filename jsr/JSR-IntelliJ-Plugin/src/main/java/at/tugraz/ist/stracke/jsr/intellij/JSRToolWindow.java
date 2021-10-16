@@ -83,6 +83,9 @@ public class JSRToolWindow {
   private ComboBox<CoverageReportListItem> cbOldCovReport;
   private JLabel lblSelOld;
   private JPanel pnlStart;
+  private JPanel pnlWrapper;
+  private JScrollPane spMain;
+  private JLabel lblSelCovReport;
   private StateService.State state;
 
   private CoverageReportListItem selItem;
@@ -94,6 +97,7 @@ public class JSRToolWindow {
     listenToPanelClicks(lblResultsWrapper, pnlResults, "results");
     initStatePersistence();
     initComponentStateFromPersistedState();
+    initScrollPane();
     listenToInputChanges();
     initStartTsrButton();
     initRadioButtons();
@@ -547,5 +551,9 @@ public class JSRToolWindow {
 
     this.cbOldCovReport.setModel(reportItemsModel);
     this.cbOldCovReport.setItem(this.selItem != null ? this.selItem : reportItems.get(0));
+  }
+
+  private void initScrollPane() {
+    spMain.getVerticalScrollBar().setUnitIncrement(30);
   }
 }
