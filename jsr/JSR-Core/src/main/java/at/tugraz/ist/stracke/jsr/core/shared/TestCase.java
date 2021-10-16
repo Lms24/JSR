@@ -2,13 +2,14 @@ package at.tugraz.ist.stracke.jsr.core.shared;
 
 import at.tugraz.ist.stracke.jsr.core.parsing.statements.IStatement;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class TestCase {
+public abstract class TestCase implements Serializable {
 
   private final String name;
   private final String className;

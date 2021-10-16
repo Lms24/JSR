@@ -1,0 +1,36 @@
+<idea-plugin>
+    <id>at.tugraz.ist.stracke.jsr.JSR-IntelliJ-Plugin</id>
+    <name>JSR</name>
+    <vendor email="l.stracke@student.tugraz.at"
+            url="https://www.tugraz.at/institute/ist/institute/">
+        Institute of Software Technology
+    </vendor>
+
+    <description>
+        A Small Plugin, providing a GUI for the Java Test Suite Reduction Framework (JSR).
+        This Plugin can be used to analyse your test suite and to identify redundant test
+        cases that slow you down when e.g. executing your regression tests.
+        JSR is able to identify redundant test cases by analysing various coverage metrics
+        of your test suite. Optionally, JSR can disable the identified redundant test cases
+        automatically.
+    </description>
+
+    <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.java</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow id="JSR"
+                    secondary="true"
+                    icon="AllIcons.General.Modified"
+                    anchor="left"
+                    factoryClass="at.tugraz.ist.stracke.jsr.intellij.JSRToolWindowFactory"/>
+        <projectService serviceImplementation="at.tugraz.ist.stracke.jsr.intellij.state.StateService"/>
+        <projectService serviceImplementation="at.tugraz.ist.stracke.jsr.intellij.services.ReductionService"/>
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+    </actions>
+</idea-plugin>

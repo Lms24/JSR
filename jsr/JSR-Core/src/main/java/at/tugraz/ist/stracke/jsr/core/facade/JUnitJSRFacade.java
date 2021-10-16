@@ -1,6 +1,7 @@
 package at.tugraz.ist.stracke.jsr.core.facade;
 
 import at.tugraz.ist.stracke.jsr.core.coverage.CoverageReport;
+import at.tugraz.ist.stracke.jsr.core.coverage.export.CoverageReportExporter;
 import at.tugraz.ist.stracke.jsr.core.coverage.strategies.CoverageStrategy;
 import at.tugraz.ist.stracke.jsr.core.parsing.TestSuiteParser;
 import at.tugraz.ist.stracke.jsr.core.sfl.SFLMatrixExporter;
@@ -11,6 +12,8 @@ import at.tugraz.ist.stracke.jsr.core.tsr.reducer.TestSuiteReducer;
 import at.tugraz.ist.stracke.jsr.core.tsr.serializer.Serializer;
 import at.tugraz.ist.stracke.jsr.core.tsr.strategies.ReductionStrategy;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
+import java.nio.file.Path;
 
 public class JUnitJSRFacade implements JSRFacade {
 
@@ -34,6 +37,7 @@ public class JUnitJSRFacade implements JSRFacade {
 
     // Step 2: Code instrumentation, TS execution and Slicing per test case, Coverage
     CoverageReport report = calculateCoverage(originalTestSuite);
+    exportCoverageReport(report);
 
     // Step 3: Perform TSR
     final ReducedTestSuite reducedTestSuite = reduceTestSuite(originalTestSuite, report);
@@ -49,6 +53,33 @@ public class JUnitJSRFacade implements JSRFacade {
     }
 
     return reducedTestSuite;
+  }
+
+  @Override
+  public ReducedTestSuite reduceTestSuiteFromCoverageReport(CoverageReport report) {
+    // Step 1: Parse the test suite
+    TestSuite originalTestSuite = parseTestSuite();
+
+    // Step 2: Perform TSR
+    final ReducedTestSuite reducedTestSuite = reduceTestSuite(originalTestSuite, report);
+
+    // optional step: SFL export
+    if (this.config.exporter != null) {
+      exportSFLMatrices(report);
+    }
+
+    // Optional step: RTS serialization
+    if (this.config.serialize) {
+      serializeReducedTestSuite(reducedTestSuite);
+    }
+
+    return reducedTestSuite;
+  }
+
+  private void exportCoverageReport(CoverageReport report) {
+    CoverageReportExporter exporter = new CoverageReportExporter(report);
+    final Path coverageOutputPath = Path.of(this.config.outputDir.toString(), "coverage");
+    exporter.exportToFile(coverageOutputPath);
   }
 
   private void serializeReducedTestSuite(ReducedTestSuite reducedTestSuite) {

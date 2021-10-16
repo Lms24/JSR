@@ -3,9 +3,10 @@ package at.tugraz.ist.stracke.jsr.core.parsing.statements;
 import at.tugraz.ist.stracke.jsr.core.coverage.CoverageReport;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Statement implements IStatement{
+public class Statement implements IStatement, Serializable {
   protected final String text;
   protected final int startLine;
   protected final int endLine;

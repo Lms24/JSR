@@ -14,9 +14,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -146,7 +144,7 @@ abstract class JaCoCoCoverageStrategy implements CoverageStrategy {
 
     ProcessBuilder pb = new ProcessBuilder()
       .command("java",
-               "-jar", CLI_JAR,
+               "-jar", this.pathToSlicer + CLI_JAR,
                CLI_REPORT, this.pathToOutDir.toString() + "/" + tcExecFileName,
                CLI_CLASS_FILES, this.pathToClasses.toString(),
                CLI_SOURCE_FILES, this.pathToSources.toString(),
@@ -183,7 +181,7 @@ abstract class JaCoCoCoverageStrategy implements CoverageStrategy {
     ProcessBuilder pb = new ProcessBuilder()
       .command("java",
                String.format("-javaagent:%s=%s",
-                             AGENT_JAR,
+                             this.pathToSlicer + AGENT_JAR,
                              String.format("%s=%s/%s,%s=%s",
                                            AGENT_DEST_FILE,
                                            this.pathToOutDir.toString(),
