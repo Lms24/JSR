@@ -402,7 +402,7 @@
                           <forms top="0" left="4" bottom="0" right="0"/>
                         </constraints>
                         <properties>
-                          <text resource-bundle="i18n/en" key="lbl.selOld"/>
+                          <text resource-bundle="i18n/en" key="lbl.repSel.heading"/>
                         </properties>
                       </component>
                     </children>

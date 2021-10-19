@@ -24,6 +24,8 @@ class Slicer4JSlicingStrategyTest {
                                   "../../slicer/Slicer4J",
                                   outDir);
 
+    strat.instrumentJar();
+
     final File logFile = new File(outDir + "/instr-debug.log");
     final BufferedReader reader = new BufferedReader(new FileReader(logFile));
 
@@ -47,6 +49,7 @@ class Slicer4JSlicingStrategyTest {
       new Slicer4JSlicingStrategy("src/test/resources/testJars/testJar.jar",
                                   "../../slicer/Slicer4J",
                                   outDir);
+    strat.instrumentJar();
 
     strat.setTestCase(new JUnitTestCase("divideZeroByNotZero",
                                         "at.tugraz.ist.stracke.jsr.CalculatorTest",
@@ -82,6 +85,7 @@ class Slicer4JSlicingStrategyTest {
       new Slicer4JSlicingStrategy("src/test/resources/testJars/testJar.jar",
                                   "../../slicer/Slicer4J",
                                   outDir);
+    strat.instrumentJar();
 
     final JUnitTestCase testcase =
       new JUnitTestCase("divideZeroByNotZero",

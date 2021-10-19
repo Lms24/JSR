@@ -23,5 +23,6 @@ mvn -f slicer/Slicer4J/Slicer4J -Dmaven.test.skip=true clean install
 echo "#################################################################"
 echo "Building JUnit4 Runner"
 
-sh slicer/Slicer4J/scripts/create_runner.sh
-mv SingleJUnitTestRunner.jar -f slicer/Slicer4J/scripts/SingleJUnitTestRunner.jar
+javac slicer/Slicer4J/scripts/SingleJUnitTestRunner.java -cp "slicer/Slicer4J/scripts/junit-4.8.2.jar"
+jar -cf slicer/Slicer4J/scripts/SingleJUnitTestRunner.jar -C slicer/Slicer4J/scripts SingleJUnitTestRunner.class
+rm slicer/Slicer4J/scripts/SingleJUnitTestRunner.class
