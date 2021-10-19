@@ -196,6 +196,6 @@ After specifying the required settings and options parameters, you can start a T
 clicking the `Start TSR` button. Depending on whether a coverage report should be created, 
 this might take a while. 
 
-Once it is finished, you two lists appear, one containing all relevant and thus _retained_ test cases
+Once the TSR procedure is finished, two lists appear, one containing all relevant and thus _retained_ test cases
 and the other one, containing all identified _redundant_ test cases. Clicking on a test case in either list
 will trigger a navigation to the test case source code in the IntelliJ editor window(s).
