@@ -107,7 +107,7 @@ gradle JSR-IntelliJ-Plugin:runIde
 Alternatively, when the JSR project is already opened in IntelliJ, 
 one can run the same gradle task from the gradle plugin.
 
-### Using the Plugin
+## Using the Plugin
 
 The following rundown is based on the `smallProject` that is used for integration tests
 in the core library.
@@ -177,7 +177,7 @@ list explains the settings items (with example values for `smallProject`):
   
   Example: `smallProject/build/jsr/pluginTest01/gen`
 
-#### Parameters
+### Parameters
 
 Under the `TSR Options` tab, you can specify your TSR parameters. 
 They should be pretty self expanatory. A short description can be found in the following list:
@@ -190,7 +190,7 @@ They should be pretty self expanatory. A short description can be found in the f
 * `Deactivate redundant test cases` determines if test suite source code with redundant test cases
   deactivated should be generated or not.
   
-#### Starting a TSR run
+### Starting a TSR run
 
 After specifying the required settings and options parameters, you can start a TSR run by 
 clicking the `Start TSR` button. Depending on whether a coverage report should be created, 
