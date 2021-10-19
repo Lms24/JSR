@@ -24,5 +24,5 @@ echo "#################################################################"
 echo "Building JUnit4 Runner"
 
 javac slicer/Slicer4J/scripts/SingleJUnitTestRunner.java -cp "slicer/Slicer4J/scripts/junit-4.8.2.jar"
-jar cf slicer/Slicer4J/scripts/SingleJUnitTestRunner.jar slicer/Slicer4J/scripts/SingleJUnitTestRunner.class -C slicer/Slicer4J/scripts
+jar -cf slicer/Slicer4J/scripts/SingleJUnitTestRunner.jar -C slicer/Slicer4J/scripts SingleJUnitTestRunner.class
 rm slicer/Slicer4J/scripts/SingleJUnitTestRunner.class
