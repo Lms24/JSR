@@ -115,7 +115,7 @@ in the core library.
 To try out the plugin, run IntelliJ as described above and open the `smallProject` 
 under `jsr/JSR-Core/src/test/resources/smallProject`.  
 
-This projects includes a test suite with around 15 tests of which many are purposefully 
+This project includes a test suite with around 15 tests of which many are purposefully 
 redundant. 
 
 Once the project is loaded and IntelliJ finished building its indexes, open the JSR plugin. 
