@@ -2,6 +2,10 @@ package at.tugraz.ist.stracke.jsr.cli;
 
 import at.tugraz.ist.stracke.jsr.cli.candidates.AlgorithmCandidates;
 import at.tugraz.ist.stracke.jsr.cli.candidates.CoverageCandidates;
+import at.tugraz.ist.stracke.jsr.cli.services.JSRParams;
+import at.tugraz.ist.stracke.jsr.cli.services.JSRService;
+import at.tugraz.ist.stracke.jsr.cli.services.JSRServiceImpl;
+import at.tugraz.ist.stracke.jsr.core.tsr.ReducedTestSuite;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
@@ -27,7 +31,7 @@ public class ReductionCommand implements Callable<Integer> {
               description = "The root directory of the test suite sources\r\n")
   private Path pathTestSources;
 
-  @ArgGroup(heading = "\r\nRequired Flags:\r\n", order = 1, validate = false, exclusive = false)
+  @ArgGroup(heading = "\r\nRequired Parameters:\r\n", order = 1, validate = false, exclusive = false)
   private RequiredFlags requiredFlags;
 
   static class RequiredFlags {
@@ -67,7 +71,7 @@ public class ReductionCommand implements Callable<Integer> {
     private Path pathOut;
   }
 
-  @ArgGroup(heading = "\r\nOptional Flags:\r\n", order = 2, validate = false, exclusive = false)
+  @ArgGroup(heading = "\r\nOptional Parameters:\r\n", order = 2, validate = false, exclusive = false)
   private OptionalFlags optionalFlags;
 
   static class OptionalFlags {
@@ -93,7 +97,7 @@ public class ReductionCommand implements Callable<Integer> {
                           "This option only has an effect if --report is not specified" +
                           "\r\n  Available options: " + CoverageCandidates.COV_CHECKED + ", " +
                           CoverageCandidates.COV_LINE + ", " + CoverageCandidates.COV_METHOD)
-    private CoverageCandidates coverageMetric;
+    private String coverageMetric;
 
     @Option(order = 8,
             arity = "1",
@@ -110,11 +114,55 @@ public class ReductionCommand implements Callable<Integer> {
             description = "The reduction algorithm used to reduce the test suite." +
                           "\r\n  Available options: " + AlgorithmCandidates.ALG_GREEDY_HGS + ", " +
                           AlgorithmCandidates.ALG_GENETIC)
-    private CoverageCandidates algorithm;
+    private String algorithm;
   }
 
   @Override
   public Integer call() throws Exception {
-    return null;
+
+    final boolean options = this.optionalFlags != null;
+
+    JSRParams params = new JSRParams(
+      this.pathTestSources,
+      this.requiredFlags.pathSources,
+      this.requiredFlags.pathJar,
+      this.requiredFlags.pathClasses,
+      this.requiredFlags.pathSlicer,
+      this.requiredFlags.pathOut,
+      options ? this.optionalFlags.pathGenOut : null,
+      options ? this.optionalFlags.pathCoverageReport : null,
+      options ? this.optionalFlags.coverageMetric : null,
+      options ? this.optionalFlags.algorithm : null,
+      options ? this.optionalFlags.basePackage : null
+    );
+
+    JSRService jsrService = new JSRServiceImpl();
+    ReducedTestSuite rts = jsrService.reduceTestSuite(params);
+
+    if (rts == null) {
+      System.err.println("Error during Reduction, check your logs in the output directory");
+      return 1;
+    }
+
+    printResult(rts);
+
+    return 0;
+  }
+
+  private void printResult(ReducedTestSuite rts) {
+    System.out.println("Successfully reduced your test suite!");
+    System.out.println("+----------------------------------- Summary -----------------------------------+");
+    System.out.printf("| Test suite size: %d test case%s%n", rts.getTestSuiteSize(), rts.getTestSuiteSize() == 1 ? "" : "s");
+    System.out.printf("+-------------------------------------------------------------------------------+%n");
+    System.out.printf("| Found %d relevant test cases:%n", rts.testCases.size());
+    rts.testCases.forEach(x -> System.out.printf("|    %s%n", x.getFullName()));
+    System.out.printf("+-------------------------------------------------------------------------------+%n");
+    System.out.printf("| Found %d redundant test cases:%n", rts.removedTestCases.size());
+    rts.removedTestCases.forEach(x -> System.out.printf("|    %s%n", x.getFullName()));
+    if (this.optionalFlags.pathGenOut != null) {
+      System.out.printf("+-------------------------------------------------------------------------------+%n");
+      System.out.printf("| Wrote reduced test suite code to: %s%n", this.optionalFlags.pathGenOut);
+    }
+    System.out.println("+-------------------------------------------------------------------------------+");
   }
 }
