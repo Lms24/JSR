@@ -42,11 +42,6 @@ public class JUnitJSRFacade implements JSRFacade {
     // Step 3: Perform TSR
     final ReducedTestSuite reducedTestSuite = reduceTestSuite(originalTestSuite, report);
 
-    // optional step: SFL export
-    if (this.config.exporter != null) {
-      exportSFLMatrices(report);
-    }
-
     // Optional step: RTS serialization
     if (this.config.serialize) {
       serializeReducedTestSuite(reducedTestSuite);
@@ -62,11 +57,6 @@ public class JUnitJSRFacade implements JSRFacade {
 
     // Step 2: Perform TSR
     final ReducedTestSuite reducedTestSuite = reduceTestSuite(originalTestSuite, report);
-
-    // optional step: SFL export
-    if (this.config.exporter != null) {
-      exportSFLMatrices(report);
-    }
 
     // Optional step: RTS serialization
     if (this.config.serialize) {

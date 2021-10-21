@@ -15,7 +15,7 @@ public interface JSRFacade {
    *
    * * Parsing the test suite
    * * Calculate coverage
-   * * Performing TS reduction with the HGS greedy algorithm
+   * * Performing TS reduction
    *
    * @return a {@link ReducedTestSuite} instance with the final outcome
    */
@@ -24,7 +24,8 @@ public interface JSRFacade {
   /**
    * Calculates a reduced test suite from a passed coverage report
    *
-   * Performing TS reduction with the HGS greedy algorithm
+   * * Parsing the test suite
+   * * Performing TS reduction
    *
    * @param report the {@link CoverageReport} on which the reduction shall be based
    *
