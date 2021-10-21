@@ -6,8 +6,6 @@ import at.tugraz.ist.stracke.jsr.core.parsing.JUnitTestSuiteParser;
 import at.tugraz.ist.stracke.jsr.core.parsing.TestSuiteParser;
 import at.tugraz.ist.stracke.jsr.core.parsing.strategies.JavaParserParsingStrategy;
 import at.tugraz.ist.stracke.jsr.core.parsing.strategies.ParsingStrategy;
-import at.tugraz.ist.stracke.jsr.core.sfl.SFLMatrixCsvExporter;
-import at.tugraz.ist.stracke.jsr.core.sfl.SFLMatrixExporter;
 import at.tugraz.ist.stracke.jsr.core.slicing.JUnitTestSuiteSlicer;
 import at.tugraz.ist.stracke.jsr.core.slicing.TestSuiteSlicer;
 import at.tugraz.ist.stracke.jsr.core.slicing.strategies.Slicer4JSlicingStrategy;
@@ -65,17 +63,10 @@ public class JUnitJSRFacadeBuilder {
     this.config.reductionStrategy = new GreedyIHGSReductionStrategy();
     this.config.reducer = new JUnitTestSuiteReducer(this.config.reductionStrategy);
 
-    this.config.exporter = new SFLMatrixCsvExporter(this.config.outputDir);
-
     /* Turning off serialization by default for now */
     this.config.serialize = false;
     this.config.serializationDirectory = null;
     this.config.serializer = new JUnit4Serializer(this.config.testDir);
-  }
-
-  public JUnitJSRFacadeBuilder skipSFLMatrix() {
-    this.config.exporter = null;
-    return this;
   }
 
   public JUnitJSRFacadeBuilder testSuiteParser(TestSuiteParser parser) {
@@ -153,11 +144,6 @@ public class JUnitJSRFacadeBuilder {
     this.config.reductionStrategy = reductionStrategy;
     this.config.reducer.setReductionStrategy(reductionStrategy);
 
-    return this;
-  }
-
-  public JUnitJSRFacadeBuilder sflExporter(SFLMatrixExporter exporter) {
-    this.config.exporter = exporter;
     return this;
   }
 

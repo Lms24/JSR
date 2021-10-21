@@ -1,4 +1,4 @@
-package at.tugraz.ist.stracke.jsr.core.sfl;
+package at.tugraz.ist.stracke.jsr.core.sfl.exporter;
 
 import at.tugraz.ist.stracke.jsr.core.coverage.CoverageReport;
 

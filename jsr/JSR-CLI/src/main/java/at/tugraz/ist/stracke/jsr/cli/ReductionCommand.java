@@ -2,7 +2,7 @@ package at.tugraz.ist.stracke.jsr.cli;
 
 import at.tugraz.ist.stracke.jsr.cli.candidates.AlgorithmCandidates;
 import at.tugraz.ist.stracke.jsr.cli.candidates.CoverageCandidates;
-import at.tugraz.ist.stracke.jsr.cli.services.JSRParams;
+import at.tugraz.ist.stracke.jsr.core.shared.JSRParams;
 import at.tugraz.ist.stracke.jsr.cli.services.JSRService;
 import at.tugraz.ist.stracke.jsr.cli.services.JSRServiceImpl;
 import at.tugraz.ist.stracke.jsr.core.tsr.ReducedTestSuite;

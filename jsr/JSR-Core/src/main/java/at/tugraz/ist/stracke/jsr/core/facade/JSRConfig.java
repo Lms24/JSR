@@ -3,7 +3,6 @@ package at.tugraz.ist.stracke.jsr.core.facade;
 import at.tugraz.ist.stracke.jsr.core.coverage.strategies.CoverageStrategy;
 import at.tugraz.ist.stracke.jsr.core.parsing.TestSuiteParser;
 import at.tugraz.ist.stracke.jsr.core.parsing.strategies.ParsingStrategy;
-import at.tugraz.ist.stracke.jsr.core.sfl.SFLMatrixExporter;
 import at.tugraz.ist.stracke.jsr.core.slicing.TestSuiteSlicer;
 import at.tugraz.ist.stracke.jsr.core.slicing.strategies.SlicingStrategy;
 import at.tugraz.ist.stracke.jsr.core.tsr.reducer.TestSuiteReducer;
@@ -33,8 +32,6 @@ class JSRConfig {
 
   public TestSuiteReducer reducer;
   public ReductionStrategy reductionStrategy;
-
-  public SFLMatrixExporter exporter;
 
   public boolean serialize;
   public Path serializationDirectory;

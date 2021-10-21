@@ -3,12 +3,12 @@ package at.tugraz.ist.stracke.jsr.cli.services;
 import at.tugraz.ist.stracke.jsr.cli.candidates.AlgorithmCandidates;
 import at.tugraz.ist.stracke.jsr.cli.candidates.CoverageCandidates;
 import at.tugraz.ist.stracke.jsr.core.coverage.CoverageReport;
-import at.tugraz.ist.stracke.jsr.core.coverage.strategies.CheckedCoverageStrategy;
 import at.tugraz.ist.stracke.jsr.core.coverage.strategies.CoverageStrategy;
 import at.tugraz.ist.stracke.jsr.core.coverage.strategies.LineCoverageStrategy;
 import at.tugraz.ist.stracke.jsr.core.coverage.strategies.MethodCoverageStrategy;
 import at.tugraz.ist.stracke.jsr.core.facade.JSRFacade;
 import at.tugraz.ist.stracke.jsr.core.facade.JUnitJSRFacadeBuilder;
+import at.tugraz.ist.stracke.jsr.core.shared.JSRParams;
 import at.tugraz.ist.stracke.jsr.core.tsr.ReducedTestSuite;
 import at.tugraz.ist.stracke.jsr.core.tsr.strategies.GeneticReductionStrategy;
 
