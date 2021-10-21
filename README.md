@@ -280,21 +280,21 @@ java -jar JSR-CLI-1.0-SNAPSHOT.jar reduce
 JSR-Core/src/test/resources/smallProject/src/test/java
 ```
 
-##Credits
+## Credits
 ### Libraries and Tools 
 
 The JSR project uses the following libraries and tools: 
 
-* [https://github.com/resess/Slicer4J][Slicer4J] to perform dynamic slicing when calculation checked coverage (JSR Core)
-* [https://www.eclemma.org/jacoco/][JaCoCo] to calculate line and method coverage (JSR Core)
-* [https://javaparser.org/][JavaParser] to parse source code and test suites (JSR-Core)
-* [https://jenetics.io/][Jenetics] as a genetic algorithm library (JSR Core)
-* [https://github.com/google/guava][Guava] as a utility library for JSR Code  
-* [https://plugins.jetbrains.com/docs/intellij/ide-development-instance.html?from=jetbrains.org][Jetbrains IntelliJ Platform SDK] 
+* [Slicer4J](https://github.com/resess/Slicer4J) to perform dynamic slicing when calculation checked coverage (JSR Core)
+* [JaCoCo](https://www.eclemma.org/jacoco/) to calculate line and method coverage (JSR Core)
+* [JavaParser](https://javaparser.org/) to parse source code and test suites (JSR-Core)
+* [Jenetics](https://jenetics.io/) as a genetic algorithm library (JSR Core)
+* [Guava](https://github.com/google/guava) as a utility library for JSR Code  
+* [Jetbrains IntelliJ Platform SDK](https://plugins.jetbrains.com/docs/intellij/ide-development-instance.html?from=jetbrains.org)
   for the JSR IntelliJ Plugin 
-* [https://picocli.info/][picocli] as a CLI framework for the JSR CLI
-* [https://junit.org/junit5/][JUnit 5] and [http://hamcrest.org/JavaHamcrest/tutorial][Hamcrest] for testing (All Modules)
-* [https://logging.apache.org/log4j/2.x/][Log4J] for logging
+* [picocli](https://picocli.info/) as a CLI framework for the JSR CLI
+* [JUnit 5](https://junit.org/junit5/) and [Hamcrest](http://hamcrest.org/JavaHamcrest/tutorial) for testing (All Modules)
+* [Log4J](https://logging.apache.org/log4j/2.x/) for logging
 
 ### Developed with
 
