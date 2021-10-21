@@ -19,4 +19,8 @@ public class ReducedTestSuite extends TestSuite {
   public int getNumberOfRemovedTestCases() {
     return  removedTestCases.size();
   }
+
+  public int getTestSuiteSize() {
+    return this.getNumberOfTestCases() + this.getNumberOfRemovedTestCases();
+  }
 }

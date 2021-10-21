@@ -14,20 +14,18 @@ import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.Logger;
-import org.checkerframework.checker.nullness.qual.NonNull;
-
 public class JavaParserParsingStrategy implements ParsingStrategy {
 
   private static final Logger logger = LogManager.getLogger(ParsingStrategy.class);
-  private Path filePath;
-
   private final CompilationUnitExtractor cuExtractor;
+  private Path filePath;
 
   public JavaParserParsingStrategy(@NonNull String code) {
     this.cuExtractor = new CompilationUnitExtractor(code);
@@ -76,10 +74,12 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
   }
 
   private TestSuite parseTestSuite(CompilationUnit cu) {
-    var testCaseMethods = cu.findAll(MethodDeclaration.class).stream().filter(decl ->
-                                                                                decl.getAnnotations().stream().anyMatch(
-                                                                                  a -> a.getNameAsString()
-                                                                                        .equals("Test")));
+    var testCaseMethods =
+      cu.findAll(MethodDeclaration.class).stream().filter(
+        decl -> decl.getAnnotations()
+                    .stream()
+                    .anyMatch(a -> a.getNameAsString().equals("Test"))
+      );
 
     List<TestCase> tcs = testCaseMethods
       .map(this::mapDeclarationToTestCase)
