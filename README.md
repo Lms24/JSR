@@ -29,9 +29,12 @@ A CLI frontend of the JSR framework, supporting the following features:
     * Genetic 
 * FSL Matrix export
 
-## IDE Plugins/Extensions
+## IntelliJ IDE Plugin
 
-The IntelliJ IDE Plugin serves as the front-end GUI. It directly integrates with IntelliJ so that developers can interact with JSR in a convenient and already established way. The Plugini provides JSR-Core functionality with a few additional features that only make sense in the IDE/GUI context:
+The IntelliJ IDE Plugin serves as the front-end GUI. It directly integrates with 
+IntelliJ so that developers can interact with JSR in a convenient and 
+already established way. The Plugin provides JSR-Core functionality with a few 
+additional features that only make sense in the IDE/GUI context:
 
 * Define and persist JSR settings (paths, package names)
 * Adjust TSR parameters (coverage type, TSR algorithm, Code generation)
@@ -107,7 +110,7 @@ gradle JSR-IntelliJ-Plugin:runIde
 Alternatively, when the JSR project is already opened in IntelliJ, 
 one can run the same gradle task from the gradle plugin.
 
-## Using the Plugin
+## Using the IntelliJ Plugin
 
 The following rundown is based on the `smallProject` that is used for integration tests
 in the core library.
@@ -199,3 +202,104 @@ this might take a while.
 Once the TSR procedure is finished, two lists appear, one containing all relevant and thus _retained_ test cases
 and the other one, containing all identified _redundant_ test cases. Clicking on a test case in either list
 will trigger a navigation to the test case source code in the IntelliJ editor window(s).
+
+## Using the CLI
+
+The JSR command line interface can be used to leverage TSR core functionality via a command line tool. 
+It supports the same settings, parameters and core functionality as the IntelliJ IDE plugin.
+
+Additionally, the CLI supports _Spectrum-based Fault Localization_ matrix export as a bonus feature for research purposes. 
+
+Usage instructions can be found by running 
+
+```java -jar JSR-CLI-1.0-SNAPSHOT.jar reduce --help```
+
+```shell
+Usage: reduce [-hV] [--algorithm=<algorithm>] -c=<pathClasses> [--coverage=<coverageMetric>]
+              [--gen=<pathGenOut>] -j=<pathJar> -l=<pathSlicer> -o=<pathOut>
+              [--package=<basePackage>] [--report=<pathCoverageReport>] -s=<pathSources>
+              <testSourceDir>
+
+Reduces a test suite based on the given options and parameters.
+
+      <testSourceDir>      The root directory of the test suite sources
+
+  -h, --help               Show this help message and exit.
+  -V, --version            Print version information and exit.
+
+Required Parameters:
+  -c, --classes=<pathClasses>
+                           The path to the root directory containing the compiled source code classes
+  -j, --jar=<pathJar>      The path to the jar file containing the source and test classes
+  -l, --slicer=<pathSlicer>
+                           The path to the Slicer4J directory
+  -o, --out=<pathOut>      The path to the directory where all reports and output files are saved
+  -s, --sources=<pathSources>
+                           The root directory of the main source code
+
+Optional Parameters:
+      --algorithm=<algorithm>
+                           The reduction algorithm used to reduce the test suite.
+                             Available options: greedyHGS, genetic
+                             Default: greedyHGS
+      --coverage=<coverageMetric>
+                           The coverage metric calculated before the reduction when no coverage
+                             report is specified. This option only has an effect if --report is not
+                             specified
+                             Available options: checked, line, method
+                             Default: checked
+      --gen=<pathGenOut>   The path to the directory where the modified test classes are generated
+                             and saved
+      --package=<basePackage>
+                           When specified, only classes under this package are instrumented for
+                             line and method coverage calculation
+      --report=<pathCoverageReport>
+                           Path to the coverage report which is used for the reduction
+```
+
+A sample call to the CLI for reducing the `smallProject` test suite is provided below. The working 
+directory of the command line in this example is `<jsrProjectRoot>/jsr`.
+
+This example performs TSR with optional parameters: It creates a new line coverage report (`--coverage`)
+and employs the genetic reduction algorithm (`--algorithm`) that ships with JSR-Core. 
+Additionally, test suite source code is generated (`--gen`). 
+The `--package` option is set to the base package of the source code classes
+to slightly enhance JaCoCo instrumentation and test case execution performance
+
+```shell
+java -jar JSR-CLI-1.0-SNAPSHOT.jar reduce
+-s JSR-Core/src/test/resources/smallProject/src/main/java
+-j JSR-Core/src/test/resources/smallProject/build/libs/testJar.jar
+-l ../slicer/Slicer4J
+-o JSR-CLI/build/jsr/cliTest01
+-c JSR-Core/src/test/resources/smallProject/build/classes/java/main
+--gen JSR-CLI/build/jsr/cliTest01/gen
+--package at.tugraz.ist.stracke.jsr
+--coverage line
+--algorithm genetic
+JSR-Core/src/test/resources/smallProject/src/test/java
+```
+
+##Credits
+### Libraries and Tools 
+
+The JSR project uses the following libraries and tools: 
+
+* [https://github.com/resess/Slicer4J][Slicer4J] to perform dynamic slicing when calculation checked coverage (JSR Core)
+* [https://www.eclemma.org/jacoco/][JaCoCo] to calculate line and method coverage (JSR Core)
+* [https://javaparser.org/][JavaParser] to parse source code and test suites (JSR-Core)
+* [https://jenetics.io/][Jenetics] as a genetic algorithm library (JSR Core)
+* [https://github.com/google/guava][Guava] as a utility library for JSR Code  
+* [https://plugins.jetbrains.com/docs/intellij/ide-development-instance.html?from=jetbrains.org][Jetbrains IntelliJ Platform SDK] 
+  for the JSR IntelliJ Plugin 
+* [https://picocli.info/][picocli] as a CLI framework for the JSR CLI
+* [https://junit.org/junit5/][JUnit 5] and [http://hamcrest.org/JavaHamcrest/tutorial][Hamcrest] for testing (All Modules)
+* [https://logging.apache.org/log4j/2.x/][Log4J] for logging
+
+### Developed with
+
+* IntelliJ IDEA
+* OpenJDK
+* Sublime
+* GitHub
+* Love ❤️

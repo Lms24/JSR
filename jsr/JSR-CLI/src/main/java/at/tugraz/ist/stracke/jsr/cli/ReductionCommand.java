@@ -53,7 +53,7 @@ public class ReductionCommand implements Callable<Integer> {
             order = 2,
             arity = "1",
             names = {"-c", "--classes"},
-            description = "The path to the root directory containing the compiled classes")
+            description = "The path to the root directory containing the compiled source code classes")
     private Path pathClasses;
 
     @Option(required = true,

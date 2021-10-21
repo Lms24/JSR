@@ -14,7 +14,7 @@ dependencies {
     implementation 'info.picocli:picocli:4.6.1'
 }
 
-def mainClassName = "at.tugraz.ist.stracke.jsr.cli.CheckSum"
+def mainClassName = "at.tugraz.ist.stracke.jsr.cli.Main"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
