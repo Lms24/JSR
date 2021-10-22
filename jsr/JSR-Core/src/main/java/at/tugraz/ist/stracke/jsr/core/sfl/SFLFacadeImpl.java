@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 public class SFLFacadeImpl implements SFLFacade {
 
-  private Logger logger = LogManager.getLogger(SFLFacadeImpl.class);
+  private final Logger logger = LogManager.getLogger(SFLFacadeImpl.class);
 
   private ParsingStrategy parsingStrategy;
   private TestSuiteParser parser;
@@ -41,31 +41,30 @@ public class SFLFacadeImpl implements SFLFacade {
   @Override
   public boolean createAndExportSFLMatrices(JSRParams params) {
 
-    if (params == null) {
+    if (!checkParams(params)) {
       return false;
     }
 
-    if (parsingStrategy == null) {
-      parsingStrategy = new JavaParserParsingStrategy(params.pathTestSources);
-    }
-    if (parser == null) {
-      parser = new JUnitTestSuiteParser(parsingStrategy);
-    }
+    configureParsing(params);
 
     parser.parse();
     TestSuite testSuite = parser.getResult();
 
-    if (slicingStrategy == null) {
-      slicingStrategy = new Slicer4JSlicingStrategy(params.pathJar.toString(),
-                                                    params.pathSlicer.toString(),
-                                                    params.pathOut.toString());
+    if (testSuite == null) {
+      return false;
     }
 
-    if (slicer == null) {
-      slicer = new JUnitTestSuiteSlicer(slicingStrategy, testSuite);
-    }
+    configureSlicing(params, testSuite);
 
+    CoverageReport finalReport = createSFLCoverageReport(params, testSuite);
 
+    configureSFLExporter(params, finalReport);
+
+    logger.info("Calling exporter");
+    return exporter.exportSFLMatrices();
+  }
+
+  private CoverageReport createSFLCoverageReport(JSRParams params, TestSuite testSuite) {
     CoverageStrategy failCoverageStrategy = new CheckedCoverageStrategy(testSuite, parser, slicer);
     CoverageStrategy passCoverageStrategy = new LineCoverageStrategy(params.pathJar,
                                                                      params.pathClasses,
@@ -108,12 +107,73 @@ public class SFLFacadeImpl implements SFLFacade {
 
     CoverageReport finalReport = new CoverageReport("mixed", allUnits, coveredUnits, coverageData);
     logger.info("Assembled combined coverage report");
+    return finalReport;
+  }
 
+  private void configureSFLExporter(JSRParams params, CoverageReport finalReport) {
     if (exporter == null) {
       exporter = new SFLMatrixCsvExporter(finalReport, params.pathOut);
     }
+  }
 
-    logger.info("Calling exporter");
-    return exporter.exportSFLMatrices();
+  private void configureSlicing(JSRParams params, TestSuite testSuite) {
+    if (slicingStrategy == null) {
+      slicingStrategy = new Slicer4JSlicingStrategy(params.pathJar.toString(),
+                                                    params.pathSlicer.toString(),
+                                                    params.pathOut.toString());
+    }
+
+    if (slicer == null) {
+      slicer = new JUnitTestSuiteSlicer(slicingStrategy, testSuite);
+    }
+  }
+
+  private void configureParsing(JSRParams params) {
+    if (parsingStrategy == null) {
+      parsingStrategy = new JavaParserParsingStrategy(params.pathTestSources);
+    }
+    if (parser == null) {
+      parser = new JUnitTestSuiteParser(parsingStrategy);
+    }
+  }
+
+  private boolean checkParams(JSRParams params) {
+    if (params == null) {
+      logger.error("The passed params object must not be null!");
+      return false;
+    }
+
+    if (params.pathTestSources == null ||
+        params.pathJar == null ||
+        params.pathSlicer == null ||
+        params.pathOut == null ||
+        params.pathClasses == null) {
+      logger.error("Required parameters are not set (null)");
+      return false;
+    }
+
+    return true;
+  }
+
+  /* Setter Dependency Injection */
+
+  public void setParsingStrategy(ParsingStrategy parsingStrategy) {
+    this.parsingStrategy = parsingStrategy;
+  }
+
+  public void setParser(TestSuiteParser parser) {
+    this.parser = parser;
+  }
+
+  public void setSlicingStrategy(SlicingStrategy slicingStrategy) {
+    this.slicingStrategy = slicingStrategy;
+  }
+
+  public void setSlicer(TestSuiteSlicer slicer) {
+    this.slicer = slicer;
+  }
+
+  public void setExporter(SFLMatrixExporter exporter) {
+    this.exporter = exporter;
   }
 }
