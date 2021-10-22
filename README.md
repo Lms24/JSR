@@ -212,14 +212,37 @@ Additionally, the CLI supports _Spectrum-based Fault Localization_ matrix export
 
 Usage instructions can be found by running 
 
-```java -jar JSR-CLI-1.0-SNAPSHOT.jar reduce --help```
+```shell
+java -jar JSR-CLI-1.0-SNAPSHOT.jar jsr --help
+```
+
+This produces the following output:
 
 ```shell
-Usage: reduce [-hV] [--algorithm=<algorithm>] -c=<pathClasses> [--coverage=<coverageMetric>]
-              [--gen=<pathGenOut>] -j=<pathJar> -l=<pathSlicer> -o=<pathOut>
-              [--package=<basePackage>] [--report=<pathCoverageReport>] -s=<pathSources>
-              <testSourceDir>
+Usage: jsr [-hV] [COMMAND]
+  -h, --help      Show this help message and exit.
+  -V, --version   Print version information and exit.
+  
+Commands:
+  reduce  Reduces a test suite based on the given options and parameters.
+  sfl     Creates Spectrum-based Fault Localization matrices.
+```
 
+### Performing TSR via the CLI
+
+By invoking the `reduce` subcommand, the CLI can perform TSR: 
+
+```shell
+java -jar JSR-CLI-1.0-SNAPSHOT.jar jsr reduce --help
+```
+
+This produces the following output:
+
+```shell
+Usage: jsr reduce [-hV] [--algorithm=<algorithm>] -c=<pathClasses> [--coverage=<coverageMetric>]
+                  [--gen=<pathGenOut>] -j=<pathJar> -l=<pathSlicer> -o=<pathOut>
+                  [--package=<basePackage>] [--report=<pathCoverageReport>] -s=<pathSources>
+                  <testSourceDir>
 Reduces a test suite based on the given options and parameters.
 
       <testSourceDir>      The root directory of the test suite sources
@@ -229,7 +252,8 @@ Reduces a test suite based on the given options and parameters.
 
 Required Parameters:
   -c, --classes=<pathClasses>
-                           The path to the root directory containing the compiled source code classes
+                           The path to the root directory containing the compiled source code
+                             classes
   -j, --jar=<pathJar>      The path to the jar file containing the source and test classes
   -l, --slicer=<pathSlicer>
                            The path to the Slicer4J directory
@@ -267,7 +291,7 @@ The `--package` option is set to the base package of the source code classes
 to slightly enhance JaCoCo instrumentation and test case execution performance
 
 ```shell
-java -jar JSR-CLI-1.0-SNAPSHOT.jar reduce
+java -jar JSR-CLI-1.0-SNAPSHOT.jar jsr reduce
 -s JSR-Core/src/test/resources/smallProject/src/main/java
 -j JSR-Core/src/test/resources/smallProject/build/libs/testJar.jar
 -l ../slicer/Slicer4J
@@ -279,13 +303,66 @@ java -jar JSR-CLI-1.0-SNAPSHOT.jar reduce
 --algorithm genetic
 JSR-Core/src/test/resources/smallProject/src/test/java
 ```
+### Generating SFL Matrices via the CLI
+
+The CLI can generate Spectrum-based Fault Localization matrices by invoking the `sfl` subcommand:
+
+```shell
+java -jar JSR-CLI-1.0-SNAPSHOT.jar jsr sfl --help
+```
+
+This produces the following output:
+
+```shell
+Usage: jsr sfl [-hV] -c=<pathClasses> -j=<pathJar> -l=<pathSlicer> -o=<pathOut>
+               [--package=<basePackage>] -s=<pathSources> <testSourceDir>
+Creates Spectrum-based Fault Localization matrices.
+
+      <testSourceDir>   The root directory of the test suite sources
+
+  -h, --help            Show this help message and exit.
+  -V, --version         Print version information and exit.
+
+Required Parameters:
+  -c, --classes=<pathClasses>
+                        The path to the root directory containing the compiled source code classes
+  -j, --jar=<pathJar>   The path to the jar file containing the source and test classes
+  -l, --slicer=<pathSlicer>
+                        The path to the Slicer4J directory
+  -o, --out=<pathOut>   The path to the directory where the SFL matrices are written to
+  -s, --sources=<pathSources>
+                        The root directory of the main source code
+
+Optional Parameters:
+      --package=<basePackage>
+                        When specified, only classes under this package are instrumented for line
+                          and method coverage calculation
+```
+
+A sample SFL call is provided below. The `sfl` commands generates two CSV files: 
+* `outcomeMatrix.csv` containing information about the outcome (pass/fail) of each executed test case.
+* `coverageMatrix.csv` containing the coverage data of each test case:
+  * A row of a _passing_ test case shows the _line-covered_ lines of the test case
+  * A row of a _failing_ test case shows the _checked-covered_ lines of the test case
+
+```shell
+java -jar JSR-CLI-1.0-SNAPSHOT.jar jsr sfl
+-s JSR-Core/src/test/resources/smallProject/src/main/java
+-j JSR-Core/src/test/resources/smallProject/build/libs/testJar.jar
+-l ../slicer/Slicer4J
+-o JSR-CLI/build/jsr/cliTest01
+-c JSR-Core/src/test/resources/smallProject/build/classes/java/main
+--package at.tugraz
+JSR-Core/src/test/resources/smallProject/src/test/java
+```
+
 
 ## Credits
 ### Libraries and Tools 
 
 The JSR project uses the following libraries and tools: 
 
-* [Slicer4J](https://github.com/resess/Slicer4J) to perform dynamic slicing when calculation checked coverage (JSR Core)
+* [Slicer4J](https://github.com/resess/Slicer4J) to perform dynamic slicing when calculating checked coverage (JSR Core)
 * [JaCoCo](https://www.eclemma.org/jacoco/) to calculate line and method coverage (JSR Core)
 * [JavaParser](https://javaparser.org/) to parse source code and test suites (JSR-Core)
 * [Jenetics](https://jenetics.io/) as a genetic algorithm library (JSR Core)

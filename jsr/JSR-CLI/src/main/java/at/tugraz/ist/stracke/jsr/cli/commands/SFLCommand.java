@@ -58,7 +58,7 @@ public class SFLCommand implements Callable<Integer> {
             order = 4,
             arity = "1",
             names = {"-o", "--out"},
-            description = "The path to the directory where all reports and output files are saved")
+            description = "The path to the directory where the SFL matrices are written to")
     private Path pathOut;
   }
 
