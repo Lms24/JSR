@@ -1,9 +1,9 @@
-package at.tugraz.ist.stracke.jsr.cli;
+package at.tugraz.ist.stracke.jsr.cli.commands;
 
 import at.tugraz.ist.stracke.jsr.cli.candidates.AlgorithmCandidates;
 import at.tugraz.ist.stracke.jsr.cli.candidates.CoverageCandidates;
 import at.tugraz.ist.stracke.jsr.core.shared.JSRParams;
-import at.tugraz.ist.stracke.jsr.cli.services.JSRService;
+import at.tugraz.ist.stracke.jsr.cli.services.TSRService;
 import at.tugraz.ist.stracke.jsr.cli.services.JSRServiceImpl;
 import at.tugraz.ist.stracke.jsr.core.tsr.ReducedTestSuite;
 import picocli.CommandLine;
@@ -21,7 +21,7 @@ import java.util.concurrent.Callable;
   usageHelpWidth = 100,
   footer = "\r\nJSR - The Java Test Suite Reduction Framework",
   version = "JSR CLI 1.0",
-  description = "\r\nReduces a test suite based on the given options and parameters.\r\n"
+  description = "Reduces a test suite based on the given options and parameters.\r\n"
 )
 public class ReductionCommand implements Callable<Integer> {
 
@@ -136,8 +136,8 @@ public class ReductionCommand implements Callable<Integer> {
       options ? this.optionalFlags.basePackage : null
     );
 
-    JSRService jsrService = new JSRServiceImpl();
-    ReducedTestSuite rts = jsrService.reduceTestSuite(params);
+    TSRService TSRService = new JSRServiceImpl();
+    ReducedTestSuite rts = TSRService.reduceTestSuite(params);
 
     if (rts == null) {
       System.err.println("Error during Reduction, check your logs in the output directory");
@@ -152,12 +152,18 @@ public class ReductionCommand implements Callable<Integer> {
   private void printResult(ReducedTestSuite rts) {
     System.out.println("Successfully reduced your test suite!");
     System.out.println("+----------------------------------- Summary -----------------------------------+");
-    System.out.printf("| Test suite size: %d test case%s%n", rts.getTestSuiteSize(), rts.getTestSuiteSize() == 1 ? "" : "s");
+    System.out.printf("| Test suite size: %d test case%s%n",
+                      rts.getTestSuiteSize(),
+                      rts.getTestSuiteSize() == 1 ? "" : "s");
     System.out.printf("+-------------------------------------------------------------------------------+%n");
-    System.out.printf("| Found %d relevant test cases:%n", rts.testCases.size());
+    System.out.printf("| Found %d relevant test case%s:%n",
+                      rts.getNumberOfTestCases(),
+                      rts.getNumberOfTestCases() == 1 ? "" : "s");
     rts.testCases.forEach(x -> System.out.printf("|    %s%n", x.getFullName()));
     System.out.printf("+-------------------------------------------------------------------------------+%n");
-    System.out.printf("| Found %d redundant test cases:%n", rts.removedTestCases.size());
+    System.out.printf("| Found %d redundant test case%s:%n",
+                      rts.getNumberOfRemovedTestCases(),
+                      rts.getNumberOfRemovedTestCases() == 1 ? "" : "s");
     rts.removedTestCases.forEach(x -> System.out.printf("|    %s%n", x.getFullName()));
     if (this.optionalFlags.pathGenOut != null) {
       System.out.printf("+-------------------------------------------------------------------------------+%n");
