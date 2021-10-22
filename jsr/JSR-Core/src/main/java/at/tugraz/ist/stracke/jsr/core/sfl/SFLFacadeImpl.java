@@ -36,6 +36,9 @@ public class SFLFacadeImpl implements SFLFacade {
   private SlicingStrategy slicingStrategy;
   private TestSuiteSlicer slicer;
 
+  private CoverageStrategy passCoverageStrategy;
+  private CoverageStrategy failCoverageStrategy;
+
   private SFLMatrixExporter exporter;
 
   @Override
@@ -65,13 +68,20 @@ public class SFLFacadeImpl implements SFLFacade {
   }
 
   private CoverageReport createSFLCoverageReport(JSRParams params, TestSuite testSuite) {
-    CoverageStrategy failCoverageStrategy = new CheckedCoverageStrategy(testSuite, parser, slicer);
-    CoverageStrategy passCoverageStrategy = new LineCoverageStrategy(params.pathJar,
-                                                                     params.pathClasses,
-                                                                     params.pathSources,
-                                                                     params.pathSlicer,
-                                                                     params.pathOut,
-                                                                     params.basePackage);
+
+    if (failCoverageStrategy == null) {
+      failCoverageStrategy = new CheckedCoverageStrategy(testSuite, parser, slicer);
+    }
+    if (passCoverageStrategy == null) {
+      passCoverageStrategy = new LineCoverageStrategy(params.pathJar,
+                                                      params.pathClasses,
+                                                      params.pathSources,
+                                                      params.pathSlicer,
+                                                      params.pathOut,
+                                                      params.basePackage);
+    }
+
+    passCoverageStrategy.setOriginalTestSuite(testSuite);
 
     logger.info("Calculating coverage for failing test cases");
     CoverageReport failCoverage = failCoverageStrategy.calculateOverallCoverage();
@@ -175,5 +185,17 @@ public class SFLFacadeImpl implements SFLFacade {
 
   public void setExporter(SFLMatrixExporter exporter) {
     this.exporter = exporter;
+  }
+
+  public void setPassCoverageStrategy(CoverageStrategy passCoverageStrategy) {
+    this.passCoverageStrategy = passCoverageStrategy;
+  }
+
+  public void setFailCoverageStrategy(CoverageStrategy failCoverageStrategy) {
+    this.failCoverageStrategy = failCoverageStrategy;
+  }
+
+  SFLMatrixExporter getExporter() {
+    return exporter;
   }
 }

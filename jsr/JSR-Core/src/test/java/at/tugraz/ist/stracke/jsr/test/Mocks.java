@@ -1,10 +1,12 @@
 package at.tugraz.ist.stracke.jsr.test;
 
 import at.tugraz.ist.stracke.jsr.core.coverage.CoverageReport;
+import at.tugraz.ist.stracke.jsr.core.coverage.strategies.CoverageStrategy;
 import at.tugraz.ist.stracke.jsr.core.parsing.TestSuiteParser;
 import at.tugraz.ist.stracke.jsr.core.parsing.statements.AssertionStatement;
 import at.tugraz.ist.stracke.jsr.core.parsing.statements.Statement;
 import at.tugraz.ist.stracke.jsr.core.parsing.strategies.ParsingStrategy;
+import at.tugraz.ist.stracke.jsr.core.sfl.exporter.SFLMatrixExporter;
 import at.tugraz.ist.stracke.jsr.core.shared.TestCase;
 import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
 import at.tugraz.ist.stracke.jsr.core.slicing.TestSuiteSlicer;
@@ -148,6 +150,66 @@ public class Mocks {
 
     @Override
     public void setTestSuite(TestSuite testSuite) {
+    }
+  }
+
+  public static class SFLTestSuiteParser implements TestSuiteParser {
+    @Override
+    public void parse() {
+    }
+
+    @Override
+    public TestSuite getResult() {
+      return TSRData.sflTestSuite;
+    }
+
+    @Override
+    public ParsingStrategy getParsingStrategy() {
+      return null;
+    }
+
+    @Override
+    public void setParsingStrategy(ParsingStrategy strategy) {
+    }
+  }
+
+  public static class SFLFailCoverageStrategy implements CoverageStrategy {
+
+    @Override
+    public CoverageReport calculateOverallCoverage() {
+      return TSRData.sflFailCoverageReport;
+    }
+
+    @Override
+    public void setOriginalTestSuite(TestSuite testSuite) {
+    }
+
+    @Override
+    public void setSlicer(TestSuiteSlicer slicer) {
+    }
+
+    @Override
+    public void setStatementParser(TestSuiteParser parser) {
+    }
+  }
+
+  public static class SFLPassCoverageStrategy implements CoverageStrategy {
+
+    @Override
+    public CoverageReport calculateOverallCoverage() {
+      return TSRData.sflPassCoverageReport;
+    }
+
+    @Override
+    public void setOriginalTestSuite(TestSuite testSuite) {
+    }
+
+    @Override
+    public void setSlicer(TestSuiteSlicer slicer) {
+    }
+
+    @Override
+    public void setStatementParser(TestSuiteParser parser) {
     }
   }
 }
