@@ -17,6 +17,9 @@ public class TSRData {
   public static final TestCase t3 = new TSRTestCase("t3", "t3", true);
   public static final TestCase t4 = new TSRTestCase("t4", "t4", true);
   public static final TestCase t5 = new TSRTestCase("t5", "t5", true);
+  public static final TestCase tf1 = new TSRTestCase("tf1", "tf1", false);
+  public static final TestCase tf2 = new TSRTestCase("tf2", "tf2", false);
+  public static final TestCase tf3 = new TSRTestCase("tf3", "tf3", false);
 
   public static final CoverageReport.Unit s1 = new CoverageReport.Unit("s1", 1, 1);
   public static final CoverageReport.Unit s2 = new CoverageReport.Unit("s2", 2, 2);
@@ -61,5 +64,35 @@ public class TSRData {
   public static final ReducedTestSuite simpleReducedTesSuite = new ReducedTestSuite(
     List.of(t1, t3, t4),
     List.of(t2, t5)
+  );
+
+  public static final TestSuite sflTestSuite = new TestSuite(List.of(t1, t2, t3, t4, t5, tf1, tf2, tf3));
+
+  public static final CoverageReport sflPassCoverageReport = new CoverageReport(
+    "Abstract",
+    Set.of(s1, s2, s3 ,s4, s5, s6),
+    Set.of(s1, s2, s3, s5),
+    Map.of(t1, Set.of(s1, s3, s2),
+           t2, Set.of(s2, s1),
+           t3, Set.of(s1, s5),
+           t4, Set.of(s1, s3, s2),
+           t5, Set.of(s5),
+           tf1, Set.of(),
+           tf2, Set.of(),
+           tf3, Set.of())
+  );
+
+  public static final CoverageReport sflFailCoverageReport = new CoverageReport(
+    "Abstract",
+    Set.of(s1, s2, s3 ,s4, s5, s6),
+    Set.of(s1, s2, s4, s5, s6),
+    Map.of(t1, Set.of(),
+           t2, Set.of(),
+           t3, Set.of(),
+           t4, Set.of(),
+           t5, Set.of(),
+           tf1, Set.of(s6, s5, s2),
+           tf2, Set.of(s6, s4, s2),
+           tf3, Set.of(s6, s4, s1))
   );
 }

@@ -4,7 +4,6 @@ import at.tugraz.ist.stracke.jsr.core.coverage.CoverageReport;
 import at.tugraz.ist.stracke.jsr.core.coverage.export.CoverageReportExporter;
 import at.tugraz.ist.stracke.jsr.core.coverage.strategies.CoverageStrategy;
 import at.tugraz.ist.stracke.jsr.core.parsing.TestSuiteParser;
-import at.tugraz.ist.stracke.jsr.core.sfl.SFLMatrixExporter;
 import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
 import at.tugraz.ist.stracke.jsr.core.slicing.TestSuiteSlicer;
 import at.tugraz.ist.stracke.jsr.core.tsr.ReducedTestSuite;
@@ -42,11 +41,6 @@ public class JUnitJSRFacade implements JSRFacade {
     // Step 3: Perform TSR
     final ReducedTestSuite reducedTestSuite = reduceTestSuite(originalTestSuite, report);
 
-    // optional step: SFL export
-    if (this.config.exporter != null) {
-      exportSFLMatrices(report);
-    }
-
     // Optional step: RTS serialization
     if (this.config.serialize) {
       serializeReducedTestSuite(reducedTestSuite);
@@ -62,11 +56,6 @@ public class JUnitJSRFacade implements JSRFacade {
 
     // Step 2: Perform TSR
     final ReducedTestSuite reducedTestSuite = reduceTestSuite(originalTestSuite, report);
-
-    // optional step: SFL export
-    if (this.config.exporter != null) {
-      exportSFLMatrices(report);
-    }
 
     // Optional step: RTS serialization
     if (this.config.serialize) {
@@ -91,12 +80,6 @@ public class JUnitJSRFacade implements JSRFacade {
 
     serializer.setReducedTestSuite(reducedTestSuite)
               .serialize(true);
-  }
-
-  private void exportSFLMatrices(CoverageReport report) {
-    SFLMatrixExporter exporter = this.config.exporter;
-    exporter.setCoverageReport(report);
-    exporter.exportSFLMatrices();
   }
 
   private ReducedTestSuite reduceTestSuite(TestSuite originalTestSuite, CoverageReport report) {

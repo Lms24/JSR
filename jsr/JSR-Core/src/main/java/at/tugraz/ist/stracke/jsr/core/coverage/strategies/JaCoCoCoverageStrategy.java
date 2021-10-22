@@ -102,6 +102,12 @@ abstract class JaCoCoCoverageStrategy implements CoverageStrategy {
 
   @Override
   public CoverageReport calculateOverallCoverage() {
+
+    if (originalTestSuite == null) {
+      logger.error("Test suite was not set. Cannot continue, aborting...");
+      return null;
+    }
+
     boolean collectedAllTCData = originalTestSuite.testCases.stream().allMatch(this::runTestCase);
 
     if (!collectedAllTCData) {

@@ -1,4 +1,4 @@
-package at.tugraz.ist.stracke.jsr.cli.services;
+package at.tugraz.ist.stracke.jsr.core.shared;
 
 import java.nio.file.Path;
 

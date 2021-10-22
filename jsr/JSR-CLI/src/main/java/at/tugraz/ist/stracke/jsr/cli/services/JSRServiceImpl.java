@@ -3,12 +3,14 @@ package at.tugraz.ist.stracke.jsr.cli.services;
 import at.tugraz.ist.stracke.jsr.cli.candidates.AlgorithmCandidates;
 import at.tugraz.ist.stracke.jsr.cli.candidates.CoverageCandidates;
 import at.tugraz.ist.stracke.jsr.core.coverage.CoverageReport;
-import at.tugraz.ist.stracke.jsr.core.coverage.strategies.CheckedCoverageStrategy;
 import at.tugraz.ist.stracke.jsr.core.coverage.strategies.CoverageStrategy;
 import at.tugraz.ist.stracke.jsr.core.coverage.strategies.LineCoverageStrategy;
 import at.tugraz.ist.stracke.jsr.core.coverage.strategies.MethodCoverageStrategy;
 import at.tugraz.ist.stracke.jsr.core.facade.JSRFacade;
 import at.tugraz.ist.stracke.jsr.core.facade.JUnitJSRFacadeBuilder;
+import at.tugraz.ist.stracke.jsr.core.sfl.SFLFacade;
+import at.tugraz.ist.stracke.jsr.core.sfl.SFLFacadeImpl;
+import at.tugraz.ist.stracke.jsr.core.shared.JSRParams;
 import at.tugraz.ist.stracke.jsr.core.tsr.ReducedTestSuite;
 import at.tugraz.ist.stracke.jsr.core.tsr.strategies.GeneticReductionStrategy;
 
@@ -18,7 +20,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.file.Path;
 
-public class JSRServiceImpl implements JSRService {
+public class JSRServiceImpl implements TSRService, SFLService {
 
   @Override
   public ReducedTestSuite reduceTestSuite(JSRParams params) {
@@ -54,6 +56,13 @@ public class JSRServiceImpl implements JSRService {
       return facade.reduceTestSuiteFromCoverageReport(report);
     }
     return facade.reduceTestSuite();
+  }
+
+
+  @Override
+  public boolean createAndExportSFLMatrices(JSRParams params) {
+    SFLFacade facade = new SFLFacadeImpl();
+    return facade.createAndExportSFLMatrices(params);
   }
 
   private CoverageReport readCoverageReport(Path pathCoverageReport) {
