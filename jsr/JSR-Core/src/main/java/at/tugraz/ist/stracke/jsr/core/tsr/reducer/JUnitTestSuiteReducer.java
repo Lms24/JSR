@@ -54,7 +54,7 @@ public class JUnitTestSuiteReducer implements TestSuiteReducer {
   public TestSuiteReducer generateReport(Path reportDir, String reportName) {
     TSRReport report = new TSRReport(this.reducedTestSuite);
     String xml = report.toXMLString();
-    final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ss");
     final String date = df.format(new Date());
     final String finalFileName = reportName.replace("%x%", date);
     Path destPath = Path.of(reportDir.toString(), finalFileName);

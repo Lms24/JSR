@@ -107,9 +107,13 @@ public class JUnitJSRFacade implements JSRFacade {
 
     TestSuiteReducer reducer = this.config.reducer;
 
-    return reducer.reduce()
-                  .generateReport(this.config.outputDir)
-                  .getReducedTestSuite();
+    reducer.reduce();
+    if (this.config.staticTSRReportName != null) {
+      reducer.generateReport(this.config.outputDir, this.config.staticTSRReportName);
+    } else {
+      reducer.generateReport(this.config.outputDir);
+    }
+    return reducer.getReducedTestSuite();
   }
 
   private CoverageReport calculateCoverage(TestSuite originalTestSuite) {

@@ -48,7 +48,7 @@ public class GeneticReductionStrategy extends BaseReductionStrategy {
 
   private static final int LIMIT_STEADY_FITNESS = 30;
   private static final int LIMIT_MAX_GENERATIONS = 100;
-  private static final int DUPLICATE_RELAXATION_QUOTIENT = 10;
+  private static final int DUPLICATE_RELAXATION_QUOTIENT = 2;
 
   private final Logger logger = LogManager.getLogger(GeneticReductionStrategy.class);
 
