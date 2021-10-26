@@ -22,6 +22,10 @@ intellij {
     plugins = ['com.intellij.java']
 }
 
+runIde {
+    jvmArgs '-Xmx4G'
+}
+
 patchPluginXml {
     changeNotes = """
       Add change notes here.<br>

@@ -11,12 +11,14 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 public class JUnitTestSuiteReducer implements TestSuiteReducer {
 
-  public static final String REPORT_DEFAULT_FILENAME = "tsr-report.xml";
+  public static final String REPORT_DEFAULT_FILENAME = "tsr-report-%x%.xml";
 
   private static final Logger logger = LogManager.getLogger(JUnitTestSuiteReducer.class);
 
@@ -52,7 +54,10 @@ public class JUnitTestSuiteReducer implements TestSuiteReducer {
   public TestSuiteReducer generateReport(Path reportDir, String reportName) {
     TSRReport report = new TSRReport(this.reducedTestSuite);
     String xml = report.toXMLString();
-    Path destPath = Path.of(reportDir.toString(), reportName);
+    final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    final String date = df.format(new Date());
+    final String finalFileName = reportName.replace("%x%", date);
+    Path destPath = Path.of(reportDir.toString(), finalFileName);
 
     try {
       if (!Files.exists(destPath)) {

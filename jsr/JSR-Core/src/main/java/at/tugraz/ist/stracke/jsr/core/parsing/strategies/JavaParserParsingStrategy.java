@@ -182,6 +182,9 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
                                          .flatMap(Collection::stream)
                                          .collect(Collectors.toList());
 
+    logger.info("====================================================================");
+    logger.info("Finished parsing the test suite. It contains {} test cases.", allTCs.size());
+
     return new TestSuite(allTCs);
   }
 

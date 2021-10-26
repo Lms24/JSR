@@ -4,6 +4,8 @@ import at.tugraz.ist.stracke.jsr.core.shared.TestCase;
 import at.tugraz.ist.stracke.jsr.core.tsr.TSRTestCase;
 import com.google.common.collect.ArrayTable;
 import com.google.common.collect.Table;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.Serializable;
@@ -11,6 +13,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class CoverageReport implements Serializable {
+
+  private final Logger logger = LogManager.getLogger(CoverageReport.class);
 
   public final String coverageType;
   public final Date createdAt;
@@ -57,7 +61,16 @@ public class CoverageReport implements Serializable {
                                                    .sorted(Comparator.comparing(CoverageReport.Unit::toString))
                                                    .collect(Collectors.toList());
 
-    Table<TSRTestCase, Unit, Boolean> table = ArrayTable.create(rows, columns);
+    Table<TSRTestCase, Unit, Boolean> table;
+
+    try {
+      table = ArrayTable.create(rows, columns);
+    } catch (IllegalArgumentException ex) {
+      logger.error("Could not create ArrayTable because the arguments are illegal. " +
+                   "Most likely, there was a coverage report problem.");
+      logger.error("Got {} rows and {} columns. They must not be 0", rows.size(), columns.size());
+      return null;
+    }
 
     testCaseCoverageData.forEach((tc, units) -> units.forEach(u -> table.put(new TSRTestCase(tc), u, true)));
 

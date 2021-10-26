@@ -42,12 +42,13 @@ public class GeneticReductionStrategy extends BaseReductionStrategy {
 
   private static final int POPULATION_SIZE = 500;
 
-  private static final double PROB_BIT_GENE_TRUE_INIT = 0.15;
+  private static final double PROB_BIT_GENE_TRUE_INIT = 0.6;
   private static final double PROB_MUTATOR = 0.55;
   private static final double PROB_ROULETTE = 0.15;
 
-  private static final int LIMIT_STEADY_FITNESS = 7;
+  private static final int LIMIT_STEADY_FITNESS = 30;
   private static final int LIMIT_MAX_GENERATIONS = 100;
+  private static final int DUPLICATE_RELAXATION_QUOTIENT = 10;
 
   private final Logger logger = LogManager.getLogger(GeneticReductionStrategy.class);
 
@@ -128,7 +129,7 @@ public class GeneticReductionStrategy extends BaseReductionStrategy {
                                                      .mapToInt(i -> i)
                                                      .sum();
 
-    return Math.max(uniqueCoveredReqs.size() - sumDuplicates, 1);
+    return Math.max(uniqueCoveredReqs.size() - (sumDuplicates / DUPLICATE_RELAXATION_QUOTIENT), 1);
   }
 
   private List<TSRTestCase> getTestCaseSelectionFromBitGenotype(final Genotype<BitGene> geneGenotype) {

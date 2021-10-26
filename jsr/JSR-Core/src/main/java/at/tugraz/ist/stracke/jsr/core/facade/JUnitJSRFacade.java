@@ -10,12 +10,15 @@ import at.tugraz.ist.stracke.jsr.core.tsr.ReducedTestSuite;
 import at.tugraz.ist.stracke.jsr.core.tsr.reducer.TestSuiteReducer;
 import at.tugraz.ist.stracke.jsr.core.tsr.serializer.Serializer;
 import at.tugraz.ist.stracke.jsr.core.tsr.strategies.ReductionStrategy;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.nio.file.Path;
 
 public class JUnitJSRFacade implements JSRFacade {
 
+  private final Logger logger = LogManager.getLogger(JUnitJSRFacade.class);
   private final JSRConfig config;
 
   /**
@@ -32,19 +35,27 @@ public class JUnitJSRFacade implements JSRFacade {
   public ReducedTestSuite reduceTestSuite() {
 
     // Step 1: Parse the test suite
+    long startTimeParsing = System.currentTimeMillis();
     TestSuite originalTestSuite = parseTestSuite();
 
     // Step 2: Code instrumentation, TS execution and Slicing per test case, Coverage
+    long startTimeCoverage = System.currentTimeMillis();
     CoverageReport report = calculateCoverage(originalTestSuite);
     exportCoverageReport(report);
 
     // Step 3: Perform TSR
+    long startTimeTSR = System.currentTimeMillis();
     final ReducedTestSuite reducedTestSuite = reduceTestSuite(originalTestSuite, report);
 
     // Optional step: RTS serialization
+    long startTimeSerialization = -1;
     if (this.config.serialize) {
+      startTimeSerialization = System.currentTimeMillis();
       serializeReducedTestSuite(reducedTestSuite);
     }
+
+    long endTime = System.currentTimeMillis();
+    this.logTime(startTimeParsing, startTimeCoverage, startTimeTSR, startTimeSerialization, endTime);
 
     return reducedTestSuite;
   }
@@ -52,15 +63,22 @@ public class JUnitJSRFacade implements JSRFacade {
   @Override
   public ReducedTestSuite reduceTestSuiteFromCoverageReport(CoverageReport report) {
     // Step 1: Parse the test suite
+    long startTimeParsing = System.currentTimeMillis();
     TestSuite originalTestSuite = parseTestSuite();
 
     // Step 2: Perform TSR
+    long startTimeTSR = System.currentTimeMillis();
     final ReducedTestSuite reducedTestSuite = reduceTestSuite(originalTestSuite, report);
 
     // Optional step: RTS serialization
+    long startTimeSerialization = -1;
     if (this.config.serialize) {
+      startTimeSerialization = System.currentTimeMillis();
       serializeReducedTestSuite(reducedTestSuite);
     }
+
+    long endTime = System.currentTimeMillis();
+    this.logTime(startTimeParsing, -1, startTimeTSR, startTimeSerialization, endTime);
 
     return reducedTestSuite;
   }
@@ -108,5 +126,29 @@ public class JUnitJSRFacade implements JSRFacade {
     TestSuiteParser parser = this.config.testSuiteParser;
     parser.parse();
     return parser.getResult();
+  }
+
+  private void logTime(long startTimeParsing, long startTimeCoverage, long startTimeTSR, long startTimeSerialization, long endTime) {
+    boolean coverage = startTimeCoverage > 0;
+    boolean serial = startTimeSerialization > 0;
+
+    final float parsingTime = ((coverage ? startTimeCoverage : startTimeTSR) - startTimeParsing) / 1000f;
+    final float tsrTime = ((serial ? startTimeSerialization : endTime) - startTimeTSR) / 1000f;
+    final float overallTime = (endTime - startTimeParsing) / 1000f;
+
+    logger.info("******************************************************************");
+    logger.info("* Facade Statistics:");
+    logger.info("* Parsing took: {} seconds", parsingTime);
+    if (coverage) {
+      final float coverageTime = (startTimeTSR - startTimeCoverage) / 1000f;
+      logger.info("* Coverage took: {} seconds", coverageTime);
+    }
+    logger.info("* Reduction took: {} seconds", tsrTime);
+    if (serial) {
+      final float serialTime = (endTime - startTimeSerialization) / 1000f;
+      logger.info("* Serialization took: {} seconds", serialTime);
+    }
+    logger.info("* Overall: {} seconds", overallTime);
+    logger.info("******************************************************************");
   }
 }
