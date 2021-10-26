@@ -182,10 +182,15 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
                                          .flatMap(Collection::stream)
                                          .collect(Collectors.toList());
 
-    logger.info("====================================================================");
-    logger.info("Finished parsing the test suite. It contains {} test cases.", allTCs.size());
+    final TestSuite testSuite = new TestSuite(allTCs);
 
-    return new TestSuite(allTCs);
+    logger.info("====================================================================");
+    logger.info("Finished parsing the test suite.");
+    logger.info("It contains {} test cases and {} assertions.",
+                testSuite.getNumberOfTestCases(),
+                testSuite.getNumberOfAssertions());
+
+    return testSuite;
   }
 
   private List<at.tugraz.ist.stracke.jsr.core.parsing.statements.Statement> mergePartialStatementLists(
