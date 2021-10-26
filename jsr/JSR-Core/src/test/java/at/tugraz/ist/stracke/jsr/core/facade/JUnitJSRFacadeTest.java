@@ -35,7 +35,7 @@ class JUnitJSRFacadeTest {
                                                                     Path.of(jarDir),
                                                                     Path.of(outDir),
                                                                     Path.of(slicerDir));
-    JSRFacade facade = facadeBuilder.build();
+    JSRFacade facade = facadeBuilder.staticReductionReportFilename().build();
 
     ReducedTestSuite rts = facade.reduceTestSuite();
 
@@ -84,7 +84,8 @@ class JUnitJSRFacadeTest {
                                                                     Path.of(slicerDir));
 
     JSRFacade facade = facadeBuilder.applyModificationsAsCopy(Path.of(serialDir))
-      .build();
+                                    .staticReductionReportFilename()
+                                    .build();
 
     ReducedTestSuite rts = facade.reduceTestSuite();
 
@@ -154,6 +155,7 @@ class JUnitJSRFacadeTest {
     JSRFacade facade = facadeBuilder
       .reductionStrategy(new GeneticReductionStrategy())
       .applyModificationsAsCopy(Path.of(serialDir))
+      .staticReductionReportFilename()
       .build();
 
     ReducedTestSuite rts = facade.reduceTestSuite();
@@ -233,6 +235,7 @@ class JUnitJSRFacadeTest {
       .coverageStrategy(lineCoverage)
       .reductionStrategy(new GeneticReductionStrategy())
       .applyModificationsAsCopy(Path.of(serialDir))
+      .staticReductionReportFilename()
       .build();
 
     ReducedTestSuite rts = facade.reduceTestSuite();
@@ -310,6 +313,7 @@ class JUnitJSRFacadeTest {
       .coverageStrategy(lineCoverage)
       .reductionStrategy(new GreedyIHGSReductionStrategy())
       .applyModificationsAsCopy(Path.of(serialDir))
+      .staticReductionReportFilename()
       .build();
 
     ReducedTestSuite rts = facade.reduceTestSuite();
@@ -387,6 +391,7 @@ class JUnitJSRFacadeTest {
       .coverageStrategy(methodCoverage)
       .reductionStrategy(new GreedyIHGSReductionStrategy())
       .applyModificationsAsCopy(Path.of(serialDir))
+      .staticReductionReportFilename()
       .build();
 
     ReducedTestSuite rts = facade.reduceTestSuite();

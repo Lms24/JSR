@@ -37,6 +37,8 @@ class JSRConfig {
   public Path serializationDirectory;
   public Serializer serializer;
 
+  public String staticTSRReportName;
+
   public JSRConfig(Path sourceDir, Path testDir, Path jarFile, Path outputDir, Path slicerDir) {
     this.sourceDir = sourceDir;
     this.testDir = testDir;

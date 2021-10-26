@@ -4,6 +4,7 @@ import at.tugraz.ist.stracke.jsr.core.coverage.CoverageReport;
 import at.tugraz.ist.stracke.jsr.core.parsing.JUnitTestSuiteParser;
 import at.tugraz.ist.stracke.jsr.core.parsing.TestSuiteParser;
 import at.tugraz.ist.stracke.jsr.core.parsing.strategies.JavaParserParsingStrategy;
+import at.tugraz.ist.stracke.jsr.core.shared.TestCase;
 import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
 import org.junit.jupiter.api.Test;
 
@@ -54,8 +55,20 @@ class LineCoverageStrategyTest {
     assertThat(report.coveredUnits, hasSize(28));
     assertThat(report.testCaseCoverageData, is(aMapWithSize(14)));
     assertThat(report.testCaseCoverageData.size(), is(equalTo(ts.testCases.size())));
-    assertThat(report.testCaseCoverageData.get(ts.testCases.get(0)), hasSize(4)); // CalculatorTest::testAdd()
-    assertThat(report.testCaseCoverageData.get(ts.testCases.get(10)), hasSize(6)); // MessageTest::testEquals()
+
+    TestCase tcAdd = ts.testCases.stream()
+                                 .filter(tc -> tc.toString().contains("add "))
+                                 .findFirst()
+                                 .orElse(null);
+    TestCase tcEquals = ts.testCases.stream()
+                                 .filter(tc -> tc.toString().contains("Equals "))
+                                 .findFirst()
+                                 .orElse(null);
+
+    assertThat(tcAdd, is(not(nullValue())));
+    assertThat(tcEquals, is(not(nullValue())));
+    assertThat(report.testCaseCoverageData.get(tcAdd), hasSize(4));
+    assertThat(report.testCaseCoverageData.get(tcEquals), hasSize(6));
 
     assertThat("Cleanup is successful", strat.cleanup());
   }

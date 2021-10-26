@@ -24,7 +24,7 @@ public class CoverageReportExporter {
 
   public boolean exportToFile(Path outputPath) {
     Date now = new Date();
-    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ss");
     final String coverageType = String.format("%sCovRep", report.coverageType);
     final String fileName = String.format("%s#%s.cvg", coverageType, df.format(now));
 

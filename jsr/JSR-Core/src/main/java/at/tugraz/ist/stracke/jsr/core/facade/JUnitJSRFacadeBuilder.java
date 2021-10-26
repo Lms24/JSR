@@ -67,6 +67,9 @@ public class JUnitJSRFacadeBuilder {
     this.config.serialize = false;
     this.config.serializationDirectory = null;
     this.config.serializer = new JUnit4Serializer(this.config.testDir);
+
+    /* Create a dynamic report name with a time stamp by default */
+    this.config.staticTSRReportName = null;
   }
 
   public JUnitJSRFacadeBuilder testSuiteParser(TestSuiteParser parser) {
@@ -133,6 +136,11 @@ public class JUnitJSRFacadeBuilder {
 
   public JUnitJSRFacadeBuilder reducer(TestSuiteReducer reducer) {
     this.config.reducer = reducer;
+    return this;
+  }
+
+  public JUnitJSRFacadeBuilder staticReductionReportFilename() {
+    this.config.staticTSRReportName = "tsr-report.xml";
     return this;
   }
 
