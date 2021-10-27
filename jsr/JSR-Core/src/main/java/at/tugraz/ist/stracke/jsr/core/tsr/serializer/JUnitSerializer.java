@@ -131,7 +131,19 @@ public abstract class JUnitSerializer implements Serializer {
     final CompilationUnit.Storage cuStorage = cu.getStorage().orElseThrow(
       () -> new IllegalStateException("No Storage Present"));
 
+    /*
+     * Here we re-create the directory sub structure (which is mostly based on the package structure)
+     * based on the directory information of the original compilation unit
+     */
+    String packageDirs = cuStorage.getPath().toString().replace(cuStorage.getSourceRoot().toString(), "");
+    packageDirs = packageDirs.replace("\\", "/")
+                             .replace(cuStorage.getFileName(), "")
+                             .substring(1);
+    packageDirs = packageDirs.substring(0, packageDirs.length() - 1);
+
+    // outputPath == serialization root dir + package structure + file name
     Path outputPath = (this.outDir == null) ? cuStorage.getPath() : Path.of(this.outDir.toString(),
+                                                                            packageDirs,
                                                                             cuStorage.getFileName());
     if (!outputPath.getParent().toFile().exists()) {
       boolean success = outputPath.getParent().toFile().mkdirs();

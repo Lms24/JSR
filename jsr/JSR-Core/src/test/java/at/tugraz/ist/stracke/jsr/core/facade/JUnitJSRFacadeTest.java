@@ -95,8 +95,8 @@ class JUnitJSRFacadeTest {
 
     Path tsrReport = Path.of(outDir, "tsr-report.xml");
     Path instrumentedJar = Path.of(outDir, "testJar_i.jar");
-    Path serializedCalculatorTest = Path.of(serialDir, "CalculatorTest.java");
-    Path serializedMessageTest = Path.of(serialDir, "MessageTest.java");
+    Path serializedCalculatorTest = Path.of(serialDir, "at/tugraz/ist/stracke/jsr", "CalculatorTest.java");
+    Path serializedMessageTest = Path.of(serialDir, "at/tugraz/ist/stracke/jsr", "MessageTest.java");
 
     assertThat(tsrReport.toFile().exists(), is(true));
     assertThat(instrumentedJar.toFile().exists(), is(true));
@@ -166,8 +166,8 @@ class JUnitJSRFacadeTest {
 
     Path tsrReport = Path.of(outDir, "tsr-report.xml");
     Path instrumentedJar = Path.of(outDir, "testJar_i.jar");
-    Path serializedCalculatorTest = Path.of(serialDir, "CalculatorTest.java");
-    Path serializedMessageTest = Path.of(serialDir, "MessageTest.java");
+    Path serializedCalculatorTest = Path.of(serialDir, "at/tugraz/ist/stracke/jsr", "CalculatorTest.java");
+    Path serializedMessageTest = Path.of(serialDir, "at/tugraz/ist/stracke/jsr", "MessageTest.java");
 
     assertThat(tsrReport.toFile().exists(), is(true));
     assertThat(instrumentedJar.toFile().exists(), is(true));
@@ -245,8 +245,8 @@ class JUnitJSRFacadeTest {
     assertThat(rts.removedTestCases, hasSize(8));
 
     Path tsrReport = Path.of(outDir, "tsr-report.xml");
-    Path serializedCalculatorTest = Path.of(serialDir, "CalculatorTest.java");
-    Path serializedMessageTest = Path.of(serialDir, "MessageTest.java");
+    Path serializedCalculatorTest = Path.of(serialDir, "at/tugraz/ist/stracke/jsr", "CalculatorTest.java");
+    Path serializedMessageTest = Path.of(serialDir, "at/tugraz/ist/stracke/jsr", "MessageTest.java");
 
     assertThat(tsrReport.toFile().exists(), is(true));
     assertThat(serializedCalculatorTest.toFile().exists(), is(true));
@@ -323,8 +323,8 @@ class JUnitJSRFacadeTest {
     assertThat(rts.removedTestCases, hasSize(8));
 
     Path tsrReport = Path.of(outDir, "tsr-report.xml");
-    Path serializedCalculatorTest = Path.of(serialDir, "CalculatorTest.java");
-    Path serializedMessageTest = Path.of(serialDir, "MessageTest.java");
+    Path serializedCalculatorTest = Path.of(serialDir, "at/tugraz/ist/stracke/jsr", "CalculatorTest.java");
+    Path serializedMessageTest = Path.of(serialDir, "at/tugraz/ist/stracke/jsr", "MessageTest.java");
 
     assertThat(tsrReport.toFile().exists(), is(true));
     assertThat(serializedCalculatorTest.toFile().exists(), is(true));
@@ -401,8 +401,8 @@ class JUnitJSRFacadeTest {
     assertThat(rts.removedTestCases, hasSize(8));
 
     Path tsrReport = Path.of(outDir, "tsr-report.xml");
-    Path serializedCalculatorTest = Path.of(serialDir, "CalculatorTest.java");
-    Path serializedMessageTest = Path.of(serialDir, "MessageTest.java");
+    Path serializedCalculatorTest = Path.of(serialDir, "at/tugraz/ist/stracke/jsr", "CalculatorTest.java");
+    Path serializedMessageTest = Path.of(serialDir, "at/tugraz/ist/stracke/jsr", "MessageTest.java");
 
     assertThat(tsrReport.toFile().exists(), is(true));
     assertThat(serializedCalculatorTest.toFile().exists(), is(true));
