@@ -154,9 +154,9 @@ abstract class JaCoCoCoverageStrategy implements CoverageStrategy {
                CLI_REPORT, this.pathToOutDir.toString() + "/" + tcExecFileName,
                CLI_CLASS_FILES, this.pathToClasses.toString(),
                CLI_SOURCE_FILES, this.pathToSources.toString(),
-               CLI_XML, String.format("%s/%s", tcOutDir, REPORT_XML),
+               CLI_XML, String.format("%s/%s", tcOutDir, REPORT_XML)//,
         /*CLI_CSV, String.format("%s/report.csv", tcOutDir),*/
-               CLI_HTML, tcOutDir.toString())
+               /*CLI_HTML, tcOutDir.toString()*/)
       .redirectOutput(ProcessBuilder.Redirect.to(new File(
         String.format("%s/%s", this.pathToOutDir.toString(), REPORT_LOG))))
       .redirectError(ProcessBuilder.Redirect.to(new File(
