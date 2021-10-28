@@ -332,7 +332,8 @@ class JavaParserParsingStrategyTest {
 
     assertThat(ts, is(notNullValue()));
     assertThat(ts.getTestCases(), not(empty()));
-    assertThat(ts.getNumberOfTestCases(), is(equalTo(1)));
+    assertThat(ts.getNumberOfTestCases(), is(equalTo(4)));
+    assertThat(ts.getTestCases().stream().allMatch(tc -> tc.getClassName().equals("ConcreteTestClass")), is(true));
   }
 
 

@@ -59,7 +59,7 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
     logger.info("Parsing test suite from File Path");
     return parseTestSuiteFromMultipleCompilationUnits();
   }
-  
+
   private TestSuite parseTestSuiteFromString() {
     logger.info("Parsing test suite from String code");
     return parseTestSuiteFromMultipleCompilationUnits();
@@ -67,11 +67,29 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
 
   private TestSuite parseTestSuiteFromMultipleCompilationUnits() {
     List<CompilationUnit> compilationUnits = cuExtractor.getCompilationUnits();
-    List<TestSuite> partialSuites = compilationUnits.stream()
+    List<CompilationUnit> abstractClassCUs = this.findAbstractClasses(compilationUnits);
+    List<CompilationUnit> concreteClassCUs = this.findConcreteClasses(compilationUnits, abstractClassCUs);
+
+    List<TestSuite> partialSuites = concreteClassCUs.stream()
                                                     .map(this::parseTestSuite)
                                                     .collect(Collectors.toList());
 
     return mergePartialSuites(partialSuites);
+  }
+
+  private List<CompilationUnit> findConcreteClasses(List<CompilationUnit> compilationUnits, List<CompilationUnit> abstractClassCUs) {
+    return compilationUnits.stream()
+                           .filter(cu -> !abstractClassCUs.contains(cu))
+                           .collect(Collectors.toList());
+  }
+
+  private List<CompilationUnit> findAbstractClasses(List<CompilationUnit> compilationUnits) {
+    return compilationUnits.stream()
+                           .filter(cu -> cu.findAll(ClassOrInterfaceDeclaration.class)
+                                           .get(0).getModifiers()
+                                           .stream()
+                                           .anyMatch(m -> m.getKeyword().toString().equals("ABSTRACT")))
+                           .collect(Collectors.toList());
   }
 
 
@@ -83,8 +101,9 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
                             .anyMatch(a -> a.getNameAsString().equals("Test")))
         /*LS (28.10.21) Adding the filter to exclude ignored test cases. They do not add value to TSR */
         .filter(decl -> decl.getAnnotations()
-                             .stream()
-                             .noneMatch(a -> a.getNameAsString().equals("Ignore") || a.getNameAsString().equals("Disabled")));
+                            .stream()
+                            .noneMatch(a -> a.getNameAsString().equals("Ignore") ||
+                                            a.getNameAsString().equals("Disabled")));
 
     List<TestCase> tcs = testCaseMethods
       .map(this::mapDeclarationToTestCase)
