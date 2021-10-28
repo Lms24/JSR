@@ -27,7 +27,7 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
   private final CompilationUnitExtractor cuExtractor;
   private Path filePath;
 
-  public JavaParserParsingStrategy(@NonNull String code) {
+  public JavaParserParsingStrategy(@NonNull List<String> code) {
     this.cuExtractor = new CompilationUnitExtractor(code);
   }
 
@@ -57,6 +57,15 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
 
   private TestSuite parseTestSuiteFromFilePath() {
     logger.info("Parsing test suite from File Path");
+    return parseTestSuiteFromMultipleCompilationUnits();
+  }
+  
+  private TestSuite parseTestSuiteFromString() {
+    logger.info("Parsing test suite from String code");
+    return parseTestSuiteFromMultipleCompilationUnits();
+  }
+
+  private TestSuite parseTestSuiteFromMultipleCompilationUnits() {
     List<CompilationUnit> compilationUnits = cuExtractor.getCompilationUnits();
     List<TestSuite> partialSuites = compilationUnits.stream()
                                                     .map(this::parseTestSuite)
@@ -65,13 +74,6 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
     return mergePartialSuites(partialSuites);
   }
 
-  private TestSuite parseTestSuiteFromString() {
-    logger.info("Parsing test suite from String code");
-
-    CompilationUnit cu = cuExtractor.getCompilationUnits().get(0);
-
-    return parseTestSuite(cu);
-  }
 
   private TestSuite parseTestSuite(CompilationUnit cu) {
     var testCaseMethods =
