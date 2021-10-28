@@ -272,5 +272,43 @@ class JavaParserParsingStrategyTest {
     assertThat(stmts.size(), is(equalTo(12)));
   }
 
+  @Test
+  public void testTestCaseParsing07() {
+    var code = "" +
+               "public class TestClass {" +
+               "  @Test(expected = NullPointerException.class) public void testCaseWithExAnnotation() {} " +
+               "  @Test public void testCase2() {} " +
+               "  public void notATestCase() {} " +
+               "  @OtherAnnotation public void testCase2() {} " +
+               "}";
+    var strat = new JavaParserParsingStrategy(code);
+
+    TestSuite ts = strat.parseTestSuite();
+
+    assertThat(ts, is(notNullValue()));
+    assertThat(ts.getTestCases(), not(empty()));
+    assertThat(ts.getNumberOfTestCases(), is(equalTo(2)));
+  }
+
+  @Test
+  public void testTestCaseParsing08() {
+    var code = "" +
+               "public class TestClass {" +
+               "  @Test(expected = NullPointerException.class) public void testCaseWithExAnnotation() {} " +
+               "  @Test @Ignore public void ignoredTestCase() {} " +
+               "  @Test @Ignore(\"Reason\") public void ignoredTestCase1() {} " +
+               "  @Test @Disabled public void ignoredTestCase2() {} " +
+               "  @Test @Disabled(\"Reason\") public void ignoredTestCase3() {} " +
+               "  public void notATestCase() {} " +
+               "  @OtherAnnotation public void testCase2() {} " +
+               "}";
+    var strat = new JavaParserParsingStrategy(code);
+
+    TestSuite ts = strat.parseTestSuite();
+
+    assertThat(ts, is(notNullValue()));
+    assertThat(ts.getTestCases(), not(empty()));
+    assertThat(ts.getNumberOfTestCases(), is(equalTo(1)));
+  }
 
 }
