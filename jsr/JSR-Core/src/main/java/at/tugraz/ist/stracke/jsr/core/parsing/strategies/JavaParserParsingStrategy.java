@@ -75,11 +75,14 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
 
   private TestSuite parseTestSuite(CompilationUnit cu) {
     var testCaseMethods =
-      cu.findAll(MethodDeclaration.class).stream().filter(
-        decl -> decl.getAnnotations()
-                    .stream()
-                    .anyMatch(a -> a.getNameAsString().equals("Test"))
-      );
+      cu.findAll(MethodDeclaration.class).stream()
+        .filter(decl -> decl.getAnnotations()
+                            .stream()
+                            .anyMatch(a -> a.getNameAsString().equals("Test")))
+        /*LS (28.10.21) Adding the filter to exclude ignored test cases. They do not add value to TSR */
+        .filter(decl -> decl.getAnnotations()
+                             .stream()
+                             .noneMatch(a -> a.getNameAsString().equals("Ignore") || a.getNameAsString().equals("Disabled")));
 
     List<TestCase> tcs = testCaseMethods
       .map(this::mapDeclarationToTestCase)
