@@ -28,6 +28,10 @@ public class CoverageReportExporter {
     final String coverageType = String.format("%sCovRep", report.coverageType);
     final String fileName = String.format("%s#%s.cvg", coverageType, df.format(now));
 
+    return this.exportToFile(outputPath, fileName);
+  }
+
+  public boolean exportToFile(Path outputPath, String fileName) {
     if (!outputPath.toFile().exists()) {
       boolean success = outputPath.toFile().mkdirs();
       if (!success) {

@@ -3,14 +3,25 @@ package at.tugraz.ist.stracke.jsr.cli.services;
 import at.tugraz.ist.stracke.jsr.cli.candidates.AlgorithmCandidates;
 import at.tugraz.ist.stracke.jsr.cli.candidates.CoverageCandidates;
 import at.tugraz.ist.stracke.jsr.core.coverage.CoverageReport;
+import at.tugraz.ist.stracke.jsr.core.coverage.export.CoverageReportExporter;
+import at.tugraz.ist.stracke.jsr.core.coverage.strategies.CheckedCoverageStrategy;
 import at.tugraz.ist.stracke.jsr.core.coverage.strategies.CoverageStrategy;
 import at.tugraz.ist.stracke.jsr.core.coverage.strategies.LineCoverageStrategy;
 import at.tugraz.ist.stracke.jsr.core.coverage.strategies.MethodCoverageStrategy;
 import at.tugraz.ist.stracke.jsr.core.facade.JSRFacade;
 import at.tugraz.ist.stracke.jsr.core.facade.JUnitJSRFacadeBuilder;
+import at.tugraz.ist.stracke.jsr.core.parsing.JUnitTestSuiteParser;
+import at.tugraz.ist.stracke.jsr.core.parsing.TestSuiteParser;
+import at.tugraz.ist.stracke.jsr.core.parsing.strategies.JavaParserParsingStrategy;
+import at.tugraz.ist.stracke.jsr.core.parsing.strategies.ParsingStrategy;
 import at.tugraz.ist.stracke.jsr.core.sfl.SFLFacade;
 import at.tugraz.ist.stracke.jsr.core.sfl.SFLFacadeImpl;
 import at.tugraz.ist.stracke.jsr.core.shared.JSRParams;
+import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
+import at.tugraz.ist.stracke.jsr.core.slicing.JUnitTestSuiteSlicer;
+import at.tugraz.ist.stracke.jsr.core.slicing.TestSuiteSlicer;
+import at.tugraz.ist.stracke.jsr.core.slicing.strategies.Slicer4JSlicingStrategy;
+import at.tugraz.ist.stracke.jsr.core.slicing.strategies.SlicingStrategy;
 import at.tugraz.ist.stracke.jsr.core.tsr.ReducedTestSuite;
 import at.tugraz.ist.stracke.jsr.core.tsr.strategies.GeneticReductionStrategy;
 
@@ -20,7 +31,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.file.Path;
 
-public class JSRServiceImpl implements TSRService, SFLService {
+public class JSRServiceImpl implements TSRService, SFLService, CoverageService {
 
   @Override
   public ReducedTestSuite reduceTestSuite(JSRParams params) {
@@ -105,5 +116,50 @@ public class JSRServiceImpl implements TSRService, SFLService {
         break;
     }
     return coverageStrategy;
+  }
+
+  @Override
+  public CoverageReport calculateCoverage(JSRParams params) {
+    CoverageStrategy coverageStrategy;
+    ParsingStrategy parsingStrategy = new JavaParserParsingStrategy(params.pathTestSources);
+    TestSuiteParser parser = new JUnitTestSuiteParser(parsingStrategy);
+    parser.parse();
+    TestSuite originalTestSuite = parser.getResult();
+
+    switch (params.coverageMetric) {
+      case CoverageCandidates.COV_LINE:
+        coverageStrategy = new LineCoverageStrategy(params.pathJar,
+                                                      params.pathClasses,
+                                                      params.pathSources,
+                                                      params.pathSlicer,
+                                                      params.pathOut,
+                                                      params.basePackage);
+        coverageStrategy.setOriginalTestSuite(originalTestSuite);
+        break;
+      case CoverageCandidates.COV_METHOD:
+        coverageStrategy = new MethodCoverageStrategy(params.pathJar,
+                                                      params.pathClasses,
+                                                      params.pathSources,
+                                                      params.pathSlicer,
+                                                      params.pathOut,
+                                                      params.basePackage);
+        coverageStrategy.setOriginalTestSuite(originalTestSuite);
+        break;
+      default:
+        SlicingStrategy slicingStrategy = new Slicer4JSlicingStrategy(params.pathJar.toString(),
+                                                                      params.pathSlicer.toString(),
+                                                                      params.pathOut.toString());
+        TestSuiteSlicer slicer = new JUnitTestSuiteSlicer(slicingStrategy, originalTestSuite);
+
+        coverageStrategy = new CheckedCoverageStrategy(originalTestSuite, parser, slicer);
+    }
+
+    CoverageReport report = coverageStrategy.calculateOverallCoverage();
+
+    CoverageReportExporter exporter = new CoverageReportExporter(report);
+    exporter.exportToFile(Path.of(params.pathOut.toString(), "coverage"),
+                          report.coverageType + "CoverageReport.cvg");
+
+    return report;
   }
 }
