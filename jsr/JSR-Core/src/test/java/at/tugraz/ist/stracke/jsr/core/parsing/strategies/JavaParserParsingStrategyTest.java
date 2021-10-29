@@ -4,6 +4,8 @@ import at.tugraz.ist.stracke.jsr.core.parsing.statements.Statement;
 import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -14,9 +16,9 @@ class JavaParserParsingStrategyTest {
   @Test
   public void testBasicParsing01() {
     var code = "" +
-      "public class TestClass {" +
-      "}";
-    var strat = new JavaParserParsingStrategy(code);
+               "public class TestClass {" +
+               "}";
+    var strat = new JavaParserParsingStrategy(Collections.singletonList(code));
 
     TestSuite ts = strat.parseTestSuite();
 
@@ -28,13 +30,13 @@ class JavaParserParsingStrategyTest {
   @Test
   public void testTestCaseParsing01() {
     var code = "" +
-      "public class TestClass {" +
-      "  @Test public void testCase1() {} " +
-      "  @Test public void testCase2() {} " +
-      "  public void notATestCase() {} " +
-      "  @OtherAnnotation public void testCase2() {} " +
-      "}";
-    var strat = new JavaParserParsingStrategy(code);
+               "public class TestClass {" +
+               "  @Test public void testCase1() {} " +
+               "  @Test public void testCase2() {} " +
+               "  public void notATestCase() {} " +
+               "  @OtherAnnotation public void testCase2() {} " +
+               "}";
+    var strat = new JavaParserParsingStrategy(Collections.singletonList(code));
 
     TestSuite ts = strat.parseTestSuite();
 
@@ -46,14 +48,14 @@ class JavaParserParsingStrategyTest {
   @Test
   public void testTestCaseParsing02() {
     var code = "" +
-      "public class TestClass {" +
-      "  @Test \n" +
-      "  public void testCase1() {} " +
-      "  @Test public void testCase2() {} " +
-      "  public void notATestCase() {} " +
-      "  @OtherAnnotation public void testCase2() {} " +
-      "}";
-    var strat = new JavaParserParsingStrategy(code);
+               "public class TestClass {" +
+               "  @Test \n" +
+               "  public void testCase1() {} " +
+               "  @Test public void testCase2() {} " +
+               "  public void notATestCase() {} " +
+               "  @OtherAnnotation public void testCase2() {} " +
+               "}";
+    var strat = new JavaParserParsingStrategy(Collections.singletonList(code));
 
     TestSuite ts = strat.parseTestSuite();
 
@@ -81,7 +83,7 @@ class JavaParserParsingStrategyTest {
       "    assertTrue(i < 100);" + nl +
       "  }" + nl +
       "}";
-    var strat = new JavaParserParsingStrategy(code);
+    var strat = new JavaParserParsingStrategy(Collections.singletonList(code));
 
     var outcome =
       "Testcase TestClass::testCase1 has 2 assertions: " + nl +
@@ -111,7 +113,7 @@ class JavaParserParsingStrategyTest {
                "    assertThat(o, is(not(null)));" + nl +
                "  }" + nl +
                "}";
-    var strat = new JavaParserParsingStrategy(code);
+    var strat = new JavaParserParsingStrategy(Collections.singletonList(code));
 
     var outcome =
       "Testcase TestClass::testCase1 has 3 assertions: " + nl +
@@ -147,7 +149,7 @@ class JavaParserParsingStrategyTest {
       "    assertEquals(p.o.prop1 == 101 && p.getO().prop1 == 101);" + nl +
       "  }" + nl +
       "}";
-    var strat = new JavaParserParsingStrategy(code);
+    var strat = new JavaParserParsingStrategy(Collections.singletonList(code));
 
     var outcome =
       "Testcase TestClass::testCase1 has 5 assertions: " + nl +
@@ -195,7 +197,7 @@ class JavaParserParsingStrategyTest {
       "    assertTrue(i < 100);" + nl +
       "  }" + nl +
       "}";
-    var strat = new JavaParserParsingStrategy(code);
+    var strat = new JavaParserParsingStrategy(Collections.singletonList(code));
 
     var outcome =
       "Testcase TestClass::testCase1 has 5 assertions: " + nl +
@@ -234,7 +236,7 @@ class JavaParserParsingStrategyTest {
                "    o.setProp2(o.getProp2() == null ? 100 : o.getProp2());" + nl +
                "  }" + nl +
                "}";
-    var strat = new JavaParserParsingStrategy(code);
+    var strat = new JavaParserParsingStrategy(Collections.singletonList(code));
 
     List<Statement> stmts = strat.parseStatements();
 
@@ -265,7 +267,7 @@ class JavaParserParsingStrategyTest {
                "    o.setProp2(o.getProp2() == null ? 100 : o.getProp2());" + nl +
                "  }" + nl +
                "}";
-    var strat = new JavaParserParsingStrategy(code);
+    var strat = new JavaParserParsingStrategy(Collections.singletonList(code));
 
     List<Statement> stmts = strat.parseStatements();
 
@@ -281,7 +283,7 @@ class JavaParserParsingStrategyTest {
                "  public void notATestCase() {} " +
                "  @OtherAnnotation public void testCase2() {} " +
                "}";
-    var strat = new JavaParserParsingStrategy(code);
+    var strat = new JavaParserParsingStrategy(Collections.singletonList(code));
 
     TestSuite ts = strat.parseTestSuite();
 
@@ -302,7 +304,7 @@ class JavaParserParsingStrategyTest {
                "  public void notATestCase() {} " +
                "  @OtherAnnotation public void testCase2() {} " +
                "}";
-    var strat = new JavaParserParsingStrategy(code);
+    var strat = new JavaParserParsingStrategy(Collections.singletonList(code));
 
     TestSuite ts = strat.parseTestSuite();
 
@@ -311,4 +313,154 @@ class JavaParserParsingStrategyTest {
     assertThat(ts.getNumberOfTestCases(), is(equalTo(1)));
   }
 
+  @Test
+  public void testTestCaseParsing09() {
+    var code1 = "" +
+                "public abstract class BaseTestClass {" +
+                "  @Test public void abstractTC1() {int i;} " +
+                "  @Test public void abstractTC2() {int a;} " +
+                "}";
+    var code2 = "" +
+                "public class ConcreteTestClass extends BaseTestClass {" +
+                "  @Test public void concreteTC1() {} " +
+                "  @Test public void concreteTC2() {} " +
+                "  @Override @Test public void abstractTC1() {} " +
+                "}";
+    var strat = new JavaParserParsingStrategy(Arrays.asList(code1, code2));
+
+    TestSuite ts = strat.parseTestSuite();
+
+    assertThat(ts, is(notNullValue()));
+    assertThat(ts.getTestCases(), not(empty()));
+    assertThat(ts.getNumberOfTestCases(), is(equalTo(4)));
+    assertThat(ts.getTestCases().stream().allMatch(tc -> tc.getClassName().equals("ConcreteTestClass")), is(true));
+  }
+
+  @Test
+  public void testTestCaseParsing10() {
+    var code0 = "" +
+                "public abstract class UnusedBaseClass {" +
+                "  @Test public void unusedAbstractTC1() {int i;} " +
+                "  @Test public void unusedAbstractTC2() {int a;} " +
+                "}";
+    var code1 = "" +
+                "public abstract class BaseTestClass {" +
+                "  @Test public void abstractTC1() {int i;} " +
+                "  @Test public void abstractTC2() {int a;} " +
+                "}";
+    var code2 = "" +
+                "public class ConcreteTestClass extends BaseTestClass {" +
+                "  @Test public void concreteTC1() {} " +
+                "  @Test public void concreteTC2() {} " +
+                "  @Override @Test public void abstractTC1() {} " +
+                "}";
+    var code3 = "" +
+                "public class AnotherConcreteTestClass extends BaseTestClass {" +
+                "  @Test public void concreteTC1() {} " +
+                "  @Test public void concreteTC2() {} " +
+                "  @Test public void concreteTC3() {} " +
+                "}";
+    var code4 = "" +
+                "public class YetAnotherConcreteTestClass extends BaseTestClass {" +
+                "}";
+    var code5 = "" +
+                "public class FinalConcreteTestClass extends BaseTestClass {" +
+                "  @Override @Test public void abstractTC1() {} " +
+                "  @Override @Test public void abstractTC2() {} " +
+                "}";
+    var strat = new JavaParserParsingStrategy(Arrays.asList(code0, code1, code2, code3, code4, code5));
+
+    TestSuite ts = strat.parseTestSuite();
+
+    assertThat(ts, is(notNullValue()));
+    assertThat(ts.getTestCases(), not(empty()));
+    assertThat(ts.getNumberOfTestCases(), is(equalTo(13)));
+    assertThat(ts.getTestCases().stream().filter(tc -> tc.getClassName().equals("ConcreteTestClass")).count(),
+               is(equalTo(4L)));
+    assertThat(ts.getTestCases().stream().filter(tc -> tc.getClassName().equals("AnotherConcreteTestClass")).count(),
+               is(equalTo(5L)));
+    assertThat(ts.getTestCases().stream().filter(tc -> tc.getClassName().equals("YetAnotherConcreteTestClass")).count(),
+               is(equalTo(2L)));
+    assertThat(ts.getTestCases().stream().filter(tc -> tc.getClassName().equals("FinalConcreteTestClass")).count(),
+               is(equalTo(2L)));
+  }
+
+  @Test
+  public void testTestCaseParsing11() {
+    var code0 = "" +
+                "public abstract class UnusedBaseClass {" +
+                "  @Test public void unusedAbstractTC1() {int i;} " +
+                "  @Test public void unusedAbstractTC2() {int a;} " +
+                "}";
+    var code1 = "" +
+                "public abstract class BaseTestClass {" +
+                "  @Test public void abstractTC1() {int i;} " +
+                "  @Test public void abstractTC2() {int a;} " +
+                "}";
+    var code2 = "" +
+                "public class ConcreteTestClass extends BaseTestClass {" +
+                "  @Test public void concreteTC1() {} " +
+                "  @Test public void concreteTC2() {} " +
+                "  @Override @Test @Ignore public void abstractTC1() {} " +
+                "  @Override @Test @Ignore public void abstractTC2() {} " +
+                "}";
+    var strat = new JavaParserParsingStrategy(Arrays.asList(code0, code1, code2));
+
+    TestSuite ts = strat.parseTestSuite();
+
+    assertThat(ts, is(notNullValue()));
+    assertThat(ts.getTestCases(), not(empty()));
+    assertThat(ts.getNumberOfTestCases(), is(equalTo(2)));
+    assertThat(ts.getTestCases().stream().filter(tc -> tc.getClassName().equals("ConcreteTestClass")).count(),
+               is(equalTo(2L)));
+  }
+
+  @Test
+  public void testTestCaseParsing12() {
+    var code1 = "" +
+                "public abstract class BaseTestClass {" +
+                "  @Test public void abstractTC1() {int i;} " +
+                "  @Test @Ignore public void abstractTC2() {int a;} " +
+                "}";
+    var code2 = "" +
+                "public class ConcreteTestClass extends BaseTestClass {" +
+                "  @Test public void concreteTC1() {} " +
+                "  @Test @Ignore public void concreteTC2() {} " +
+                "  @Override @Test @Ignore public void abstractTC1() {} " +
+                "  @Override @Test public void abstractTC2() {} " +
+                "}";
+    var strat = new JavaParserParsingStrategy(Arrays.asList(code1, code2));
+
+    TestSuite ts = strat.parseTestSuite();
+
+    assertThat(ts, is(notNullValue()));
+    assertThat(ts.getTestCases(), not(empty()));
+    assertThat(ts.getNumberOfTestCases(), is(equalTo(2)));
+    assertThat(ts.getTestCases().stream().filter(tc -> tc.getClassName().equals("ConcreteTestClass")).count(),
+               is(equalTo(2L)));
+  }
+
+  @Test
+  public void testTestCaseParsing13() {
+    var code1 = "" +
+                "public abstract class BaseTestClass {" +
+                "  @Test public void abstractTC1() {int i;} " +
+                "  @Test @Ignore public void abstractTC2() {int a;} " +
+                "}";
+    var code2 = "" +
+                "public class ConcreteTestClass extends BaseTestClass {" +
+                "  @Test public void concreteTC1() {} " +
+                "  @Test @Ignore public void concreteTC2() {} " +
+                "  @Override @Test public void abstractTC2() {} " +
+                "}";
+    var strat = new JavaParserParsingStrategy(Arrays.asList(code1, code2));
+
+    TestSuite ts = strat.parseTestSuite();
+
+    assertThat(ts, is(notNullValue()));
+    assertThat(ts.getTestCases(), not(empty()));
+    assertThat(ts.getNumberOfTestCases(), is(equalTo(3)));
+    assertThat(ts.getTestCases().stream().filter(tc -> tc.getClassName().equals("ConcreteTestClass")).count(),
+               is(equalTo(3L)));
+  }
 }

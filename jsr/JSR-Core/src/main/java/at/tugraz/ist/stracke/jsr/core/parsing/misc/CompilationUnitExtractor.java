@@ -17,13 +17,13 @@ public class CompilationUnitExtractor {
 
 
   private Path filePath;
-  private String code;
+  private List<String> code;
 
   public CompilationUnitExtractor(Path filePath) {
     this.filePath = filePath;
   }
 
-  public CompilationUnitExtractor(String code) {
+  public CompilationUnitExtractor(List<String> code) {
     this.code = code;
   }
 
@@ -47,6 +47,8 @@ public class CompilationUnitExtractor {
 
   private List<CompilationUnit> parseCompilationUnitsFromString() {
     logger.info("Collecting compilation units from String code");
-    return Collections.singletonList(StaticJavaParser.parse(code));
+    return code.stream()
+               .map(StaticJavaParser::parse)
+               .collect(Collectors.toList());
   }
 }

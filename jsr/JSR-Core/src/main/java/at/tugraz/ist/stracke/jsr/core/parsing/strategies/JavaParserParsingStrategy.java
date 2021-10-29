@@ -3,6 +3,7 @@ package at.tugraz.ist.stracke.jsr.core.parsing.strategies;
 import at.tugraz.ist.stracke.jsr.core.parsing.misc.CompilationUnitExtractor;
 import at.tugraz.ist.stracke.jsr.core.parsing.statements.AssertionStatement;
 import at.tugraz.ist.stracke.jsr.core.parsing.statements.IStatement;
+import at.tugraz.ist.stracke.jsr.core.shared.ConcreteTestSuite;
 import at.tugraz.ist.stracke.jsr.core.shared.JUnitTestCase;
 import at.tugraz.ist.stracke.jsr.core.shared.TestCase;
 import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
@@ -27,7 +28,7 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
   private final CompilationUnitExtractor cuExtractor;
   private Path filePath;
 
-  public JavaParserParsingStrategy(@NonNull String code) {
+  public JavaParserParsingStrategy(@NonNull List<String> code) {
     this.cuExtractor = new CompilationUnitExtractor(code);
   }
 
@@ -57,32 +58,72 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
 
   private TestSuite parseTestSuiteFromFilePath() {
     logger.info("Parsing test suite from File Path");
-    List<CompilationUnit> compilationUnits = cuExtractor.getCompilationUnits();
-    List<TestSuite> partialSuites = compilationUnits.stream()
-                                                    .map(this::parseTestSuite)
-                                                    .collect(Collectors.toList());
-
-    return mergePartialSuites(partialSuites);
+    return parseTestSuiteFromMultipleCompilationUnits();
   }
 
   private TestSuite parseTestSuiteFromString() {
     logger.info("Parsing test suite from String code");
-
-    CompilationUnit cu = cuExtractor.getCompilationUnits().get(0);
-
-    return parseTestSuite(cu);
+    return parseTestSuiteFromMultipleCompilationUnits();
   }
 
-  private TestSuite parseTestSuite(CompilationUnit cu) {
+  private TestSuite parseTestSuiteFromMultipleCompilationUnits() {
+    List<CompilationUnit> compilationUnits = cuExtractor.getCompilationUnits();
+    List<CompilationUnit> abstractClassCUs = this.findAbstractClasses(compilationUnits);
+    List<CompilationUnit> concreteClassCUs = this.findConcreteClasses(compilationUnits, abstractClassCUs);
+
+    List<TestSuite> abstractPartialSuites = abstractClassCUs.stream()
+                                                            .map(cu -> parseTestSuite(cu, false))
+                                                            .collect(Collectors.toList());
+    List<ConcreteTestSuite> concretePartialSuites = concreteClassCUs.stream()
+                                                                    .map(cu -> parseTestSuite(cu, true))
+                                                                    .collect(Collectors.toList());
+
+    this.assignAbstractTestsToConcreteSuites(abstractPartialSuites, concretePartialSuites);
+
+    List<TestSuite> finalTestSuites = concretePartialSuites.stream()
+                                                           .map(cts -> new TestSuite(cts.testCases))
+                                                           .collect(Collectors.toList());
+    return mergePartialSuites(finalTestSuites);
+  }
+
+  private void assignAbstractTestsToConcreteSuites(List<TestSuite> abstractPartialSuites,
+                                                   List<ConcreteTestSuite> concretePartialSuites) {
+    abstractPartialSuites.forEach(ats -> concretePartialSuites.forEach(cts -> {
+      final String abstractClassName = ats.testClasses.toArray()[0].toString();
+      if (abstractClassName.equals(cts.extendedClass)) {
+        ats.testCases.forEach(atc -> {
+          final String concreteClassName = cts.testClasses.toArray()[0].toString();
+          TestCase newTC = new JUnitTestCase(atc.getName(), concreteClassName, atc.getAssertions());
+          if (!cts.testCases.contains(newTC)) {
+            cts.testCases.add(newTC);
+          }
+        });
+      }
+    }));
+  }
+
+  private List<CompilationUnit> findConcreteClasses(List<CompilationUnit> compilationUnits, List<CompilationUnit> abstractClassCUs) {
+    return compilationUnits.stream()
+                           .filter(cu -> !abstractClassCUs.contains(cu))
+                           .collect(Collectors.toList());
+  }
+
+  private List<CompilationUnit> findAbstractClasses(List<CompilationUnit> compilationUnits) {
+    return compilationUnits.stream()
+                           .filter(cu -> cu.findAll(ClassOrInterfaceDeclaration.class)
+                                           .get(0).getModifiers()
+                                           .stream()
+                                           .anyMatch(m -> m.getKeyword().toString().equals("ABSTRACT")))
+                           .collect(Collectors.toList());
+  }
+
+
+  private ConcreteTestSuite parseTestSuite(CompilationUnit cu, boolean concrete) {
     var testCaseMethods =
       cu.findAll(MethodDeclaration.class).stream()
         .filter(decl -> decl.getAnnotations()
                             .stream()
-                            .anyMatch(a -> a.getNameAsString().equals("Test")))
-        /*LS (28.10.21) Adding the filter to exclude ignored test cases. They do not add value to TSR */
-        .filter(decl -> decl.getAnnotations()
-                             .stream()
-                             .noneMatch(a -> a.getNameAsString().equals("Ignore") || a.getNameAsString().equals("Disabled")));
+                            .anyMatch(a -> a.getNameAsString().equals("Test")));
 
     List<TestCase> tcs = testCaseMethods
       .map(this::mapDeclarationToTestCase)
@@ -92,7 +133,18 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
 
     tcs.forEach(tc -> logger.info(tc.toString()));
 
-    return new TestSuite(tcs);
+    final ConcreteTestSuite cts = new ConcreteTestSuite(tcs);
+    if (concrete) {
+      final ClassOrInterfaceDeclaration clazz = cu.findAll(ClassOrInterfaceDeclaration.class).get(
+        0);
+      if (clazz != null && clazz.getExtendedTypes().isNonEmpty()) {
+        cts.extendedClass = clazz.getExtendedTypes().get(0).getNameAsString();
+      }
+      if (clazz != null && cts.testClasses.isEmpty()) {
+        cts.testClasses.add(clazz.getFullyQualifiedName().orElse("Error"));
+      }
+    }
+    return cts;
   }
 
   private JUnitTestCase mapDeclarationToTestCase(MethodDeclaration decl) {
@@ -109,10 +161,18 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
     final ClassOrInterfaceDeclaration clazz = (ClassOrInterfaceDeclaration) decl.getParentNode().orElse(null);
     final String className = clazz != null ? clazz.getFullyQualifiedName().orElse("unknown") : "error";
 
-    return new JUnitTestCase(
+    final JUnitTestCase jUnitTestCase = new JUnitTestCase(
       decl.getNameAsString(),
       className,
       aStmts);
+
+    /*LS (28.10.21) Adding the filter to exclude ignored test cases. They do not add value to TSR */
+    jUnitTestCase.disabled = decl.getAnnotations()
+                                 .stream()
+                                 .anyMatch(a -> a.getNameAsString().equals("Ignore") ||
+                                                a.getNameAsString().equals("Disabled"));
+
+    return jUnitTestCase;
   }
 
   private AssertionStatement mapStatementToAssertionStatement(Statement stmt) {
@@ -183,6 +243,7 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
                                          .collect(Collectors.toList())
                                          .stream()
                                          .flatMap(Collection::stream)
+                                         .filter(tc -> !tc.disabled)
                                          .collect(Collectors.toList());
 
     final TestSuite testSuite = new TestSuite(allTCs);
