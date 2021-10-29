@@ -463,4 +463,25 @@ class JavaParserParsingStrategyTest {
     assertThat(ts.getTestCases().stream().filter(tc -> tc.getClassName().equals("ConcreteTestClass")).count(),
                is(equalTo(3L)));
   }
+
+  @Test
+  public void testTestCaseParsing14() {
+    var code1 = "" +
+                "public abstract class BaseTestClass {" +
+                "  @Test public void abstractTC1() {int i;} " +
+                "  @Test public void abstractTC2() {int a;} " +
+                "}";
+    var code2 = "" +
+                "public class ConcreteTestClass extends BaseTestClass {" +
+                "  @Override @Test @Ignore public void abstractTC2() {} " +
+                "  @Override @Test @Ignore public void abstractTC1() {} " +
+                "}";
+    var strat = new JavaParserParsingStrategy(Arrays.asList(code1, code2));
+
+    TestSuite ts = strat.parseTestSuite();
+
+    assertThat(ts, is(notNullValue()));
+    assertThat(ts.getTestCases(), is(empty()));
+    assertThat(ts.getNumberOfTestCases(), is(equalTo(0)));
+  }
 }
