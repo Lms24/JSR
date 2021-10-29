@@ -18,6 +18,8 @@ public abstract class TestCase implements Serializable {
 
   private boolean passed;
 
+  public boolean disabled = false;
+
   public TestCase(String name, String className, List<IStatement> assertions) {
     this.name = name;
     this.className = className;
