@@ -151,7 +151,9 @@ public class JSRServiceImpl implements TSRService, SFLService, CoverageService {
                                                                       params.pathOut.toString());
         TestSuiteSlicer slicer = new JUnitTestSuiteSlicer(slicingStrategy, originalTestSuite);
 
-        coverageStrategy = new CheckedCoverageStrategy(originalTestSuite, parser, slicer);
+        ParsingStrategy stmtParsingStrategy = new JavaParserParsingStrategy(params.pathSources);
+        TestSuiteParser statementParser = new JUnitTestSuiteParser(stmtParsingStrategy);
+        coverageStrategy = new CheckedCoverageStrategy(originalTestSuite, statementParser, slicer);
     }
 
     CoverageReport report = coverageStrategy.calculateOverallCoverage();

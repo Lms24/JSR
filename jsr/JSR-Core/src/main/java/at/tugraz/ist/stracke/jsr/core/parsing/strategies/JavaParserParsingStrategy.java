@@ -95,6 +95,7 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
         ats.testCases.forEach(atc -> {
           final String concreteClassName = cts.testClasses.toArray()[0].toString();
           TestCase newTC = new JUnitTestCase(atc.getName(), concreteClassName, atc.getAssertions());
+          newTC.parentClassName = abstractClassName;
           if (cts.testCases.stream().noneMatch(ctc -> ctc.getName().equals(newTC.getName()))) {
             cts.testCases.add(newTC);
           }

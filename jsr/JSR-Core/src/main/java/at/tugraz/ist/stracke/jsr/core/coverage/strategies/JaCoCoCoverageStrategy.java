@@ -14,10 +14,13 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static at.tugraz.ist.stracke.jsr.core.coverage.strategies.JaCoCoCLI.Args.*;
 import static at.tugraz.ist.stracke.jsr.core.coverage.strategies.JaCoCoCLI.FileNames.*;
@@ -28,21 +31,19 @@ import static at.tugraz.ist.stracke.jsr.core.slicing.strategies.Slicer4JCLI.JUNI
 abstract class JaCoCoCoverageStrategy implements CoverageStrategy {
 
   protected final Logger logger;
+  protected final Set<CoverageReport.Unit> allUnits = new HashSet<>();
+  protected final Set<CoverageReport.Unit> coveredUnits = new HashSet<>();
+  protected final Map<TestCase, Set<CoverageReport.Unit>> coverageData = new HashMap<>();
   private final String classPathSeparator;
   protected Path pathToOutDir;
   protected TestSuite originalTestSuite;
   boolean performCleanup = true;
+  boolean firstIteration = true;
   private Path pathToJar;
   private Path pathToClasses;
   private Path pathToSources;
   private Path pathToSlicer;
   private String basePackage;
-
-  protected final Set<CoverageReport.Unit> allUnits = new HashSet<>();
-  protected final Set<CoverageReport.Unit> coveredUnits = new HashSet<>();
-  protected final Map<TestCase, Set<CoverageReport.Unit>> coverageData = new HashMap<>();
-
-  boolean firstIteration = true;
 
   public JaCoCoCoverageStrategy(Path pathToJar,
                                 Path pathToClasses,
@@ -108,7 +109,13 @@ abstract class JaCoCoCoverageStrategy implements CoverageStrategy {
       return null;
     }
 
-    boolean collectedAllTCData = originalTestSuite.testCases.stream().allMatch(this::runTestCase);
+    AtomicInteger tcCounter = new AtomicInteger();
+    boolean collectedAllTCData =
+      originalTestSuite.testCases.stream()
+                                 .peek(tc -> logger.info("Executing test case {}/{}",
+                                                         tcCounter.incrementAndGet(),
+                                                         originalTestSuite.getTestCases().size()))
+                                 .allMatch(this::runTestCase);
 
     if (!collectedAllTCData) {
       logger.error("Could not collect all individual test case data. Aborting...");
@@ -156,7 +163,7 @@ abstract class JaCoCoCoverageStrategy implements CoverageStrategy {
                CLI_SOURCE_FILES, this.pathToSources.toString(),
                CLI_XML, String.format("%s/%s", tcOutDir, REPORT_XML)//,
         /*CLI_CSV, String.format("%s/report.csv", tcOutDir),*/
-               /*CLI_HTML, tcOutDir.toString()*/)
+        /*CLI_HTML, tcOutDir.toString()*/)
       .redirectOutput(ProcessBuilder.Redirect.to(new File(
         String.format("%s/%s", this.pathToOutDir.toString(), REPORT_LOG))))
       .redirectError(ProcessBuilder.Redirect.to(new File(

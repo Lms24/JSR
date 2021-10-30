@@ -13,6 +13,7 @@ public abstract class TestCase implements Serializable {
 
   private final String name;
   private final String className;
+  public String parentClassName;
 
   private final List<IStatement> assertions;
 

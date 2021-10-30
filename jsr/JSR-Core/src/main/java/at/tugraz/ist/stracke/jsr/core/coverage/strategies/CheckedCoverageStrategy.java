@@ -21,26 +21,27 @@ public class CheckedCoverageStrategy implements CoverageStrategy {
   private static final Logger logger = LogManager.getLogger(CheckedCoverageStrategy.class);
 
   private TestSuite originalTestSuite;
-  private TestSuiteParser parser;
+  private TestSuiteParser statementParser;
   private TestSuiteSlicer slicer;
 
   public CheckedCoverageStrategy(TestSuite originalTestSuite,
-                                 TestSuiteParser parser,
+                                 TestSuiteParser statementParser,
                                  TestSuiteSlicer slicer) {
     this.originalTestSuite = originalTestSuite;
-    this.parser = parser;
+    this.statementParser = statementParser;
     this.slicer = slicer;
   }
 
-  public CheckedCoverageStrategy(TestSuiteParser parser,
+  public CheckedCoverageStrategy(TestSuiteParser statementParser,
                                  TestSuiteSlicer slicer) {
-    this.parser = parser;
+    this.statementParser = statementParser;
     this.slicer = slicer;
   }
 
   @Override
   public CoverageReport calculateOverallCoverage() {
-    List<Statement> executableStatements = this.parser.getParsingStrategy().parseStatements();
+    logger.info("Parsing Source code to find executable statements");
+    List<Statement> executableStatements = this.statementParser.getParsingStrategy().parseStatements();
     TestSuiteSliceResult res = this.slicer.slice();
 
     Set<CoverageReport.Unit> allUnits = executableStatements.stream()
@@ -90,6 +91,6 @@ public class CheckedCoverageStrategy implements CoverageStrategy {
 
   @Override
   public void setStatementParser(TestSuiteParser parser) {
-    this.parser = parser;
+    this.statementParser = parser;
   }
 }

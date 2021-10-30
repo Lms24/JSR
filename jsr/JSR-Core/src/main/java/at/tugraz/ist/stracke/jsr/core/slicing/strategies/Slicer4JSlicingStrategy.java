@@ -12,7 +12,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,19 +32,15 @@ import static at.tugraz.ist.stracke.jsr.core.slicing.strategies.Slicer4JCLI.*;
 public class Slicer4JSlicingStrategy implements SlicingStrategy {
 
   private static final Logger logger = LogManager.getLogger(Slicer4JSlicingStrategy.class);
-
+  private final String classPathSeparator;
   private Path pathToJar;
   private Path pathToSlicer;
   private Path pathToOutDir;
-
   private Path pathToLoggerJar;
-
   private TestCase testCase;
-
   private String jarFileName;
   private String instrumentedJarFileName;
 
-  private final String classPathSeparator;
   /**
    * Initializes a new Slicer4JSlicingStrategy instance
    *
@@ -262,13 +257,21 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
                    .map(ass -> {
                      String substr = String.format("LINENO:%s:FILE:%s",
                                                    ass.getStartLine(),
-                                                   this.testCase.getClassName());
+                                                   (this.testCase.parentClassName != null ?
+                                                   this.testCase.parentClassName : this.testCase.getClassName()));
                      return finalIcdgLogLines.stream()
                                              .filter(l -> l.contains(substr))
                                              .map(l -> l.split(", ")[0])
                                              .collect(Collectors.joining("-"));
                    })
+                   .filter(cs -> !cs.isEmpty() && !cs.isBlank())
                    .collect(Collectors.joining("-"));
+
+    if (sl4jSlicingCriteriaString.isEmpty() || sl4jSlicingCriteriaString.isBlank() ||
+        sl4jSlicingCriteriaString.replace("-", "").isEmpty()) {
+      logger.warn("Could not find a valid slicing criterion. Perhaps, the slicer/ICDG builder/tracer has an error");
+      return null;
+    }
 
     logger.debug("SL4J Slicing Criterion: [{}]", sl4jSlicingCriteriaString);
 

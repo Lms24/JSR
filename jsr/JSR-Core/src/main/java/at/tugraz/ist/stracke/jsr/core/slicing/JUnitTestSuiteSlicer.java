@@ -4,12 +4,18 @@ import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
 import at.tugraz.ist.stracke.jsr.core.slicing.result.TestCaseSliceResult;
 import at.tugraz.ist.stracke.jsr.core.slicing.result.TestSuiteSliceResult;
 import at.tugraz.ist.stracke.jsr.core.slicing.strategies.SlicingStrategy;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class JUnitTestSuiteSlicer implements TestSuiteSlicer {
+
+  private Logger logger = LogManager.getLogger(JUnitTestSuiteSlicer.class);
 
   private SlicingStrategy slicingStrategy;
   private TestSuite testSuite;
@@ -29,10 +35,17 @@ public class JUnitTestSuiteSlicer implements TestSuiteSlicer {
   @Override
   public TestSuiteSliceResult slice() {
     this.slicingStrategy.instrumentJar();
-
+    AtomicInteger tcCounter = new AtomicInteger();
     List<TestCaseSliceResult> tcSlices =
       this.testSuite.getTestCases().stream()
-                    .map(tc -> this.slicingStrategy.setTestCase(tc).execute())
+                    .map(tc -> {
+                      logger.info("Executing and Slicing test case {}/{}",
+                                  tcCounter.incrementAndGet(),
+                                  testSuite.getTestCases().size());
+                      this.slicingStrategy.setTestCase(tc);
+                      return this.slicingStrategy.execute();
+                    })
+                    .filter(Objects::nonNull)
                     .collect(Collectors.toList());
 
     this.result = new TestSuiteSliceResult(tcSlices);

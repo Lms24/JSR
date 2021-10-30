@@ -70,7 +70,9 @@ public class SFLFacadeImpl implements SFLFacade {
   private CoverageReport createSFLCoverageReport(JSRParams params, TestSuite testSuite) {
 
     if (failCoverageStrategy == null) {
-      failCoverageStrategy = new CheckedCoverageStrategy(testSuite, parser, slicer);
+      ParsingStrategy stmtParsingStrategy = new JavaParserParsingStrategy(params.pathSources);
+      TestSuiteParser statementParser = new JUnitTestSuiteParser(stmtParsingStrategy);
+      failCoverageStrategy = new CheckedCoverageStrategy(testSuite, statementParser, slicer);
     }
     if (passCoverageStrategy == null) {
       passCoverageStrategy = new LineCoverageStrategy(params.pathJar,
