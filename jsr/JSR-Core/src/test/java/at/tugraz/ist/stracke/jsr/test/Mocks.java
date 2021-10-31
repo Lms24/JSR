@@ -15,6 +15,7 @@ import at.tugraz.ist.stracke.jsr.core.slicing.result.TestCaseSliceResult;
 import at.tugraz.ist.stracke.jsr.core.slicing.result.TestSuiteSliceResult;
 import at.tugraz.ist.stracke.jsr.core.slicing.strategies.SlicingStrategy;
 
+import java.nio.file.Path;
 import java.util.*;
 
 public class Mocks {
@@ -70,6 +71,11 @@ public class Mocks {
     @Override
     public SlicingStrategy instrumentJar() {
       return this;
+    }
+
+    @Override
+    public Path getOutputDirectory() {
+      return null;
     }
   }
 
@@ -150,6 +156,11 @@ public class Mocks {
 
     @Override
     public void setTestSuite(TestSuite testSuite) {
+    }
+
+    @Override
+    public SlicingStrategy getSlicingStrategy() {
+      return null;
     }
   }
 

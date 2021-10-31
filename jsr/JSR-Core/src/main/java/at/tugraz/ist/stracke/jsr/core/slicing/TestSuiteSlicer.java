@@ -22,6 +22,7 @@ public interface TestSuiteSlicer {
   TestSuiteSliceResult getResult();
 
   void setSlicingStrategy(SlicingStrategy strategy);
+  SlicingStrategy getSlicingStrategy();
 
   void setTestSuite(TestSuite testSuite);
 }

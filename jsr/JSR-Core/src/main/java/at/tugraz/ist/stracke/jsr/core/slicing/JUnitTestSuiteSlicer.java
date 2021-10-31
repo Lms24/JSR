@@ -67,4 +67,9 @@ public class JUnitTestSuiteSlicer implements TestSuiteSlicer {
   public void setTestSuite(TestSuite testSuite) {
     this.testSuite = testSuite;
   }
+
+  @Override
+  public SlicingStrategy getSlicingStrategy() {
+    return this.slicingStrategy;
+  }
 }
