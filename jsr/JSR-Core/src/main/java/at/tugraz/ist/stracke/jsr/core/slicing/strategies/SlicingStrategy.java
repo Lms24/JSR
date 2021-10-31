@@ -5,6 +5,8 @@ import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
 import at.tugraz.ist.stracke.jsr.core.slicing.result.TestCaseSliceResult;
 import at.tugraz.ist.stracke.jsr.core.slicing.result.TestSuiteSliceResult;
 
+import java.nio.file.Path;
+
 public interface SlicingStrategy {
 
   /**
@@ -29,4 +31,10 @@ public interface SlicingStrategy {
    * @return A reference to the slicing strategy instance for method chaining
    */
   SlicingStrategy instrumentJar();
+
+  /**
+   * Returns the output directory of the slicing strategy's output files.
+   * @return the output directory of the slicing strategy's output files.
+   */
+  Path getOutputDirectory();
 }

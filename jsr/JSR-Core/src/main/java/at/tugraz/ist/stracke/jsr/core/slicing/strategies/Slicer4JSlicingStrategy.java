@@ -357,6 +357,7 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
     final File logFile = new File(this.pathToOutDir.toString() + "/" + FileNames.TRACE_LOG);
 
     Files.write(logFile.toPath(), String.join(System.lineSeparator(), slicing).getBytes(StandardCharsets.UTF_8));
+    reader.close();
   }
 
   private void handleInstrumentationError(@NonNull Process p) {
@@ -422,5 +423,10 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
     logger.debug("Path to slicer: {}", this.pathToSlicer);
     logger.debug("Path to out dir: {}", this.pathToOutDir);
     logger.debug("Path to out logging jar: {}", this.pathToLoggerJar);
+  }
+
+  @Override
+  public Path getOutputDirectory() {
+    return this.pathToOutDir;
   }
 }
