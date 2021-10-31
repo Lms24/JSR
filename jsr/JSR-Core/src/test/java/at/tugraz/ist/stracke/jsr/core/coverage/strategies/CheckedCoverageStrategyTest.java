@@ -14,6 +14,7 @@ class CheckedCoverageStrategyTest {
     CheckedCoverageStrategy strat = new CheckedCoverageStrategy(Mocks.emptyTestSuite,
                                                                 new Mocks.MockedTestSuiteParser(),
                                                                 new Mocks.MockedTestSuiteSlicer());
+    strat.shouldCleanup = false;
     CoverageReport cr = strat.calculateOverallCoverage();
 
     assertThat(cr, is(notNullValue()));

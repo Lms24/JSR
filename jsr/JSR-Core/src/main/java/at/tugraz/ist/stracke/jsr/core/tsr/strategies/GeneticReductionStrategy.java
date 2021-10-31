@@ -40,15 +40,16 @@ import static io.jenetics.engine.Limits.bySteadyFitness;
  */
 public class GeneticReductionStrategy extends BaseReductionStrategy {
 
-  private static final int POPULATION_SIZE = 500;
+  private static final int POPULATION_SIZE = 750;
 
-  private static final double PROB_BIT_GENE_TRUE_INIT = 0.6;
-  private static final double PROB_MUTATOR = 0.55;
+  private static final double PROB_BIT_GENE_TRUE_INIT = 0.9;
+  private static final double PROB_MUTATOR = 0.5;
   private static final double PROB_ROULETTE = 0.15;
 
-  private static final int LIMIT_STEADY_FITNESS = 30;
+  private static final int LIMIT_STEADY_FITNESS = 15;
   private static final int LIMIT_MAX_GENERATIONS = 100;
-  private static final int DUPLICATE_RELAXATION_QUOTIENT = 2;
+  private static final int DUPLICATE_RELAXATION_QUOTIENT = 10;
+  private static final boolean AVG_DUPLICATES = true;
 
   private final Logger logger = LogManager.getLogger(GeneticReductionStrategy.class);
 
@@ -105,7 +106,7 @@ public class GeneticReductionStrategy extends BaseReductionStrategy {
     final List<TSRTestCase> tcSelection = this.getTestCaseSelectionFromBitGenotype(geneGenotype);
 
     if (!tcCollectionSatisfiesAllReqs(tcSelection)) {
-      return 0;
+      return -1;
     }
 
     return getFitnessFromSelection(tcSelection);
@@ -125,12 +126,21 @@ public class GeneticReductionStrategy extends BaseReductionStrategy {
                                                                    .map(f -> f - 1)
                                                                    .collect(Collectors.toList());
 
-    int sumDuplicates = numberOfDuplicatedCoveredReqs.stream()
-                                                     .mapToInt(i -> i)
-                                                     .sum();
+    if (AVG_DUPLICATES) {
+      int avgDuplicates = (int) numberOfDuplicatedCoveredReqs.stream()
+                                                             .mapToInt(i -> i)
+                                                             .average().orElse(0);
 
-    return Math.max(uniqueCoveredReqs.size() - (sumDuplicates / DUPLICATE_RELAXATION_QUOTIENT), 1);
-  }
+      return Math.max(uniqueCoveredReqs.size() - (avgDuplicates * DUPLICATE_RELAXATION_QUOTIENT), 1);
+
+    } else {
+      int sumDuplicates = numberOfDuplicatedCoveredReqs.stream()
+                                                       .mapToInt(i -> i)
+                                                       .sum();
+
+      return Math.max(uniqueCoveredReqs.size() - (sumDuplicates / DUPLICATE_RELAXATION_QUOTIENT), 1);
+    }
+   }
 
   private List<TSRTestCase> getTestCaseSelectionFromBitGenotype(final Genotype<BitGene> geneGenotype) {
     final List<Boolean> vector = geneGenotype.chromosome()
