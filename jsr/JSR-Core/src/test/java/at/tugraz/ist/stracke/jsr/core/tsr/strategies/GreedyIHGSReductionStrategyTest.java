@@ -56,4 +56,24 @@ class GreedyIHGSReductionStrategyTest {
     assertThat(TSRData.smallOriginalTS.testCases.containsAll(union), is(true));
     assertThat(rts.testCases, contains(TSRData.t4));
   }
+
+  @Test
+  void testReduce04() {
+    GreedyIHGSReductionStrategy strategy = new GreedyIHGSReductionStrategy(TSRData.forceGreedyOriginalTS,
+                                                                              TSRData.forceGreedyCoverageReport);
+    ReducedTestSuite rts = strategy.reduce();
+
+    List<TestCase> union = new ArrayList<>(rts.testCases);
+    union.addAll(rts.removedTestCases);
+
+    assertThat(union.size(), is(equalTo(TSRData.forceGreedyOriginalTS.testCases.size())));
+    assertThat(TSRData.forceGreedyOriginalTS.testCases.containsAll(union), is(true));
+    assertThat(rts.removedTestCases, containsInAnyOrder(TSRData.t5, TSRData.t9));
+    assertThat(rts.testCases, containsInAnyOrder(TSRData.t2,
+                                                 TSRData.t3,
+                                                 TSRData.t4,
+                                                 TSRData.t6,
+                                                 TSRData.t7,
+                                                 TSRData.t8));
+  }
 }

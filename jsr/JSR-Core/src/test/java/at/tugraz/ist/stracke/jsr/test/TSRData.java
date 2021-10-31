@@ -17,6 +17,11 @@ public class TSRData {
   public static final TestCase t3 = new TSRTestCase("t3", "t3", true);
   public static final TestCase t4 = new TSRTestCase("t4", "t4", true);
   public static final TestCase t5 = new TSRTestCase("t5", "t5", true);
+  public static final TestCase t6 = new TSRTestCase("t6", "t6", true);
+  public static final TestCase t7 = new TSRTestCase("t7", "t7", true);
+  public static final TestCase t8 = new TSRTestCase("t8", "t8", true);
+  public static final TestCase t9 = new TSRTestCase("t9", "t9", true);
+  public static final TestCase t10 = new TSRTestCase("t10", "t10", true);
   public static final TestCase tf1 = new TSRTestCase("tf1", "tf1", false);
   public static final TestCase tf2 = new TSRTestCase("tf2", "tf2", false);
   public static final TestCase tf3 = new TSRTestCase("tf3", "tf3", false);
@@ -27,6 +32,10 @@ public class TSRData {
   public static final CoverageReport.Unit s4 = new CoverageReport.Unit("s4", 4, 4);
   public static final CoverageReport.Unit s5 = new CoverageReport.Unit("s5", 5, 5);
   public static final CoverageReport.Unit s6 = new CoverageReport.Unit("s6", 6, 6);
+  public static final CoverageReport.Unit s7 = new CoverageReport.Unit("s7", 6, 6);
+  public static final CoverageReport.Unit s8 = new CoverageReport.Unit("s8", 6, 6);
+  public static final CoverageReport.Unit s9 = new CoverageReport.Unit("s9", 6, 6);
+  public static final CoverageReport.Unit s10 = new CoverageReport.Unit("s10", 6, 6);
 
   public static final TestSuite smallOriginalTS = new TestSuite(List.of(t1, t2, t3, t4, t5));
   public static final CoverageReport smallCoverageReport = new CoverageReport(
@@ -38,6 +47,16 @@ public class TSRData {
            t3, Set.of(s2, s4, s5),
            t4, Set.of(s2, s3, s6),
            t5, Set.of(s1, s4, s5))
+  );
+  public static final CoverageReport delGreedyCoverageReport = new CoverageReport(
+    "Abstract",
+    Set.of(s1, s2, s3 ,s4, s5, s6),
+    Set.of(s1, s2, s3, s4, s5, s6),
+    Map.of(t1, Set.of(s1, s2, s3),
+           t2, Set.of(s1, s4),
+           t3, Set.of(s2, s5),
+           t4, Set.of(s3, s6),
+           t5, Set.of(s5))
   );
 
   public static final TestSuite simpleOriginalTS = new TestSuite(List.of(t1, t2, t3, t4));
@@ -94,5 +113,21 @@ public class TSRData {
            tf1, Set.of(s6, s5, s2),
            tf2, Set.of(s6, s4, s2),
            tf3, Set.of(s6, s4, s1))
+  );
+
+  public static final TestSuite forceGreedyOriginalTS =
+    new TestSuite(List.of(t2, t3, t4, t5, t6, t7, t8, t9));
+  public static final CoverageReport forceGreedyCoverageReport = new CoverageReport(
+    "Abstract",
+    Set.of(s1, s2, s3, s4, s5, s6, s7, s8, s9),
+    Set.of(s1, s2, s3, s4, s5, s6, s7, s8, s9),
+    Map.of(t2, Set.of(s5, s8, s9),
+           t3, Set.of(s1, s2, s4, s5, s7),
+           t4, Set.of(s1, s3, s4, s5, s6),
+           t5, Set.of(s1, s2, s5, s8),
+           t6, Set.of(s2, s6, s8),
+           t7, Set.of(s3, s4, s7, s8),
+           t8, Set.of(s1, s9),
+           t9, Set.of(s2, s3, s7, s9))
   );
 }
