@@ -33,9 +33,10 @@ abstract class BaseReductionStrategy implements ReductionStrategy {
 
   /**
    * This obviously needs to be implemented by the concrete classes.
+   *
    * @return
    */
-  abstract @NonNull public ReducedTestSuite reduce();
+  abstract public @NonNull ReducedTestSuite reduce();
 
   protected List<TSRTestCase> getTestCasesSatisfyingRequirement(CoverageReport.Unit req) {
     return this.table.column(req)
@@ -56,8 +57,9 @@ abstract class BaseReductionStrategy implements ReductionStrategy {
   }
 
   protected List<TestCase> getRemovedTCs(List<TestCase> retainedTCs) {
-    return this.originalTestsuite.testCases.stream().filter(
-      t -> !retainedTCs.contains(t)).collect(Collectors.toList());
+    return this.originalTestsuite.testCases.stream()
+                                           .filter(t -> !retainedTCs.contains(t))
+                                           .collect(Collectors.toList());
   }
 
   @Override

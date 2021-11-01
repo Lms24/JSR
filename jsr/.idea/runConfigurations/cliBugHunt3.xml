@@ -1,0 +1,17 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="cliBugHunt3" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="at.tugraz.ist.stracke.jsr.cli.Main" />
+    <module name="jsr.JSR-CLI.main" />
+    <option name="PROGRAM_PARAMETERS" value="coverage ./src/test/java/ -c build/classes -j build/libs/testJar.jar -l $PROJECT_DIR$/../slicer/Slicer4J -o ./tmp -s ./src/main/java --type checked" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/JSR-Core/src/test/resources/smallProject" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="at.tugraz.ist.stracke.jsr.cli.commands.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

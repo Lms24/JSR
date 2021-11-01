@@ -5,10 +5,11 @@ import java.util.Arrays;
 
 public class AlgorithmCandidates extends ArrayList<String> {
   public static final String ALG_GREEDY_HGS = "greedyHGS";
+  public static final String ALG_DELAYED_GREEDY = "delayedGreedy";
   public static final  String ALG_GENETIC = "genetic";
 
   AlgorithmCandidates() {
-    super(Arrays.asList(ALG_GREEDY_HGS, ALG_GENETIC));
+    super(Arrays.asList(ALG_GREEDY_HGS, ALG_DELAYED_GREEDY, ALG_GENETIC));
   }
 
 }

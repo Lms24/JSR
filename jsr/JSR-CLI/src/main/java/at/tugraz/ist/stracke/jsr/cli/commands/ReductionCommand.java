@@ -112,7 +112,9 @@ public class ReductionCommand implements Callable<Integer> {
             completionCandidates = AlgorithmCandidates.class,
             names = {"--algorithm"},
             description = "The reduction algorithm used to reduce the test suite." +
-                          "\r\n  Available options: " + AlgorithmCandidates.ALG_GREEDY_HGS + ", " +
+                          "\r\n  Available options: " +
+                          AlgorithmCandidates.ALG_GREEDY_HGS + ", " +
+                          AlgorithmCandidates.ALG_DELAYED_GREEDY + ", " +
                           AlgorithmCandidates.ALG_GENETIC)
     private String algorithm;
   }
