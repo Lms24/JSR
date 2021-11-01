@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Main-sfl-generate" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="at.tugraz.ist.stracke.jsr.cli.Main" />
+    <module name="jsr.JSR-CLI.main" />
+    <option name="PROGRAM_PARAMETERS" value="sfl -s JSR-Core/src/test/resources/smallProject/src/main/java -j JSR-Core/src/test/resources/smallProject/build/libs/testJar.jar -l ../slicer/Slicer4J -o JSR-CLI/build/jsr/cliTest02 -c JSR-Core/src/test/resources/smallProject/build/classes/java/main --package at.tugraz JSR-Core/src/test/resources/smallProject/src/test/java" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="at.tugraz.ist.stracke.jsr.cli.commands.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

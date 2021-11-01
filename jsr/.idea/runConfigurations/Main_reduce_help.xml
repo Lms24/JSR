@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Main-reduce-help" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="at.tugraz.ist.stracke.jsr.cli.Main" />
+    <module name="jsr.JSR-CLI.main" />
+    <option name="PROGRAM_PARAMETERS" value="reduce -h" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="at.tugraz.ist.stracke.jsr.cli.commands.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
