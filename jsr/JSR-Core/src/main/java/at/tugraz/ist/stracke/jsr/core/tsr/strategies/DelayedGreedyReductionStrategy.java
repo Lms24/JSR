@@ -94,25 +94,41 @@ public class DelayedGreedyReductionStrategy extends BaseReductionStrategy {
    * @return true if at least one object reduction was performed.
    */
   private boolean performObjectReduction() {
-    logger.debug("Trying Object Reduction with table size {}", table.size());
+    //logger.debug("Trying Object Reduction with table size {}", table.size());
     boolean performedOR = false;
 
-    for (var entry_i : table.rowMap().entrySet()) {
+    List<Map.Entry<TSRTestCase,Map<CoverageReport.Unit, Boolean>>> entries = new ArrayList<>(table.rowMap().entrySet());
+
+    for (var entry_i : entries) {
       if (performedOR) break;
 
       TSRTestCase tc_i = entry_i.getKey();
       List<CoverageReport.Unit> coveredUnits_i = getRequirementsSatisfiedByTestCase(tc_i);
 
-      for (var entry_j : table.rowMap().entrySet()) {
+      for (var entry_j : entries) {
         TSRTestCase tc_j = entry_j.getKey();
         if (tc_i == tc_j) {
-          continue;
+          break;
         }
 
         List<CoverageReport.Unit> coveredUnits_j = getRequirementsSatisfiedByTestCase(tc_j);
+
+        TestCase tcToKeep = null, tcToRemove = null;
+        List<CoverageReport.Unit> coveredUnitsToRemove = null;
         if (coveredUnits_j.containsAll(coveredUnits_i)) {
-          logger.debug("OR because {} => {}", tc_j.getName(), tc_i.getName());
-          coveredUnits_i.forEach(u -> ((ArrayTable<?, ?, ?>) table).erase(tc_i, u));
+          tcToRemove = tc_i;
+          tcToKeep = tc_j;
+          coveredUnitsToRemove = coveredUnits_i;
+        } else if (coveredUnits_i.containsAll(coveredUnits_j)) {
+          tcToRemove = tc_j;
+          tcToKeep = tc_i;
+          coveredUnitsToRemove = coveredUnits_j;
+        }
+
+        if (tcToKeep != null && tcToRemove != null) {
+          logger.debug("OR because {} => {}", tcToKeep.getName(), tcToRemove.getName());
+          final TestCase finalTcToRemove = tcToRemove;
+          coveredUnitsToRemove.forEach(u -> ((ArrayTable<?, ?, ?>) table).erase(finalTcToRemove, u));
           performedOR = true;
           this.updateTable();
           if (MULTIPLE_REDUCTIONS_PER_STEP) {
@@ -135,7 +151,7 @@ public class DelayedGreedyReductionStrategy extends BaseReductionStrategy {
    * @return true if at least one attribute reduction was performed
    */
   private boolean performAttributeReduction() {
-    logger.debug("Trying Attribute Reduction with table size {}", table.size());
+    //logger.debug("Trying Attribute Reduction with table size {}", table.size());
     boolean performedAR = false;
 
     for (var entry : table.columnMap().entrySet()) {
@@ -147,13 +163,27 @@ public class DelayedGreedyReductionStrategy extends BaseReductionStrategy {
       for (var e : table.columnMap().entrySet()) {
         CoverageReport.Unit req_i = e.getKey();
         if (req_i == req_j) {
-          continue;
+          break;
         }
 
         List<TSRTestCase> coveringTCs_i = getTestCasesSatisfyingRequirement(req_i);
+
+        CoverageReport.Unit reqToKeep = null, reqToRemove = null;
+        List<TSRTestCase> coveringTCsToRemove = null;
         if (coveringTCs_i.containsAll(coveringTCs_j)) {
-          logger.debug("AR because {} => {}", req_j.name, req_i.name);
-          coveringTCs_i.forEach(tc -> ((ArrayTable<?, ?, ?>) table).erase(tc, req_i));
+          reqToKeep = req_j;
+          reqToRemove = req_i;
+          coveringTCsToRemove = coveringTCs_i;
+        } else if (coveringTCs_j.containsAll(coveringTCs_i)) {
+          reqToKeep = req_i;
+          reqToRemove = req_j;
+          coveringTCsToRemove = coveringTCs_j;
+        }
+
+        if (reqToKeep != null && reqToRemove != null) {
+          logger.debug("AR because {} => {}", reqToKeep.name, reqToRemove.name);
+          final CoverageReport.Unit finalReqToRemove = reqToRemove;
+          coveringTCsToRemove.forEach(tc -> ((ArrayTable<?, ?, ?>) table).erase(tc, finalReqToRemove));
           performedAR = true;
           this.updateTable();
           if (MULTIPLE_REDUCTIONS_PER_STEP) {
@@ -176,7 +206,7 @@ public class DelayedGreedyReductionStrategy extends BaseReductionStrategy {
    * @return true if at least one owner reduction was performed
    */
   private boolean performOwnerReduction() {
-    logger.debug("Trying Owner Reduction with table size {}", table.size());
+    //logger.debug("Trying Owner Reduction with table size {}", table.size());
     boolean performedOwnerReduction = false;
 
     for (var entry : this.table.columnMap().entrySet()) {
@@ -189,7 +219,6 @@ public class DelayedGreedyReductionStrategy extends BaseReductionStrategy {
 
         selectTC(owner);
 
-        this.updateTable();
         performedOwnerReduction = true;
         if (MULTIPLE_REDUCTIONS_PER_STEP) {
           performOwnerReduction();

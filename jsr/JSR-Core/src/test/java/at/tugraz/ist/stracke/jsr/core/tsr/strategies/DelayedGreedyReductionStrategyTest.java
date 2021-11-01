@@ -70,7 +70,7 @@ class DelayedGreedyReductionStrategyTest {
 
     assertThat(union.size(), is(equalTo(TSRData.simpleOriginalTS.testCases.size())));
     assertThat(TSRData.smallOriginalTS.testCases.containsAll(union), is(true));
-    assertThat(rts.testCases, (contains(TSRData.t4)));
+    assertThat(rts.testCases, (contains(TSRData.t1)));
     assertThat(strategy.optimalResult, is(true));
   }
 
@@ -100,14 +100,14 @@ class DelayedGreedyReductionStrategyTest {
 
     assertThat(union.size(), is(equalTo(TSRData.forceGreedyOriginalTS.testCases.size())));
     assertThat(TSRData.forceGreedyOriginalTS.testCases.containsAll(union), is(true));
-    assertThat(rts.removedTestCases, containsInAnyOrder(TSRData.t2,
+    assertThat(rts.removedTestCases, containsInAnyOrder(TSRData.t7,
                                                         TSRData.t3,
                                                         TSRData.t5,
                                                         TSRData.t6,
                                                         TSRData.t8));
     assertThat(rts.testCases, containsInAnyOrder(TSRData.t4,
                                                  TSRData.t9,
-                                                 TSRData.t7));
+                                                 TSRData.t2));
     assertThat(strategy.optimalResult, is(false));
   }
 }
