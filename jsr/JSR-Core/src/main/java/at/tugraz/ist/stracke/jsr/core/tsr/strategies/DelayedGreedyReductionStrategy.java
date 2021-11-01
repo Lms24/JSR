@@ -277,7 +277,7 @@ public class DelayedGreedyReductionStrategy extends BaseReductionStrategy {
   /* Helpers */
 
   private void selectTC(TestCase testCase) {
-    logger.debug("Selecting {} greedily", testCase.getName());
+    logger.debug("Selecting {}", testCase.getName());
     this.addSelectedTCToRTS(testCase);
     List<CoverageReport.Unit> ownersCoveredReqs = this.getRequirementsSatisfiedByTestCase((TSRTestCase) testCase);
     final ArrayTable<?, ?, ?> arrayTable = (ArrayTable<?, ?, ?>) this.table;
