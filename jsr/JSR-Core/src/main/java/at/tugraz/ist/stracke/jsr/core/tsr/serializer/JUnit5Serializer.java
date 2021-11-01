@@ -22,4 +22,11 @@ public class JUnit5Serializer extends JUnitSerializer {
   void importAnnotation(CompilationUnit cu) {
     cu.addImport("org.junit.jupiter.api.Disabled");
   }
+
+  @Override
+  void importTestMarkerAnnotation(CompilationUnit cu) {
+    if (cu.getImports().stream().noneMatch(i -> i.getNameAsString().equals("org.junit.jupiter.api.Test"))) {
+      cu.addImport("org.junit.jupiter.api.Test");
+    }
+  }
 }

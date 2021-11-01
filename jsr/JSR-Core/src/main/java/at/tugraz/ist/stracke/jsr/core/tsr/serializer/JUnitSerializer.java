@@ -4,9 +4,15 @@ import at.tugraz.ist.stracke.jsr.core.parsing.misc.CompilationUnitExtractor;
 import at.tugraz.ist.stracke.jsr.core.shared.TestCase;
 import at.tugraz.ist.stracke.jsr.core.tsr.ReducedTestSuite;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.expr.MarkerAnnotationExpr;
+import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.ast.type.VoidType;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -51,6 +57,8 @@ public abstract class JUnitSerializer implements Serializer {
 
   abstract void importAnnotation(CompilationUnit cu);
 
+  abstract void importTestMarkerAnnotation(CompilationUnit cu);
+
   @Override
   public void serialize(boolean writeToFile) {
     // 1. Parse CUs
@@ -61,7 +69,8 @@ public abstract class JUnitSerializer implements Serializer {
     compilationUnits.forEach(cu -> modified.set(this.modifyCompilationUnit(cu) || modified.get()));
 
     if (modified.get()) {
-      this.modifiedCode = compilationUnits.stream().map(Node::toString).collect(Collectors.toList());;
+      this.modifiedCode = compilationUnits.stream().map(Node::toString).collect(Collectors.toList());
+      ;
     }
 
     // 3. Write to file
@@ -104,8 +113,9 @@ public abstract class JUnitSerializer implements Serializer {
                                                                  .collect(Collectors.toList());
 
         final List<MethodDeclaration> allMethods = clazz.findAll(MethodDeclaration.class);
-
         modifiedSomething.set(this.modifyTestMethods(allMethods, testCasesToModify));
+
+        addConcreteDisabledMethodsOfAbstractClass(modifiedSomething, testCasesToModify, allMethods, clazz);
       }
     });
 
@@ -114,6 +124,40 @@ public abstract class JUnitSerializer implements Serializer {
     }
 
     return modifiedSomething.get();
+  }
+
+  private void addConcreteDisabledMethodsOfAbstractClass(AtomicBoolean modifiedSomething,
+                                                         List<TestCase> testCasesToModify,
+                                                         List<MethodDeclaration> allMethods,
+                                                         ClassOrInterfaceDeclaration clazz) {
+    List<TestCase> tcsWithoutImplementedMethod =
+      testCasesToModify.stream()
+                       .filter(tc -> allMethods.stream()
+                                               .noneMatch(m -> m.getNameAsString().equals(tc.getName())))
+                       .collect(Collectors.toList());
+
+    if (!tcsWithoutImplementedMethod.isEmpty()) {
+      tcsWithoutImplementedMethod.forEach(tc -> {
+        NodeList<Modifier> mods = new NodeList<>(Modifier.publicModifier());
+        Type voidType = new VoidType();
+        var newMethod = new MethodDeclaration(mods, voidType, tc.getName());
+        newMethod.addAnnotation(new MarkerAnnotationExpr("Override"));
+        newMethod.addAnnotation(new MarkerAnnotationExpr("Test"));
+        addAnnotation(newMethod, "Redundant Test Case (identified and added to concrete class by JSR)");
+        newMethod.setBody(new BlockStmt(new NodeList<>()));
+        clazz.addMember(newMethod);
+        modifiedSomething.set(true);
+      });
+    }
+
+    if (modifiedSomething.get()) {
+      CompilationUnit cu = clazz.findCompilationUnit().orElse(null);
+      if (cu == null) {
+        throw new IllegalStateException("You should not be here, this means no good.");
+      }
+
+      importTestMarkerAnnotation(cu);
+    }
   }
 
   private boolean modifyTestMethods(List<MethodDeclaration> methods, List<TestCase> testCasesToModify) {

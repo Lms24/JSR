@@ -2,7 +2,7 @@
   <configuration default="false" name="cliBugHunt" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="at.tugraz.ist.stracke.jsr.cli.Main" />
     <module name="jsr.JSR-CLI.main" />
-    <option name="PROGRAM_PARAMETERS" value="reduce ./src/test/java/ -c target/classes -j target/commons-cli-1.4-fat-tests.jar -l $PROJECT_DIR$/../slicer/Slicer4J -o $PROJECT_DIR$/../../master-benchmark/results/tmp --gen $PROJECT_DIR$/../../master-benchmark/results/tmp/gen -s ./src/main/java --coverage line --algorithm delayedGreedy --package org.apache.commons.cli" />
+    <option name="PROGRAM_PARAMETERS" value="reduce ./src/test/java/ -c target/classes -j target/commons-cli-1.4-fat-tests.jar -l $PROJECT_DIR$/../slicer/Slicer4J -o $PROJECT_DIR$/../../master-benchmark/results/tmp --gen $PROJECT_DIR$/../../master-benchmark/results/tmp/gen -s ./src/main/java --report $PROJECT_DIR$/../../master-benchmark/results/commons-cli/lc/coverage/LineCoverageReport.cvg --algorithm delayedGreedy --package org.apache.commons.cli" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../master-benchmark/projects/commons-cli" />
     <extension name="coverage">
       <pattern>

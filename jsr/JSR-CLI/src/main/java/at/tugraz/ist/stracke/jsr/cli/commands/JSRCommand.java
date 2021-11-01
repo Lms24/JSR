@@ -7,7 +7,7 @@ import picocli.CommandLine.*;
   mixinStandardHelpOptions = true,
   usageHelpWidth = 100,
   footer = "JSR - The Java Test Suite Reduction Framework",
-  version = "JSR CLI 1.0"
+  version = "JSR CLI 1.0.1"
 )
 public class JSRCommand {
 }
