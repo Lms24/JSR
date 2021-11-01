@@ -45,7 +45,7 @@ class GeneticReductionStrategyTest {
 
     int fitness = strategy.getFitness(geneGenotype);
 
-    assertThat(fitness, is(equalTo(0)));
+    assertThat(fitness, is(equalTo(-1)));
   }
 
   @Test
@@ -62,7 +62,7 @@ class GeneticReductionStrategyTest {
 
     int fitness = strategy.getFitness(geneGenotype);
 
-    assertThat(fitness, is(equalTo(2))); // LS (26.10.) relaxed duplicate punishment
+    assertThat(fitness, is(equalTo(1))); // LS (26.10.) relaxed duplicate punishment
   }
 
   @Test
@@ -79,7 +79,7 @@ class GeneticReductionStrategyTest {
 
     int fitness = strategy.getFitness(geneGenotype);
 
-    assertThat(fitness, is(equalTo(5))); // LS (26.10.) relaxed duplicate punishment
+    assertThat(fitness, is(equalTo(1))); // LS (26.10.) relaxed duplicate punishment
   }
 
   @Test
