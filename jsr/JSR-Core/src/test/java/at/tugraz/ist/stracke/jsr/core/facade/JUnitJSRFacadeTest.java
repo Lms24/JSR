@@ -526,7 +526,7 @@ class JUnitJSRFacadeTest {
     String slicerDir = "../../slicer/Slicer4J";
     String serialDir = outDir + "/serial";
     String classDir = "./src/test/resources/smallProject/build/classes/java/main";
-    
+
     JUnitJSRFacadeBuilder facadeBuilder = new JUnitJSRFacadeBuilder(Path.of(srcDir),
                                                                     Path.of(testDir),
                                                                     Path.of(jarDir),

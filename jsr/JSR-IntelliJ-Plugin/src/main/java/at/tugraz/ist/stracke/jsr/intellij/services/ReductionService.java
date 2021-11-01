@@ -7,6 +7,7 @@ import at.tugraz.ist.stracke.jsr.core.coverage.strategies.MethodCoverageStrategy
 import at.tugraz.ist.stracke.jsr.core.facade.JSRFacade;
 import at.tugraz.ist.stracke.jsr.core.facade.JUnitJSRFacadeBuilder;
 import at.tugraz.ist.stracke.jsr.core.tsr.ReducedTestSuite;
+import at.tugraz.ist.stracke.jsr.core.tsr.strategies.DelayedGreedyReductionStrategy;
 import at.tugraz.ist.stracke.jsr.core.tsr.strategies.GeneticReductionStrategy;
 import at.tugraz.ist.stracke.jsr.intellij.misc.CoverageMetric;
 import at.tugraz.ist.stracke.jsr.intellij.misc.ReductionAlgorithm;
@@ -78,8 +79,15 @@ public class ReductionService {
       builder.applyModificationsAsCopy(pathSerialOutput);
     }
 
-    if (reductionAlgorithm == ReductionAlgorithm.GENETIC) {
-      builder.reductionStrategy(new GeneticReductionStrategy());
+    switch (reductionAlgorithm) {
+      case DELAYED_GREEDY:
+        builder.reductionStrategy(new DelayedGreedyReductionStrategy());
+        break;
+      case GENETIC:
+        builder.reductionStrategy(new GeneticReductionStrategy());
+        break;
+      // In the default case we don't have to do anything, as
+      // the builder uses the greedy HGS algo as default RS.
     }
 
     JSRFacade facade = builder.build();

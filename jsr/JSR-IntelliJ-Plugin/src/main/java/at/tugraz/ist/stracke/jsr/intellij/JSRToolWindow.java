@@ -343,6 +343,8 @@ public class JSRToolWindow {
     final String selAlgoItemTxt = this.cbReductionAlg.getItem();
     if (rb.getString("alg.gen").equals(selAlgoItemTxt)) {
       this.state.reductionAlgorithm = ReductionAlgorithm.GENETIC;
+    } else if(rb.getString("alg.del").equals(selAlgoItemTxt)) {
+      this.state.reductionAlgorithm = ReductionAlgorithm.DELAYED_GREEDY;
     } else {
       this.state.reductionAlgorithm = ReductionAlgorithm.GREEDY_HGS;
     }
@@ -385,6 +387,9 @@ public class JSRToolWindow {
     switch (state.reductionAlgorithm) {
       case GENETIC:
         redAlgoItem = rb.getString("alg.gen");
+        break;
+      case DELAYED_GREEDY:
+        redAlgoItem = rb.getString("alg.del");
         break;
       case GREEDY_HGS:
       default:
@@ -490,6 +495,7 @@ public class JSRToolWindow {
 
     List<String> algorithmItems = Arrays.asList(
       rb.getString("alg.hgs"),
+      rb.getString("alg.del"),
       rb.getString("alg.gen")
     );
 
