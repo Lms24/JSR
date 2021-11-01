@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("UnstableApiUsage") // Guava ArrayTable
 public class DelayedGreedyReductionStrategy extends BaseReductionStrategy {
 
-  private final boolean MULTIPLE_REDUCTIONS_PER_STEP = true;
+  private final boolean MULTIPLE_REDUCTIONS_PER_STEP = false;
 
   private final Logger logger = LogManager.getLogger(DelayedGreedyReductionStrategy.class);
 
