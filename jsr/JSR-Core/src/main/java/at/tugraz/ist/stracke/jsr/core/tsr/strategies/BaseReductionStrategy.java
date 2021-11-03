@@ -8,6 +8,7 @@ import at.tugraz.ist.stracke.jsr.core.tsr.TSRTestCase;
 import com.google.common.collect.Table;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -16,6 +17,8 @@ import java.util.stream.Collectors;
  * Class BaseReductionStrategy
  */
 abstract class BaseReductionStrategy implements ReductionStrategy {
+
+  public static final boolean KEEP_IRRELEVANT_TCS = false;
 
   protected TestSuite originalTestsuite;
   protected CoverageReport coverageReport;
@@ -57,9 +60,22 @@ abstract class BaseReductionStrategy implements ReductionStrategy {
   }
 
   protected List<TestCase> getRemovedTCs(List<TestCase> retainedTCs) {
-    return this.originalTestsuite.testCases.stream()
-                                           .filter(t -> !retainedTCs.contains(t))
-                                           .collect(Collectors.toList());
+    final List<TestCase> allTCs = KEEP_IRRELEVANT_TCS ?
+                                  new ArrayList<>(this.coverageReport.testCaseCoverageData.keySet()) :
+                                  this.originalTestsuite.testCases;
+
+    final List<TestCase> removedTCs = allTCs.stream()
+                                            .filter(t -> !retainedTCs.contains(t))
+                                            .collect(Collectors.toList());
+
+    if (KEEP_IRRELEVANT_TCS) {
+      retainedTCs.addAll(this.originalTestsuite.testCases.stream()
+                                                         .filter(tc -> !removedTCs.contains(tc))
+                                                         .filter(tc -> !retainedTCs.contains(tc))
+                                                         .collect(Collectors.toList()));
+    }
+
+    return removedTCs;
   }
 
   @Override
