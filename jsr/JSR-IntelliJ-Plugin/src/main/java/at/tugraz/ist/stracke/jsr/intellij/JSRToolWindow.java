@@ -86,6 +86,7 @@ public class JSRToolWindow {
   private JPanel pnlWrapper;
   private JScrollPane spMain;
   private JLabel lblSelCovReport;
+  private JCheckBox chkKeepZero;
   private StateService.State state;
 
   private CoverageReportListItem selItem;
@@ -197,7 +198,8 @@ public class JSRToolWindow {
                                               state.coverageMetric,
                                               state.reductionAlgorithm,
                                               state.deactivateTCs,
-                                              oldReport);
+                                              oldReport,
+                                              state.keepZeroCoverageTCs);
     } catch (Exception ex) {
       ex.printStackTrace();
       rts = null;
@@ -348,6 +350,8 @@ public class JSRToolWindow {
     } else {
       this.state.reductionAlgorithm = ReductionAlgorithm.GREEDY_HGS;
     }
+
+    this.state.keepZeroCoverageTCs = this.chkKeepZero.isSelected();
   }
 
   private void initComponentStateFromPersistedState() {
@@ -402,6 +406,8 @@ public class JSRToolWindow {
     this.toggleReportSelection(state.useLastCoverageReport);
 
     this.lblStatus.setVisible(false);
+
+    this.chkKeepZero.setSelected(state.keepZeroCoverageTCs);
   }
 
   private void initStatePersistence() {

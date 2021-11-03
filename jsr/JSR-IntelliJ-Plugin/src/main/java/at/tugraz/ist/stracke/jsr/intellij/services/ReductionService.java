@@ -34,7 +34,8 @@ public class ReductionService {
                                            CoverageMetric coverageMetric,
                                            ReductionAlgorithm reductionAlgorithm,
                                            boolean deactivateTCs,
-                                           CoverageReport lastCoverageReport) {
+                                           CoverageReport lastCoverageReport,
+                                           boolean keepZeroCoverageTCs) {
 
     final Path pathSources = Path.of(strPathSources);
     final Path pathTestSources = Path.of(strPathTestSources);
@@ -88,6 +89,10 @@ public class ReductionService {
         break;
       // In the default case we don't have to do anything, as
       // the builder uses the greedy HGS algo as default RS.
+    }
+
+    if (keepZeroCoverageTCs) {
+      builder.keepZeroCoverageTCs();
     }
 
     JSRFacade facade = builder.build();

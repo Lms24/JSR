@@ -57,6 +57,7 @@ public class StateService implements PersistentStateComponent<StateService.State
     public boolean paramsExpanded;
     public boolean resultsExpanded;
     public boolean deactivateTCs;
+    public boolean keepZeroCoverageTCs;
 
     public State() {
       this.pathTestSources = "";
@@ -74,6 +75,7 @@ public class StateService implements PersistentStateComponent<StateService.State
       this.paramsExpanded = false;
       this.resultsExpanded = false;
       this.deactivateTCs = true;
+      this.keepZeroCoverageTCs = false;
     }
 
     @Override
@@ -95,7 +97,8 @@ public class StateService implements PersistentStateComponent<StateService.State
              Objects.equals(settingsExpanded, state.settingsExpanded) &&
              Objects.equals(paramsExpanded, state.paramsExpanded) &&
              Objects.equals(resultsExpanded, state.resultsExpanded) &&
-             Objects.equals(deactivateTCs, state.deactivateTCs);
+             Objects.equals(deactivateTCs, state.deactivateTCs) &&
+             Objects.equals(keepZeroCoverageTCs, state.keepZeroCoverageTCs);
     }
 
     @Override
@@ -114,7 +117,8 @@ public class StateService implements PersistentStateComponent<StateService.State
                           settingsExpanded,
                           paramsExpanded,
                           resultsExpanded,
-                          deactivateTCs);
+                          deactivateTCs,
+                          keepZeroCoverageTCs);
     }
   }
 }

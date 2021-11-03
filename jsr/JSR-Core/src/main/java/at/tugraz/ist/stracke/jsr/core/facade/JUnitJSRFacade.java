@@ -105,6 +105,10 @@ public class JUnitJSRFacade implements JSRFacade {
     reductionStrategy.setOriginalTestSuite(originalTestSuite);
     reductionStrategy.setCoverageReport(report);
 
+    if (this.config.keepZeroCoverageTCs) {
+      reductionStrategy.keepZeroCoverageTCs(true);
+    }
+
     TestSuiteReducer reducer = this.config.reducer;
 
     reducer.reduce();

@@ -16,7 +16,7 @@
     <option name="basePackage" value="at.tugraz" />
     <option name="coverageMetric" value="LINE_COVERAGE" />
     <option name="reductionAlgorithm" value="DELAYED_GREEDY" />
-    <option name="paramsExpanded" value="true" />
     <option name="resultsExpanded" value="true" />
+    <option name="keepZeroCoverageTCs" value="true" />
   </component>
 </project>

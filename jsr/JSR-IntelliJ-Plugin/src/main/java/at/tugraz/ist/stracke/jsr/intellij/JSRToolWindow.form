@@ -265,7 +265,7 @@
               <grid id="d8cb" binding="pnlParamsWrapper" layout-manager="FormLayout">
                 <rowspec value="bottom:27px:noGrow"/>
                 <rowspec value="top:4dlu:noGrow"/>
-                <rowspec value="fill:m:noGrow"/>
+                <rowspec value="fill:p:noGrow"/>
                 <colspec value="fill:d:grow"/>
                 <constraints>
                   <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -302,8 +302,11 @@
                     <rowspec value="center:4dlu:noGrow"/>
                     <rowspec value="center:max(d;4px):noGrow"/>
                     <rowspec value="center:max(d;4px):noGrow"/>
+                    <rowspec value="top:4dlu:noGrow"/>
+                    <rowspec value="center:27px:noGrow"/>
                     <rowspec value="center:max(d;4px):noGrow"/>
-                    <rowspec value="fill:m:noGrow"/>
+                    <rowspec value="fill:27px:noGrow"/>
+                    <rowspec value="center:max(d;4px):noGrow"/>
                     <colspec value="fill:d:grow"/>
                     <constraints>
                       <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -350,11 +353,12 @@
                       </component>
                       <component id="ae5e2" class="javax.swing.JCheckBox" binding="chkDeactivate">
                         <constraints>
-                          <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                           <forms/>
                         </constraints>
                         <properties>
                           <text resource-bundle="i18n/en" key="lbl.deactivate"/>
+                          <toolTipText resource-bundle="i18n/en" key="tt.deactivate"/>
                         </properties>
                       </component>
                       <grid id="4b7d1" binding="pnlReportSel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
@@ -403,6 +407,16 @@
                         </constraints>
                         <properties>
                           <text resource-bundle="i18n/en" key="lbl.repSel.heading"/>
+                        </properties>
+                      </component>
+                      <component id="1fe2b" class="javax.swing.JCheckBox" binding="chkKeepZero">
+                        <constraints>
+                          <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <forms/>
+                        </constraints>
+                        <properties>
+                          <text resource-bundle="i18n/en" key="cb.keepZero"/>
+                          <toolTipText resource-bundle="i18n/en" key="tt.zeroCoverage"/>
                         </properties>
                       </component>
                     </children>
