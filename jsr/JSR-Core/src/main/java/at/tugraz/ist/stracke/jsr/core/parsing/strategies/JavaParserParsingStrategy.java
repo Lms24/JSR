@@ -3,10 +3,10 @@ package at.tugraz.ist.stracke.jsr.core.parsing.strategies;
 import at.tugraz.ist.stracke.jsr.core.parsing.misc.CompilationUnitExtractor;
 import at.tugraz.ist.stracke.jsr.core.parsing.statements.AssertionStatement;
 import at.tugraz.ist.stracke.jsr.core.parsing.statements.IStatement;
+import at.tugraz.ist.stracke.jsr.core.shared.ConcreteTestSuite;
 import at.tugraz.ist.stracke.jsr.core.shared.JUnitTestCase;
 import at.tugraz.ist.stracke.jsr.core.shared.TestCase;
 import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
-import at.tugraz.ist.stracke.jsr.core.shared.ConcreteTestSuite;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -69,8 +69,9 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
 
   private TestSuite parseTestSuiteFromMultipleCompilationUnits() {
     List<CompilationUnit> compilationUnits = cuExtractor.getCompilationUnits();
-    List<CompilationUnit> abstractClassCUs = this.findAbstractClasses(compilationUnits);
-    List<CompilationUnit> concreteClassCUs = this.findConcreteClasses(compilationUnits, abstractClassCUs);
+    List<CompilationUnit> filteredCUs = preFilterCUs(compilationUnits);
+    List<CompilationUnit> abstractClassCUs = this.findAbstractClasses(filteredCUs);
+    List<CompilationUnit> concreteClassCUs = this.findConcreteClasses(filteredCUs, abstractClassCUs);
 
     abstractPartialSuites = abstractClassCUs.stream()
                                             .map(cu -> parseTestSuite(cu, false))
@@ -85,6 +86,17 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
                                                            .map(cts -> new TestSuite(cts.testCases))
                                                            .collect(Collectors.toList());
     return mergePartialSuites(finalTestSuites);
+  }
+
+  private List<CompilationUnit> preFilterCUs(List<CompilationUnit> compilationUnits) {
+    return compilationUnits.stream()
+                           .filter(cu -> cu.findAll(ClassOrInterfaceDeclaration.class)
+                                           .get(0)
+                                           .getAnnotations()
+                                           .stream()
+                                           .noneMatch(a -> a.getNameAsString().equals("Ignore") ||
+                                                           a.getNameAsString().equals("Disabled")))
+                           .collect(Collectors.toList());
   }
 
   private void assignAbstractTestsToConcreteSuites(List<TestSuite> abstractPartialSuites,
@@ -143,7 +155,8 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
         if (this.abstractPartialSuites != null && !this.abstractPartialSuites.isEmpty()) {
           String partialName = clazz.getExtendedTypes().get(0).getNameAsString();
           cts.extendedClass = this.abstractPartialSuites.stream()
-                                                        .filter(s -> s.testClasses.toArray()[0].toString().contains(partialName))
+                                                        .filter(s -> s.testClasses.toArray()[0].toString()
+                                                                                               .contains(partialName))
                                                         .map(s -> s.testClasses.toArray()[0].toString())
                                                         .findFirst().orElse("Error");
         }
