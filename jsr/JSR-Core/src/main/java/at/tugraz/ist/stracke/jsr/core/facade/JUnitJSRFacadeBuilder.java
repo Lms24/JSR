@@ -70,6 +70,8 @@ public class JUnitJSRFacadeBuilder {
 
     /* Create a dynamic report name with a time stamp by default */
     this.config.staticTSRReportName = null;
+
+    this.config.keepZeroCoverageTCs = false;
   }
 
   public JUnitJSRFacadeBuilder testSuiteParser(TestSuiteParser parser) {
@@ -161,6 +163,23 @@ public class JUnitJSRFacadeBuilder {
    */
   public JUnitJSRFacadeBuilder applyModifications() {
     this.config.serialize = true;
+    return this;
+  }
+
+  /**
+   * If this method is called, the resulting facade will
+   * keep test cases that do not contribute to coverage (i.e. have
+   * a TC-specific coverage score of 0) in the reduced test suite.
+   *
+   * The idea behind this is that such Zero-Coverage TCs often
+   * contribute to the TS in other ways (e.g. performance monitoring) or their
+   * contribution is not measurable by the employed coverage metric (e.g.
+   * as is sometimes the case with checked coverage).
+   *
+   * @return a reference to the builder instance for chaining
+   */
+  public JUnitJSRFacadeBuilder keepZeroCoverageTCs() {
+    this.config.keepZeroCoverageTCs = true;
     return this;
   }
 

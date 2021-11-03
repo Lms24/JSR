@@ -65,6 +65,10 @@ public class JSRServiceImpl implements TSRService, SFLService, CoverageService {
       // to the greedy HGS algorithm
     }
 
+    if (params.keepZeroCoverageTCs) {
+      builder.keepZeroCoverageTCs();
+    }
+
     JSRFacade facade = builder.build();
 
     if (params.pathCoverageReport != null) {

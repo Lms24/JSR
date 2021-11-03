@@ -6,6 +6,7 @@ import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
 import at.tugraz.ist.stracke.jsr.core.tsr.ReducedTestSuite;
 import at.tugraz.ist.stracke.jsr.core.tsr.TSRTestCase;
 import com.google.common.collect.Table;
+import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -18,20 +19,24 @@ import java.util.stream.Collectors;
  */
 abstract class BaseReductionStrategy implements ReductionStrategy {
 
-  public static final boolean KEEP_IRRELEVANT_TCS = false;
-
+  public static final boolean KEEP_IRRELEVANT_TCS_DEFAULT = false;
+  protected final Logger logger;
   protected TestSuite originalTestsuite;
   protected CoverageReport coverageReport;
   protected Table<TSRTestCase, CoverageReport.Unit, Boolean> table;
+  boolean keepZeroCoverageTCs = KEEP_IRRELEVANT_TCS_DEFAULT;
 
-  public BaseReductionStrategy() {
+  public BaseReductionStrategy(@NonNull Logger logger) {
+    this.logger = logger;
   }
 
   public BaseReductionStrategy(@NonNull TestSuite originalTestsuite,
-                               @NonNull CoverageReport coverageReport) {
+                               @NonNull CoverageReport coverageReport,
+                               @NonNull Logger logger) {
     this.originalTestsuite = originalTestsuite;
     this.coverageReport = coverageReport;
     this.table = coverageReport.toTable(false);
+    this.logger = logger;
   }
 
   /**
@@ -60,7 +65,7 @@ abstract class BaseReductionStrategy implements ReductionStrategy {
   }
 
   protected List<TestCase> getRemovedTCs(List<TestCase> retainedTCs) {
-    final List<TestCase> allTCs = KEEP_IRRELEVANT_TCS ?
+    final List<TestCase> allTCs = this.keepZeroCoverageTCs ?
                                   new ArrayList<>(this.coverageReport.testCaseCoverageData.keySet()) :
                                   this.originalTestsuite.testCases;
 
@@ -68,11 +73,14 @@ abstract class BaseReductionStrategy implements ReductionStrategy {
                                             .filter(t -> !retainedTCs.contains(t))
                                             .collect(Collectors.toList());
 
-    if (KEEP_IRRELEVANT_TCS) {
-      retainedTCs.addAll(this.originalTestsuite.testCases.stream()
-                                                         .filter(tc -> !removedTCs.contains(tc))
-                                                         .filter(tc -> !retainedTCs.contains(tc))
-                                                         .collect(Collectors.toList()));
+    if (this.keepZeroCoverageTCs) {
+      final List<TestCase> zeroCovTCs = this.originalTestsuite.testCases.stream()
+                                                                        .filter(tc -> !removedTCs.contains(tc))
+                                                                        .filter(tc -> !retainedTCs.contains(tc))
+                                                                        .collect(Collectors.toList());
+      retainedTCs.addAll(zeroCovTCs);
+
+      this.logger.info("Keeping {} Zero-Coverage test cases in the reduced test suite.", zeroCovTCs.size());
     }
 
     return removedTCs;
@@ -89,4 +97,8 @@ abstract class BaseReductionStrategy implements ReductionStrategy {
     this.originalTestsuite = testSuite;
   }
 
+  @Override
+  public void keepZeroCoverageTCs(boolean keep) {
+    this.keepZeroCoverageTCs = keep;
+  }
 }

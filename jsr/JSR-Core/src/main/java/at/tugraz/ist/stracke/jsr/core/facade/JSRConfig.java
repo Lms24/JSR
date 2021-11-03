@@ -39,6 +39,8 @@ class JSRConfig {
 
   public String staticTSRReportName;
 
+  public boolean keepZeroCoverageTCs;
+
   public JSRConfig(Path sourceDir, Path testDir, Path jarFile, Path outputDir, Path slicerDir) {
     this.sourceDir = sourceDir;
     this.testDir = testDir;

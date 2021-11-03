@@ -51,14 +51,13 @@ public class GeneticReductionStrategy extends BaseReductionStrategy {
   private static final int DUPLICATE_RELAXATION_QUOTIENT = 10;
   private static final boolean AVG_DUPLICATES = true;
 
-  private final Logger logger = LogManager.getLogger(GeneticReductionStrategy.class);
-
   public GeneticReductionStrategy(@NonNull TestSuite testSuite,
                                   @NonNull CoverageReport coverageReport) {
-    super(testSuite, coverageReport);
+    super(testSuite, coverageReport, LogManager.getLogger(GeneticReductionStrategy.class));
   }
 
   public GeneticReductionStrategy() {
+    super(LogManager.getLogger(GeneticReductionStrategy.class));
   }
 
   @Override

@@ -89,7 +89,8 @@ public class SFLCommand implements Callable<Integer> {
       null,
       null,
       null,
-      opts ? optionalFlags.basePackage : null);
+      opts ? optionalFlags.basePackage : null,
+      false);
 
     SFLService sflService = new JSRServiceImpl();
     sflService.createAndExportSFLMatrices(params);

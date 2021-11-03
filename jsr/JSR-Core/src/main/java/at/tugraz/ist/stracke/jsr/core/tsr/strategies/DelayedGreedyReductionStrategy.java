@@ -31,19 +31,19 @@ public class DelayedGreedyReductionStrategy extends BaseReductionStrategy {
 
   private final boolean MULTIPLE_REDUCTIONS_PER_STEP = false;
 
-  private final Logger logger = LogManager.getLogger(DelayedGreedyReductionStrategy.class);
-
   private final List<TestCase> retainedTCs = new ArrayList<>();
 
   boolean optimalResult = false;
 
   public DelayedGreedyReductionStrategy() {
-    super();
+    super(LogManager.getLogger(DelayedGreedyReductionStrategy.class));
   }
 
   public DelayedGreedyReductionStrategy(@NonNull TestSuite originalTestsuite,
                                         @NonNull CoverageReport coverageReport) {
-    super(originalTestsuite, coverageReport);
+    super(originalTestsuite,
+          coverageReport,
+          LogManager.getLogger(DelayedGreedyReductionStrategy.class));
   }
 
   @Override

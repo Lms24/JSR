@@ -15,6 +15,7 @@ public class JSRParams {
   public String coverageMetric;
   public String algorithm;
   public String basePackage;
+  public boolean keepZeroCoverageTCs;
 
   public JSRParams(Path pathTestSources,
                    Path pathSources,
@@ -26,7 +27,8 @@ public class JSRParams {
                    Path pathCoverageReport,
                    String coverageMetric,
                    String algorithm,
-                   String basePackage) {
+                   String basePackage,
+                   boolean keepZeroCoverageTCs) {
     this.pathSources = pathSources;
     this.pathTestSources = pathTestSources;
     this.pathJar = pathJar;
@@ -38,5 +40,6 @@ public class JSRParams {
     this.coverageMetric = coverageMetric;
     this.algorithm = algorithm;
     this.basePackage = basePackage;
+    this.keepZeroCoverageTCs = keepZeroCoverageTCs;
   }
 }

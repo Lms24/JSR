@@ -117,6 +117,11 @@ public class ReductionCommand implements Callable<Integer> {
                           AlgorithmCandidates.ALG_DELAYED_GREEDY + ", " +
                           AlgorithmCandidates.ALG_GENETIC)
     private String algorithm;
+
+    @Option(names = {"--zeroCoverage", "--zero"},
+            description = "When this option is specified, test cases that do not " +
+                          "have any coverage, are kept instead of removed from the test suite")
+    private boolean keep0CoverageTCs;
   }
 
   @Override
@@ -135,7 +140,8 @@ public class ReductionCommand implements Callable<Integer> {
       options ? this.optionalFlags.pathCoverageReport : null,
       options ? this.optionalFlags.coverageMetric : null,
       options ? this.optionalFlags.algorithm : null,
-      options ? this.optionalFlags.basePackage : null
+      options ? this.optionalFlags.basePackage : null,
+      options && this.optionalFlags.keep0CoverageTCs
     );
 
     TSRService TSRService = new JSRServiceImpl();

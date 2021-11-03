@@ -81,4 +81,9 @@ public class GreedyReductionStrategy implements ReductionStrategy {
   public void setOriginalTestSuite(TestSuite testSuite) {
     this.originalTestsuite = testSuite;
   }
+
+  @Override
+  public void keepZeroCoverageTCs(boolean keep) {
+    throw new UnsupportedOperationException("This option is not supported with this reduction strategy");
+  }
 }

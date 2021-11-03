@@ -25,4 +25,6 @@ public interface ReductionStrategy {
 
   void setCoverageReport(CoverageReport report);
   void setOriginalTestSuite(TestSuite testSuite);
+
+  void keepZeroCoverageTCs(boolean keep);
 }

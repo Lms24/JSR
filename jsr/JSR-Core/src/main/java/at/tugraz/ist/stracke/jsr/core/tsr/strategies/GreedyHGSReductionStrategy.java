@@ -5,7 +5,7 @@ import at.tugraz.ist.stracke.jsr.core.shared.TestCase;
 import at.tugraz.ist.stracke.jsr.core.shared.TestSuite;
 import at.tugraz.ist.stracke.jsr.core.tsr.ReducedTestSuite;
 import at.tugraz.ist.stracke.jsr.core.tsr.TSRTestCase;
-import com.google.common.collect.*;
+import org.apache.logging.log4j.LogManager;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.*;
@@ -40,12 +40,14 @@ public class GreedyHGSReductionStrategy extends BaseReductionStrategy {
   protected Deque<CoverageReport.Unit> unmarkedRequirements;
 
   public GreedyHGSReductionStrategy() {
-    super();
+    super(LogManager.getLogger(GreedyHGSReductionStrategy.class));
   }
 
   public GreedyHGSReductionStrategy(@NonNull TestSuite originalTestsuite,
                                     @NonNull CoverageReport coverageReport) {
-    super(originalTestsuite, coverageReport);
+    super(originalTestsuite,
+          coverageReport,
+          LogManager.getLogger(GreedyHGSReductionStrategy.class));
 
     this.unmarkedRequirements =
       coverageReport.coveredUnits.stream()
