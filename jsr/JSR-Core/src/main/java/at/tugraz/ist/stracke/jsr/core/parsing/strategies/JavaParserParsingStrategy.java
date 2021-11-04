@@ -75,9 +75,11 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
 
     abstractPartialSuites = abstractClassCUs.stream()
                                             .map(cu -> parseTestSuite(cu, false))
+                                            .filter(Objects::nonNull)
                                             .collect(Collectors.toList());
     List<ConcreteTestSuite> concretePartialSuites = concreteClassCUs.stream()
                                                                     .map(cu -> parseTestSuite(cu, true))
+                                                                    .filter(Objects::nonNull)
                                                                     .collect(Collectors.toList());
 
     this.assignAbstractTestsToConcreteSuites(abstractPartialSuites, concretePartialSuites);
@@ -90,12 +92,18 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
 
   private List<CompilationUnit> preFilterCUs(List<CompilationUnit> compilationUnits) {
     return compilationUnits.stream()
-                           .filter(cu -> cu.findAll(ClassOrInterfaceDeclaration.class)
-                                           .get(0)
-                                           .getAnnotations()
-                                           .stream()
-                                           .noneMatch(a -> a.getNameAsString().equals("Ignore") ||
-                                                           a.getNameAsString().equals("Disabled")))
+                           .filter(cu -> {
+                             final List<ClassOrInterfaceDeclaration> all =
+                               cu.findAll(ClassOrInterfaceDeclaration.class);
+                             if (all.isEmpty()) {
+                               return false;
+                             }
+                             return all.get(0)
+                                       .getAnnotations()
+                                       .stream()
+                                       .noneMatch(a -> a.getNameAsString().equals("Ignore") ||
+                                                       a.getNameAsString().equals("Disabled"));
+                           })
                            .collect(Collectors.toList());
   }
 
@@ -142,15 +150,18 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
     List<TestCase> tcs = testCaseMethods
       .map(this::mapDeclarationToTestCase)
       .collect(Collectors.toList());
-
     logger.info("Found {} test case{}", tcs.size(), tcs.size() != 1 ? "s" : "");
+
+    if (!concrete && tcs.isEmpty()) {
+      return null;
+    }
 
     tcs.forEach(tc -> logger.info(tc.toString()));
 
     final ConcreteTestSuite cts = new ConcreteTestSuite(tcs);
     if (concrete) {
-      final ClassOrInterfaceDeclaration clazz = cu.findAll(ClassOrInterfaceDeclaration.class).get(
-        0);
+      final ClassOrInterfaceDeclaration clazz = cu.findAll(ClassOrInterfaceDeclaration.class)
+                                                  .get(0);
       if (clazz != null && clazz.getExtendedTypes().isNonEmpty()) {
         if (this.abstractPartialSuites != null && !this.abstractPartialSuites.isEmpty()) {
           String partialName = clazz.getExtendedTypes().get(0).getNameAsString();

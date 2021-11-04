@@ -53,7 +53,7 @@ abstract class JaCoCoCoverageStrategy implements CoverageStrategy {
                                 String basePackage,
                                 Logger concreteLogger) {
     this.basePackage = basePackage;
-    if (!this.basePackage.endsWith(".*")) {
+    if (this.basePackage != null && !this.basePackage.endsWith(".*")) {
       this.basePackage += ".*";
     }
     this.logger = concreteLogger;

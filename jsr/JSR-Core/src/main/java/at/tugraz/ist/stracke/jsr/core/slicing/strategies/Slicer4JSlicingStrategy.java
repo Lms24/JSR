@@ -266,7 +266,7 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
                                    .collect(Collectors.toSet());
       Set<String> lineNOs = new HashSet<>();
       icdgLogLines.stream()
-                  .filter(line -> line.toLowerCase().contains("assert"))
+                  .filter(line -> line.contains("assert"))
                   .peek(line -> pattern.matcher(line)
                                        .results()
                                        .map(mr -> mr.group(0))

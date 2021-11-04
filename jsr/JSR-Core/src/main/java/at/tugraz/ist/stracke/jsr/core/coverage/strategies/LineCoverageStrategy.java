@@ -52,7 +52,7 @@ public class LineCoverageStrategy extends JaCoCoCoverageStrategy {
   }
 
   private void collectClassData(Document document, Set<CoverageReport.Unit> tmpCoveredUnits, Node clazz) {
-    String className = clazz.getAttributes().getNamedItem("name").getTextContent().replace("/", ".");
+    String className = clazz.getAttributes().getNamedItem("name").getTextContent().replace("/", ".").split("\\$")[0];
     String sourceFileName = clazz.getAttributes().getNamedItem("sourcefilename").getTextContent();
     Node sourceFile = this.getSourceFileByName(sourceFileName, document);
 
