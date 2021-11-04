@@ -12,8 +12,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static at.tugraz.ist.stracke.jsr.core.slicing.strategies.Slicer4JCLI.*;
@@ -33,6 +36,7 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
 
   private static final Logger logger = LogManager.getLogger(Slicer4JSlicingStrategy.class);
   private final String classPathSeparator;
+  private final boolean searchForAssertICDGLogLines = true;
   private Path pathToJar;
   private Path pathToSlicer;
   private Path pathToOutDir;
@@ -251,21 +255,34 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
     }
 
     List<String> finalIcdgLogLines = icdgLogLines;
-    String sl4jSlicingCriteriaString =
-      this.testCase.getAssertions()
-                   .stream()
-                   .map(ass -> {
-                     String substr = String.format("LINENO:%s:FILE:%s",
-                                                   ass.getStartLine(),
-                                                   (this.testCase.parentClassName != null ?
-                                                   this.testCase.parentClassName : this.testCase.getClassName()));
-                     return finalIcdgLogLines.stream()
-                                             .filter(l -> l.contains(substr))
-                                             .map(l -> l.split(", ")[0])
-                                             .collect(Collectors.joining("-"));
-                   })
-                   .filter(cs -> !cs.isEmpty() && !cs.isBlank())
-                   .collect(Collectors.joining("-"));
+
+
+    String sl4jSlicingCriteriaString = "";
+    if (this.searchForAssertICDGLogLines) {
+      Pattern pattern = Pattern.compile("LINENO:[0-9]+:FILE:.+:PRED");
+
+      Set<String> criteria = Arrays.stream(this.getCriterionFromTCAssertionsAsString(finalIcdgLogLines)
+                                               .split("-"))
+                                   .collect(Collectors.toSet());
+      Set<String> lineNOs = new HashSet<>();
+      icdgLogLines.stream()
+                  .filter(line -> line.toLowerCase().contains("assert"))
+                  .peek(line -> pattern.matcher(line)
+                                       .results()
+                                       .map(mr -> mr.group(0))
+                                       .findFirst()
+                                       .ifPresent(lineNOs::add))
+                  .map(line -> line.split(", ")[0])
+                  .forEach(criteria::add);
+      icdgLogLines.stream()
+                  .filter(l -> lineNOs.stream().anyMatch(l::contains))
+                  .map(l -> l.split(", ")[0])
+                  .forEach(criteria::add);
+      sl4jSlicingCriteriaString = String.join("-", criteria);
+    } else {
+      sl4jSlicingCriteriaString =
+        getCriterionFromTCAssertionsAsString(finalIcdgLogLines);
+    }
 
     if (sl4jSlicingCriteriaString.isEmpty() || sl4jSlicingCriteriaString.isBlank() ||
         sl4jSlicingCriteriaString.replace("-", "").isEmpty()) {
@@ -276,6 +293,23 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
     logger.debug("SL4J Slicing Criterion: [{}]", sl4jSlicingCriteriaString);
 
     return sl4jSlicingCriteriaString;
+  }
+
+  private String getCriterionFromTCAssertionsAsString(List<String> finalIcdgLogLines) {
+    return this.testCase.getAssertions()
+                        .stream()
+                        .map(ass -> {
+                          String substr = String.format("LINENO:%s:FILE:%s",
+                                                        ass.getStartLine(),
+                                                        (this.testCase.parentClassName != null ?
+                                                         this.testCase.parentClassName : this.testCase.getClassName()));
+                          return finalIcdgLogLines.stream()
+                                                  .filter(l -> l.contains(substr))
+                                                  .map(l -> l.split(", ")[0])
+                                                  .collect(Collectors.joining("-"));
+                        })
+                        .filter(cs -> !cs.isEmpty() && !cs.isBlank())
+                        .collect(Collectors.joining("-"));
   }
 
   private void slice(String criterion) {
