@@ -132,7 +132,8 @@ public class CheckedCoverageStrategy implements CoverageStrategy {
                                     .filter(file -> file.getName().endsWith(".log"))
                                     .allMatch(File::delete);
     boolean deletedTxtFiles = Arrays.stream(outDirFiles)
-                                    .filter(file -> file.getName().endsWith(".txt"))
+                                    .filter(file -> file.getName().endsWith(".txt") &&
+                                                    !file.getName().equals("terminalLog.txt"))
                                     .allMatch(File::delete);
     boolean deletedCsvFiles = Arrays.stream(outDirFiles)
                                     .filter(file -> file.getName().endsWith(".csv") &&

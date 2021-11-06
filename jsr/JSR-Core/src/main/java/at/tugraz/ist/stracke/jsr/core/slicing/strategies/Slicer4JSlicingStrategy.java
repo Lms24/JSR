@@ -72,7 +72,7 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
     if (this.testCase == null) {
       throw new IllegalStateException("Test case was not set before calling execute()");
     }
-    if (this.testCase.getAssertions().isEmpty()) {
+    if (!this.searchForAssertICDGLogLines && this.testCase.getAssertions().isEmpty()) {
       logger.warn("Got TestCase w/o assertions, skipping execution and slicing ({}:{})",
                   this.testCase.getClassName(),
                   this.testCase.getName());
@@ -263,6 +263,7 @@ public class Slicer4JSlicingStrategy implements SlicingStrategy {
 
       Set<String> criteria = Arrays.stream(this.getCriterionFromTCAssertionsAsString(finalIcdgLogLines)
                                                .split("-"))
+                                   .filter(c -> !c.isEmpty() && !c.isBlank())
                                    .collect(Collectors.toSet());
       Set<String> lineNOs = new HashSet<>();
       icdgLogLines.stream()

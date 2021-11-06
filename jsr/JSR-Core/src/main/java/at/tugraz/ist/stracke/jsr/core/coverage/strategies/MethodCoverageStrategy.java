@@ -51,7 +51,10 @@ public class MethodCoverageStrategy extends JaCoCoCoverageStrategy {
   }
 
   private void collectMethodData(Set<CoverageReport.Unit> tmpCoveredUnits, Node clazz) {
-    String className = clazz.getAttributes().getNamedItem("name").getTextContent().replace("/", ".");
+    String className = clazz.getAttributes()
+                            .getNamedItem("name")
+                            .getTextContent()
+                            .replace("/", ".").split("\\$")[0];
     NodeList methods = clazz.getChildNodes();
     for (int i = 0; i < methods.getLength(); i++) {
       Node method = methods.item(i);
