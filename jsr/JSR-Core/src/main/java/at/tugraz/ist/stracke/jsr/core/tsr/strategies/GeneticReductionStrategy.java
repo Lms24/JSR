@@ -40,9 +40,9 @@ import static io.jenetics.engine.Limits.bySteadyFitness;
  */
 public class GeneticReductionStrategy extends BaseReductionStrategy {
 
-  private static final int POPULATION_SIZE = 750;
+  private static final int POPULATION_SIZE = 5000;
 
-  private static final double PROB_BIT_GENE_TRUE_INIT = 0.9;
+  private static final double PROB_BIT_GENE_TRUE_INIT = 0.95;
   private static final double PROB_MUTATOR = 0.5;
   private static final double PROB_ROULETTE = 0.15;
 

@@ -11,6 +11,7 @@ public class TestSuite {
 
   public final List<TestCase> testCases;
   public final Set<String> testClasses;
+  public Set<String> extendedClasses;
 
   public TestSuite(@NonNull List<TestCase> testCases) {
     this.testCases = testCases;
