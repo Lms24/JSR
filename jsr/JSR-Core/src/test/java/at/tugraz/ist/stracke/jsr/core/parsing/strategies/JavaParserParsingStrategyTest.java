@@ -484,4 +484,251 @@ class JavaParserParsingStrategyTest {
     assertThat(ts.getTestCases(), is(empty()));
     assertThat(ts.getNumberOfTestCases(), is(equalTo(0)));
   }
+
+  @Test
+  public void testTestCaseParsing15() {
+    var code1 = "" +
+                "package at.jsr.test;" +
+                "public class ParentTestClass {" +
+                "  @Test public void parentTC1() {int i;} " +
+                "  @Test public void parentTC2() {int a;} " +
+                "}";
+    var code2 = "" +
+                "package at.jsr.test;" +
+                "public class ChildTestClass extends ParentTestClass {" +
+                "}";
+    var strat = new JavaParserParsingStrategy(Arrays.asList(code1, code2));
+
+    TestSuite ts = strat.parseTestSuite();
+
+    assertThat(ts, is(notNullValue()));
+    assertThat(ts.getTestCases(), is(not(empty())));
+    assertThat(ts.getNumberOfTestCases(), is(equalTo(4)));
+  }
+
+  @Test
+  public void testTestCaseParsing16() {
+    var code1 = "" +
+                "package at.jsr.test;" +
+                "public class ParentTestClass {" +
+                "  @Test public void parentTC1() {int i;} " +
+                "  @Test public void parentTC2() {int a;} " +
+                "}";
+    var code2 = "" +
+                "package at.jsr.test;" +
+                "public class ChildTestClass extends ParentTestClass {" +
+                "  @Override @Test public void parentTC1() {int i;} " +
+                "  @Override @Test public void parentTC2() {int a;} " +
+                "}";
+    var strat = new JavaParserParsingStrategy(Arrays.asList(code1, code2));
+
+    TestSuite ts = strat.parseTestSuite();
+
+    assertThat(ts, is(notNullValue()));
+    assertThat(ts.getTestCases(), is(not(empty())));
+    assertThat(ts.getNumberOfTestCases(), is(equalTo(4)));
+  }
+
+  @Test
+  public void testTestCaseParsing17() {
+    var code1 = "" +
+                "package at.jsr.test;" +
+                "public class ParentTestClass {" +
+                "  @Test public void parentTC1() {int i;} " +
+                "  @Test public void parentTC2() {int a;} " +
+                "}";
+    var code2 = "" +
+                "package at.jsr.test;" +
+                "public class ChildTestClass extends ParentTestClass {" +
+                "  @Test public void childTC1() {int i;} " +
+                "  @Test public void childTC2() {int a;} " +
+                "}";
+    var strat = new JavaParserParsingStrategy(Arrays.asList(code1, code2));
+
+    TestSuite ts = strat.parseTestSuite();
+
+    assertThat(ts, is(notNullValue()));
+    assertThat(ts.getTestCases(), is(not(empty())));
+    assertThat(ts.getNumberOfTestCases(), is(equalTo(6)));
+  }
+
+  @Test
+  public void testTestCaseParsing18() {
+    var code1 = "" +
+                "package at.jsr.test;" +
+                "public class ParentTestClass {" +
+                "  public void parentTC1() {int i;} " +
+                "  public void parentTC2() {int a;} " +
+                "}";
+    var code2 = "" +
+                "package at.jsr.test;" +
+                "public class ChildTestClass extends ParentTestClass {" +
+                "  @Test public void childTC1() {int i;} " +
+                "  @Test public void childTC2() {int a;} " +
+                "}";
+    var strat = new JavaParserParsingStrategy(Arrays.asList(code1, code2));
+
+    TestSuite ts = strat.parseTestSuite();
+
+    assertThat(ts, is(notNullValue()));
+    assertThat(ts.getTestCases(), is(not(empty())));
+    assertThat(ts.getNumberOfTestCases(), is(equalTo(2)));
+  }
+
+  @Test
+  public void testTestCaseParsing19() {
+    var code1 = "" +
+                "package at.jsr.test;" +
+                "public class ParentTestClass {" +
+                "  @Test public void parentTC1() {int i;} " +
+                "  @Test public void parentTC2() {int a;} " +
+                "}";
+    var code2 = "" +
+                "package at.jsr.test;" +
+                "public class ChildTestClass extends ParentTestClass {" +
+                "  @Test public void childTC1() {int i;} " +
+                "  @Test public void childTC2() {int a;} " +
+                "}";
+    var code3 = "" +
+                "package at.jsr.test;" +
+                "public class GrandChildTestClass extends ChildTestClass {" +
+                "  @Test public void grandChildTC1() {int i;} " +
+                "  @Test public void grandChildTC2() {int a;} " +
+                "}";
+    var strat = new JavaParserParsingStrategy(Arrays.asList(code1, code2, code3));
+
+    TestSuite ts = strat.parseTestSuite();
+
+    assertThat(ts, is(notNullValue()));
+    assertThat(ts.getTestCases(), is(not(empty())));
+    assertThat(ts.getNumberOfTestCases(), is(equalTo(12)));
+  }
+
+  @Test
+  public void testTestCaseParsing20() {
+    var code1 = "" +
+                "package at.jsr.test;" +
+                "public class ParentTestClass {" +
+                "  @Test public void parentTC1() {int i;} " +
+                "  @Test public void parentTC2() {int a;} " +
+                "}";
+    var code2 = "" +
+                "package at.jsr.test;" +
+                "public class ChildTestClass extends ParentTestClass {" +
+                "  @Test public void childTC1() {int i;} " +
+                "  @Test public void childTC2() {int a;} " +
+                "}";
+    var code3 = "" +
+                "package at.jsr.test;" +
+                "public class GrandChildTestClass extends ChildTestClass {" +
+                "  @Test public void grandChildTC1() {int i;} " +
+                "  @Test public void grandChildTC2() {int a;} " +
+                "}";
+    var strat = new JavaParserParsingStrategy(Arrays.asList(code3, code2, code1));
+
+    TestSuite ts = strat.parseTestSuite();
+
+    assertThat(ts, is(notNullValue()));
+    assertThat(ts.getTestCases(), is(not(empty())));
+    assertThat(ts.getNumberOfTestCases(), is(equalTo(12)));
+  }
+
+  @Test
+  public void testTestCaseParsing21() {
+    var code1 = "" +
+                "package at.jsr.test;" +
+                "public class ParentTestClass {" +
+                "  @Test public void parentTC1() {int i;} " +
+                "  @Test public void parentTC2() {int a;} " +
+                "}";
+    var code2 = "" +
+                "package at.jsr.test;" +
+                "public class ChildTestClass extends ParentTestClass {" +
+                "  @Test public void childTC1() {int i;} " +
+                "  @Test public void childTC2() {int a;} " +
+                "}";
+    var code3 = "" +
+                "package at.jsr.test;" +
+                "public class GrandChildTestClass extends ChildTestClass {" +
+                "  @Test public void grandChildTC1() {int i;} " +
+                "  @Test public void grandChildTC2() {int a;} " +
+                "}";
+    var strat = new JavaParserParsingStrategy(Arrays.asList(code2, code3, code1));
+
+    TestSuite ts = strat.parseTestSuite();
+
+    assertThat(ts, is(notNullValue()));
+    assertThat(ts.getTestCases(), is(not(empty())));
+    assertThat(ts.getNumberOfTestCases(), is(equalTo(12)));
+  }
+
+  @Test
+  public void testTestCaseParsing22() {
+    var code1 = "" +
+                "package at.jsr.test;" +
+                "public class ParentTestClass {" +
+                "  @Test public void parentTC1() {int i;} " +
+                "  @Test public void parentTC2() {int a;} " +
+                "}";
+    var code2 = "" +
+                "package at.jsr.test;" +
+                "public class ChildTestClass extends ParentTestClass {" +
+                "  @Test public void childTC1() {int i;} " +
+                "  @Test public void childTC2() {int a;} " +
+                "}";
+    var code3 = "" +
+                "package at.jsr.test;" +
+                "public class GrandChildTestClass extends ChildTestClass {" +
+                "  @Test public void grandChildTC1() {int i;} " +
+                "  @Test public void grandChildTC2() {int a;} " +
+                "}";
+    var code4 = "" +
+                "package at.jsr.test;" +
+                "public class GrandChildTestClass2 extends ChildTestClass {" +
+                "  @Test public void grandChildTC3() {int i;} " +
+                "  @Test public void grandChildTC4() {int a;} " +
+                "}";
+    var strat = new JavaParserParsingStrategy(Arrays.asList(code2, code3, code1, code4));
+
+    TestSuite ts = strat.parseTestSuite();
+
+    assertThat(ts, is(notNullValue()));
+    assertThat(ts.getTestCases(), is(not(empty())));
+    assertThat(ts.getNumberOfTestCases(), is(equalTo(18)));
+  }
+
+  @Test
+  public void testTestCaseParsing23() {
+    var code1 = "" +
+                "package at.jsr.test;" +
+                "public class ParentTestClass {" +
+                "  @Test public void parentTC1() {int i;} " +
+                "  @Test public void parentTC2() {int a;} " +
+                "}";
+    var code2 = "" +
+                "package at.jsr.test;" +
+                "public class ChildTestClass extends ParentTestClass {" +
+                "  @Test public void childTC1() {int i;} " +
+                "  @Test public void childTC2() {int a;} " +
+                "}";
+    var code3 = "" +
+                "package at.jsr.test;" +
+                "public class GrandChildTestClass extends ChildTestClass {" +
+                "  @Test public void grandChildTC1() {int i;} " +
+                "  @Test public void grandChildTC2() {int a;} " +
+                "}";
+    var code4 = "" +
+                "package at.jsr.test;" +
+                "public class GrandChildTestClass2 extends SomethingWeDontKnow {" +
+                "  @Test public void grandChildTC3() {int i;} " +
+                "  public void grandChildNoTC4() {int a;} " +
+                "}";
+    var strat = new JavaParserParsingStrategy(Arrays.asList(code2, code3, code1, code4));
+
+    TestSuite ts = strat.parseTestSuite();
+
+    assertThat(ts, is(notNullValue()));
+    assertThat(ts.getTestCases(), is(not(empty())));
+    assertThat(ts.getNumberOfTestCases(), is(equalTo(13)));
+  }
 }

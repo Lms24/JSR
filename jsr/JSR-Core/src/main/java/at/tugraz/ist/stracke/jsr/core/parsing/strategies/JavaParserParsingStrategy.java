@@ -20,6 +20,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class JavaParserParsingStrategy implements ParsingStrategy {
@@ -72,6 +73,7 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
     List<CompilationUnit> filteredCUs = preFilterCUs(compilationUnits);
     List<CompilationUnit> abstractClassCUs = this.findAbstractClasses(filteredCUs);
     List<CompilationUnit> concreteClassCUs = this.findConcreteClasses(filteredCUs, abstractClassCUs);
+    List<CompilationUnit> extendingClassCUs = this.findExtendingClasses(concreteClassCUs);
 
     abstractPartialSuites = abstractClassCUs.stream()
                                             .map(cu -> parseTestSuite(cu, false))
@@ -81,8 +83,12 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
                                                                     .map(cu -> parseTestSuite(cu, true))
                                                                     .filter(Objects::nonNull)
                                                                     .collect(Collectors.toList());
+    this.findFullExtendedClasses(concretePartialSuites, abstractPartialSuites);
 
-    this.assignAbstractTestsToConcreteSuites(abstractPartialSuites, concretePartialSuites);
+    boolean needsAnotherRound = true;
+    while (needsAnotherRound) {
+      needsAnotherRound = this.assignParentTestsToConcreteSuites(abstractPartialSuites, concretePartialSuites);
+    }
 
     List<TestSuite> finalTestSuites = concretePartialSuites.stream()
                                                            .map(cts -> new TestSuite(cts.testCases))
@@ -107,21 +113,74 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
                            .collect(Collectors.toList());
   }
 
-  private void assignAbstractTestsToConcreteSuites(List<TestSuite> abstractPartialSuites,
-                                                   List<ConcreteTestSuite> concretePartialSuites) {
+  private boolean assignParentTestsToConcreteSuites(List<TestSuite> abstractPartialSuites,
+                                                 List<ConcreteTestSuite> concretePartialSuites) {
+    AtomicBoolean modifiedSomething = new AtomicBoolean(false);
     abstractPartialSuites.forEach(ats -> concretePartialSuites.forEach(cts -> {
       final String abstractClassName = ats.testClasses.toArray()[0].toString();
       if (abstractClassName.equals(cts.extendedClass)) {
+        final String concreteClassName = cts.testClasses.toArray()[0].toString();
         ats.testCases.forEach(atc -> {
-          final String concreteClassName = cts.testClasses.toArray()[0].toString();
           TestCase newTC = new JUnitTestCase(atc.getName(), concreteClassName, atc.getAssertions());
           newTC.parentClassName = abstractClassName;
           if (cts.testCases.stream().noneMatch(ctc -> ctc.getName().equals(newTC.getName()))) {
             cts.testCases.add(newTC);
+            modifiedSomething.set(true);
+          }
+        });
+        cts.extendedClass = null;
+      }
+    }));
+
+    List<ConcreteTestSuite> extendingSuites = concretePartialSuites.stream()
+                                                                   .filter(cps -> cps.extendedClass != null)
+                                                                   .collect(Collectors.toList());
+    extendingSuites.forEach(ets -> concretePartialSuites.forEach(cps -> {
+      final String parentClassName = ets.extendedClass;
+      final String childClassName = ets.testClasses.toArray()[0].toString();
+      final String concreteClassName = cps.testClasses.toArray()[0].toString();
+
+      if (parentClassName.equals(concreteClassName)) {
+        cps.testCases.forEach(cts -> {
+          TestCase newTC = new JUnitTestCase(cts.getName(), childClassName, cts.getAssertions());
+          if (ets.testCases.stream().noneMatch(etc -> etc.getName().equals(newTC.getName()))) {
+            ets.testCases.add(newTC);
+            modifiedSomething.set(true);
           }
         });
       }
     }));
+    return modifiedSomething.get();
+  }
+
+  private void findFullExtendedClasses(List<ConcreteTestSuite> concretePartialSuites, List<TestSuite> abstractSuites) {
+    concretePartialSuites.stream()
+                         .filter(cps -> cps.extendedClass != null)
+                         .forEach(cps -> {
+                           concretePartialSuites.stream()
+                                                .map(x -> x.testClasses.toArray()[0].toString())
+                                                .filter(x -> x.endsWith("." + cps.extendedClass))
+                                                .findFirst()
+                                                .ifPresent((x) -> cps.extendedClass = x);
+                           abstractSuites.stream()
+                                         .map(x -> x.testClasses.toArray()[0].toString())
+                                         .filter(x -> x.endsWith("." + cps.extendedClass))
+                                         .findFirst()
+                                         .ifPresent((x) -> cps.extendedClass = x);
+                         });
+  }
+
+  private List<CompilationUnit> findExtendingClasses(List<CompilationUnit> compilationUnits) {
+    return compilationUnits.stream()
+                           .filter(cu -> {
+                             List<ClassOrInterfaceDeclaration> classes = cu.findAll(ClassOrInterfaceDeclaration.class);
+                             if (classes == null || classes.isEmpty()) {
+                               return false;
+                             }
+                             ClassOrInterfaceDeclaration clazz = classes.get(0);
+                             return clazz.getExtendedTypes().isNonEmpty();
+                           })
+                           .collect(Collectors.toList());
   }
 
   private List<CompilationUnit> findConcreteClasses(List<CompilationUnit> compilationUnits, List<CompilationUnit> abstractClassCUs) {
@@ -163,14 +222,16 @@ public class JavaParserParsingStrategy implements ParsingStrategy {
       final ClassOrInterfaceDeclaration clazz = cu.findAll(ClassOrInterfaceDeclaration.class)
                                                   .get(0);
       if (clazz != null && clazz.getExtendedTypes().isNonEmpty()) {
-        if (this.abstractPartialSuites != null && !this.abstractPartialSuites.isEmpty()) {
-          String partialName = clazz.getExtendedTypes().get(0).getNameAsString();
+        //if (this.abstractPartialSuites != null && !this.abstractPartialSuites.isEmpty()) {
+          /*
           cts.extendedClass = this.abstractPartialSuites.stream()
                                                         .filter(s -> s.testClasses.toArray()[0].toString()
                                                                                                .contains(partialName))
                                                         .map(s -> s.testClasses.toArray()[0].toString())
                                                         .findFirst().orElse("Error");
-        }
+           */
+          cts.extendedClass = clazz.getExtendedTypes().get(0).getNameAsString();
+        //}
       }
       if (clazz != null && cts.testClasses.isEmpty()) {
         cts.testClasses.add(clazz.getFullyQualifiedName().orElse("Error"));
