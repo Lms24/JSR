@@ -7,9 +7,16 @@ JSR is a test suite reduction framework for Java. It consists of the following m
 * JSR CLI
 * JSR IntelliJ IDE plugin
 
+
+## Important Notice:
+
+Please note that JSR is currently still undergoing active Development. Features are subject to change and the installation process will change in the future. 
+Our long-term goal is to create a test suite reduction framework for practical use in the software industry. If you want to contribute to JSR, please feel free to submit an issue or a PR. I would be happy if you want to get in touch with me.
+
+
 ## JSR Core
 
-The core framework module, containing the functionality and implementation of algorithms, calls to programs, libraries, etc.
+The core framework module, containing the functionality and implementation of algorithms, interactions with programs, libraries, etc.
 
 More specifically, the Core modules provides APIs to clients for the following features:
 
